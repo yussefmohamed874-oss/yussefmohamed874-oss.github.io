@@ -145,6 +145,8 @@ function render(){
  if(v==='list')return list();
  if(v==='form')return form();
  if(v==='backup')return backup();
+ if(v==='plist')return plist();
+ if(v==='pform')return pform();
 }
 
 // ===== الرئيسية =====
@@ -152,8 +154,8 @@ let q='';
 function home(){
  const newC=DB.filter(p=>p.status==='new').length;
  const todayC=DB.filter(p=>p.date===todayISO()).length;
- const last=+localStorage.getItem('pa_last_backup')||Math.min(...DB.map(p=>p.created||Date.now()),Date.now());
- const needBk=DB.length>0&&Date.now()-last>7*864e5;
+ const last=+localStorage.getItem('pa_last_backup')||Math.min(...[...DB,...PDB].map(p=>p.created||Date.now()),Date.now());
+ const needBk=(DB.length+PDB.length)>0&&Date.now()-last>7*864e5;
  $('#app').innerHTML=`
  <div class="hdr"><div class="row"><h1>عيادات Physio Art</h1></div>
  <input class="search" id="q" type="search" placeholder="🔍 دوّر برقم التليفون أو الاسم..." value="${esc(q)}" autocomplete="off"></div>
@@ -168,6 +170,7 @@ function home(){
    <button class="tile" onclick="go({v:'list',k:'new'})"><span class="ic" style="background:#FFF6CC">🆕</span><b>عملاء جداد</b><span class="n">${newC}</span></button>
    <button class="tile" onclick="go({v:'list',k:'today'})"><span class="ic" style="background:#E3F6EC">📅</span><b>مواعيد النهارده</b><span class="n">${todayC}</span></button>
   </div>
+  <button class="tile" style="margin-bottom:14px" onclick="go({v:'plist'})"><span class="ic" style="background:#FFF1E0">🏠</span><b>حالات البرايفت</b><span class="n">${PDB.length}</span></button>
   ${BRANCHES.map(b=>`<div class="branch"><h2>🏥 ${b.name}${b.sub?` <small>${b.sub}</small>`:''}</h2>
    ${SERVICES.map(s=>{const n=DB.filter(p=>p.status!=='new'&&p.branch===b.id&&p.service===s.id).length;
     return `<button class="svc" onclick="go({v:'list',k:'svc',b:'${b.id}',s:'${s.id}'})"><span class="ic" style="background:${s.bg}">${s.ic}</span><b>${s.name}</b><span class="n">${n}</span><span class="ar">‹</span></button>`}).join('')}
@@ -181,12 +184,13 @@ function matches(p,s){
  const n=normAr(s).trim();if(!n)return true;
  const nd=n.replace(/\D/g,'');
  if(nd.length>=3&&digits(p.phone).replace(/\D/g,'').includes(nd.replace(/^20/,'0')))return true;
- return normAr(p.name).includes(n)||normAr(p.problem).includes(n);
+ return normAr(p.name).includes(n)||normAr(p.problem).includes(n)||normAr(p.address).includes(n);
 }
 function results(s){
  const r=sortList(DB.filter(p=>matches(p,s)));
- if(!r.length)return `<div class="empty">مفيش حد بالرقم أو الاسم ده<br><br><button class="btn" style="width:auto;display:inline-block;padding:10px 20px" onclick="go({v:'form',status:'new',prefill:'${esc(s)}'})">＋ ضيفه عميل جديد</button></div>`;
- return `<div class="sec-t">${r.length} نتيجة</div>`+r.map(p=>cardHTML(p,true)).join('');
+ const rp=PDB.filter(p=>matches(p,s));
+ if(!r.length&&!rp.length)return `<div class="empty">مفيش حد بالرقم أو الاسم ده<br><br><button class="btn" style="width:auto;display:inline-block;padding:10px 20px" onclick="go({v:'form',status:'new',prefill:'${esc(s)}'})">＋ ضيفه عميل جديد</button></div>`;
+ return `<div class="sec-t">${r.length+rp.length} نتيجة</div>`+r.map(p=>cardHTML(p,true)).join('')+rp.map(pCardHTML).join('');
 }
 
 // ===== كارت العميل =====
@@ -205,6 +209,7 @@ function cardHTML(p,showWhere){
  </div></div>`;
 }
 function bindCards(root){
+ root.querySelectorAll('[data-ped]').forEach(x=>x.onclick=()=>go({v:'pform',id:x.dataset.ped}));
  root.querySelectorAll('[data-ed]').forEach(x=>x.onclick=()=>go({v:'form',id:x.dataset.ed}));
  root.querySelectorAll('[data-go]').forEach(x=>x.onclick=()=>{
   const p=DB.find(r=>r.id===x.dataset.go);
@@ -326,7 +331,7 @@ function startRec(ta,onDone){
  rec.onend=()=>{recOn=false;setBtn(false);onDone()};
  try{rec.start();recOn=true;setBtn(true)}catch(e){toast('جرّب تاني')}
 }
-function setBtn(on){const b=$('#vb');if(!b)return;b.classList.toggle('rec',on);b.textContent=on?'⏹':'🎤';const h=$('#vh');if(h)h.textContent=on?'بسمعك... اتكلم وبعدين دوس ⏹':'دوس 🎤 وقول: الاسم، الرقم، الفرع، الخدمة، المشكلة، والميعاد'}
+function setBtn(on){const b=$('#vb');if(!b)return;b.classList.toggle('rec',on);b.textContent=on?'⏹':'🎤';const h=$('#vh');if(h)h.textContent=on?'بسمعك... اتكلم وبعدين دوس ⏹':(view.v==='pform'?'دوس 🎤 وقول: الاسم، الرقم، المشكلة، العنوان، سعر الجلسة، والأيام':'دوس 🎤 وقول: الاسم، الرقم، الفرع، الخدمة، المشكلة، والميعاد')}
 
 // ===== فورم الإضافة/التعديل =====
 let F=null;
@@ -394,14 +399,14 @@ function backup(){
  <div class="hdr"><div class="row"><button class="back" onclick="history.back()">→</button><h1>💾 النسخة الاحتياطية</h1></div></div>
  <main>
  <div class="card"><b>البيانات محفوظة على التليفون ده بس.</b><div class="pr" style="margin-top:6px">عشان ماتضيعش لو التليفون ضاع أو اتمسح، اعمل نسخة كل أسبوع وابعتها لنفسك على الواتساب أو احفظها على Google Drive.</div>
- <div class="pr" style="margin-top:6px">عدد العملاء: <b>${DB.length}</b> · آخر نسخة: <b>${last?new Date(last).toLocaleDateString('ar-EG'):'لسه'}</b></div></div>
+ <div class="pr" style="margin-top:6px">عدد العملاء: <b>${DB.length}</b> · البرايفت: <b>${PDB.length}</b> · آخر نسخة: <b>${last?new Date(last).toLocaleDateString('ar-EG'):'لسه'}</b></div></div>
  <button class="btn" id="ex">⬆ اعمل نسخة احتياطية دلوقتي</button>
  <button class="btn sec" id="im">⬇ رجّع نسخة قديمة</button>
  <input type="file" id="fi" accept=".json,application/json" hidden>
  </main>`;
  $('#ex').onclick=async()=>{
   const name='physio-art-'+todayISO()+'.json';
-  const blob=new Blob([JSON.stringify({app:'physio-art-clinic',v:1,at:Date.now(),data:DB},null,1)],{type:'application/json'});
+  const blob=new Blob([JSON.stringify({app:'physio-art-clinic',v:1,at:Date.now(),data:DB,private:PDB},null,1)],{type:'application/json'});
   const file=new File([blob],name,{type:'application/json'});
   try{
    if(navigator.canShare&&navigator.canShare({files:[file]}))await navigator.share({files:[file],title:name});
@@ -414,9 +419,120 @@ function backup(){
   const f=e.target.files[0];if(!f)return;
   try{const j=JSON.parse(await f.text());const data=Array.isArray(j)?j:j.data;if(!Array.isArray(data))throw 0;
    if(!confirm('النسخة فيها '+data.length+' عميل. هتتضاف على اللي موجود (والمكرر هيتحدّث). تكمل؟'))return;
-   const m=new Map(DB.map(p=>[p.id,p]));data.forEach(p=>p&&p.id&&m.set(p.id,p));DB=[...m.values()];save();toast('اترجعت ✓');go({v:'home'});
+   const m=new Map(DB.map(p=>[p.id,p]));data.forEach(p=>p&&p.id&&m.set(p.id,p));DB=[...m.values()];save();if(Array.isArray(j.private)){const m2=new Map(PDB.map(p=>[p.id,p]));j.private.forEach(p=>p&&p.id&&m2.set(p.id,p));PDB=[...m2.values()];psave()}toast('اترجعت ✓');go({v:'home'});
   }catch(err){toast('الملف ده مش نسخة صحيحة')}
  };
+}
+
+// ===== حالات البرايفت =====
+const PKEY='pa_private_v1';
+let PDB=[];
+try{PDB=JSON.parse(localStorage.getItem(PKEY)||'[]')}catch(e){PDB=[]}
+function psave(){localStorage.setItem(PKEY,JSON.stringify(PDB))}
+const PDAYS=['السبت','الأحد','الاتنين','التلات','الأربع','الخميس','الجمعة'];
+const DAYRE='(?:سبت|[أا]حد|[أا]تنين|[أا]ثنين|تلات|ثلاثاء|ثلاث|[أا]ربعاء|[أا]ربع|خميس|جمع[ةه])';
+const PD=[['السبت',/(^|\s)و?(ال)?سبت(\s|$)/],['الأحد',/(^|\s)و?(ال)?(احد)(\s|$)/],['الاتنين',/(^|\s)و?(ال)?(اتنين|اثنين)(\s|$)/],['التلات',/(^|\s)و?(ال)?(تلات|ثلاثاء|تلاتاء|ثلاث)(\s|$)/],['الأربع',/(^|\s)و?(ال)?(اربع|اربعاء)(\s|$)/],['الخميس',/(^|\s)و?(ال)?خميس(\s|$)/],['الجمعة',/(^|\s)و?(ال)?جمعه(\s|$)/]];
+const PW={'ميتين':200,'تلتميه':300,'ثلثمائه':300,'اربعميه':400,'خمسميه':500,'ستميه':600,'سبعميه':700,'تمانميه':800,'تسعميه':900,'الف':1000,'ميه':100};
+function parsePrivate(raw){
+ const out={};let r=' '+digits(raw)+' ';
+ const am=r.match(/(?:العنوان|ساكن[ةه]?\s+(?:في|ب)|بتسكن\s+(?:في|ب)|بيسكن\s+(?:في|ب))\s*(.+?)(?=\s*[,،]|\s+(?:سعر|الجلسة|الجلسه|الايام|الأيام|ايام|أيام|متاح|متاحة|رقم|رقمه|رقمها|عنده|عندها|بسعر|المشكلة|المشكله)(?:\s|$)|$)/);
+ if(am){out.address=am[1].trim();r=r.replace(am[0],' , ')}
+ const rn=r.replace(/\d{7,}/g,' ');
+ let pm=rn.match(/(?:سعر\s+(?:ال)?جلس[ةه]|(?:ال)?جلس[ةه]\s*(?:ب|بـ)?|بسعر|سعرها|سعره)\s*(?:ب)?\s*(\d{2,5})/)||rn.match(/(\d{2,5})\s*(?:جنيه|جنية)/);
+ if(pm){out.price=pm[1];r=r.replace(pm[0],' , ')}
+ else{const pw=normAr(rn).match(/(?:سعر\s+(?:ال)?جلسه|الجلسه|بسعر)\s*(?:ب)?\s*(ميتين|تلتميه|ثلثمائه|اربعميه|خمسميه|ستميه|سبعميه|تمانميه|تسعميه|الف|ميه)/);
+  if(pw){out.price=String(PW[pw[1]]);r=r.replace(new RegExp(pw[0].replace(/[أإآ]/g,'[أإآا]').replace(/ة|ه/g,'[ةه]').replace(/ى|ي/g,'[ىي]')),' , ')}}
+ const tn=' '+normAr(r).replace(/[،,؛.!?؟]/g,' ')+' ';
+ const days=[];
+ if(/كل يوم|كل الايام/.test(tn))days.push(...PDAYS);else for(const [d,re] of PD)if(re.test(tn))days.push(d);
+ if(days.length)out.days=days;
+ r=r.replace(/(?:ال)?[أا]يام(?:\s+(?:ال)?متاح[ةه])?|متاح[ةه]?|كل\s+(?:ال)?[أا]يام|كل\s+يوم/g,' ');
+ r=r.replace(new RegExp('(^|\\s)و?(?:ال)?'+DAYRE+'(?=\\s|$)','g'),'$1');
+ const b=parseSpeech(r);
+ for(const k of ['name','phone','problem'])if(b[k])out[k]=b[k];
+ return out;
+}
+function pCardHTML(p){
+ return `<div class="card" style="border-right:5px solid #F59E0B">
+ <div class="nm">${esc(p.name)||'<span style="color:#aaa">بدون اسم</span>'}</div>
+ ${p.phone?`<div class="ph">${esc(p.phone)}</div>`:''}
+ <div class="tags"><span class="tag" style="background:#FFF1E0;color:#B45309">🏠 برايفت</span>${p.price?`<span class="tag" style="background:#E3F6EC;color:#0E7A50">💰 ${esc(p.price)} ج / جلسة</span>`:''}</div>
+ ${p.problem?`<div class="pr">📝 ${esc(p.problem)}</div>`:''}
+ ${p.address?`<div class="pr">📍 ${esc(p.address)}</div>`:''}
+ ${(p.days&&p.days.length)?`<div class="tags">${p.days.map(d=>`<span class="tag" style="background:#F1EAFB;color:var(--purple)">${d}</span>`).join('')}</div>`:''}
+ <div class="acts">
+  ${p.phone?`<a class="a-call" href="tel:${esc(digits(p.phone))}">📞 اتصال</a><a class="a-wa" href="${waLink(p.phone)}" target="_blank">واتساب</a>`:''}
+  ${p.address?`<a class="a-call" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.address)}" target="_blank">📍 الخريطة</a>`:''}
+  <button class="a-ed" data-ped="${p.id}">✏️ تعديل</button>
+ </div></div>`;
+}
+let pq='',pd='all';
+function plist(){
+ $('#app').innerHTML=`
+ <div class="hdr"><div class="row"><button class="back" onclick="history.back()">→</button><div style="flex:1"><h1>🏠 حالات البرايفت</h1></div><b style="font-size:24px;color:var(--gold)">${PDB.length}</b></div>
+ <input class="search" id="pq" type="search" placeholder="🔍 دوّر بالاسم أو الرقم أو العنوان..." value="${esc(pq)}"></div>
+ <main><div class="lbl" style="margin-top:0">متاح يوم:</div><div class="chips" style="margin-bottom:12px">${['all',...PDAYS].map(d=>`<button class="chip ${pd===d?'on':''}" data-d="${d}">${d==='all'?'الكل':d}</button>`).join('')}</div><div id="ls"></div></main>
+ <button class="fab" id="fab">🎤 إضافة</button>`;
+ const draw=()=>{
+  const r=PDB.filter(p=>matches(p,pq)&&(pd==='all'||(p.days||[]).includes(pd))).sort((a,b)=>(a.name||'').localeCompare(b.name||'','ar'));
+  $('#ls').innerHTML=r.length?r.map(pCardHTML).join(''):`<div class="empty">لسه مفيش حد هنا<br>دوس 🎤 إضافة تحت</div>`;
+  bindCards($('#ls'));
+ };
+ draw();
+ $('#pq').oninput=e=>{pq=e.target.value;draw()};
+ document.querySelectorAll('[data-d]').forEach(x=>x.onclick=()=>{pd=x.dataset.d;plist()});
+ $('#fab').onclick=()=>go({v:'pform',voice:1});
+}
+function pform(){
+ const ex=view.id?PDB.find(p=>p.id===view.id):null;
+ F=ex?{...ex,days:[...(ex.days||[])]}:{id:null,name:'',phone:'',problem:'',address:'',price:'',days:[]};
+ $('#app').innerHTML=`
+ <div class="hdr"><div class="row"><button class="back" onclick="history.back()">→</button><h1>${ex?'✏️ تعديل':'＋ حالة برايفت'}</h1></div></div>
+ <main>
+ <div class="voice"><div class="top"><button class="vbtn" id="vb">🎤</button><div class="hint" id="vh">دوس 🎤 وقول: الاسم، الرقم، المشكلة، العنوان، سعر الجلسة، والأيام</div></div>
+ <textarea class="inp" id="vt" placeholder="الكلام هيتكتب هنا... أو اكتب بإيدك ودوس رتّب"></textarea>
+ <button class="btn sec" id="parse" style="background:var(--navy);color:var(--gold)">⬇ رتّب الكلام في الخانات</button></div>
+ <div class="lbl">الاسم</div><input class="inp" id="f-name" value="${esc(F.name)}">
+ <div class="lbl">رقم التليفون</div><input class="inp" id="f-phone" type="tel" inputmode="tel" dir="ltr" style="text-align:right" value="${esc(F.phone)}">
+ <div class="lbl">المشكلة</div><input class="inp" id="f-problem" value="${esc(F.problem)}">
+ <div class="lbl">العنوان</div><input class="inp" id="f-address" value="${esc(F.address)}">
+ <div class="lbl">سعر الجلسة (جنيه)</div><input class="inp" id="f-price" type="number" inputmode="numeric" value="${esc(F.price)}">
+ <div class="lbl">الأيام المتاحة</div><div class="chips" id="c-days">${PDAYS.map(d=>`<button class="chip" data-v="${d}">${d}</button>`).join('')}</div>
+ <button class="btn" id="sv">✓ احفظ</button>
+ ${ex?'<button class="btn del" id="dl">🗑 امسح الحالة</button>':''}
+ </main>`;
+ const paint=()=>document.querySelectorAll('#c-days .chip').forEach(c=>c.classList.toggle('on',F.days.includes(c.dataset.v)));
+ paint();
+ document.querySelectorAll('#c-days .chip').forEach(c=>c.onclick=()=>{const v=c.dataset.v;F.days=F.days.includes(v)?F.days.filter(x=>x!==v):[...F.days,v];paint()});
+ const vt=$('#vt');
+ const flash=el=>{el.classList.remove('flash');void el.offsetWidth;el.classList.add('flash')};
+ const apply=()=>{
+  if(!document.body.contains(vt)||!vt.value.trim())return;
+  const r=parsePrivate(vt.value);let n=0;
+  for(const k of ['name','phone','problem','address','price']){if(r[k]){const el=$('#f-'+k);el.value=r[k];flash(el);n++}}
+  if(r.days){F.days=[...new Set([...F.days,...r.days])];paint();n++}
+  toast(n?'اتملت '+n+' خانات ✓ راجعها واحفظ':'مافهمتش، جرّب تاني أو اكتب بإيدك');
+  if(r.phone)pdup(r.phone);
+ };
+ $('#parse').onclick=apply;
+ $('#vb').onclick=()=>{if(recOn)stopRec();else startRec(vt,apply)};
+ $('#f-phone').onchange=e=>pdup(e.target.value);
+ $('#sv').onclick=()=>{
+  F.name=$('#f-name').value.trim();F.phone=digits($('#f-phone').value).replace(/[^\d+]/g,'');F.problem=$('#f-problem').value.trim();
+  F.address=$('#f-address').value.trim();F.price=$('#f-price').value.trim();
+  if(!F.name&&!F.phone){toast('اكتب الاسم أو الرقم على الأقل');return}
+  stopRec();
+  if(F.id){const i=PDB.findIndex(p=>p.id===F.id);PDB[i]={...F,updated:Date.now()}}
+  else PDB.push({...F,id:uid(),created:Date.now()});
+  psave();toast('اتحفظ ✓');history.back();
+ };
+ if(ex)$('#dl').onclick=()=>{if(confirm('متأكد إنك عايز تمسح '+(F.name||F.phone)+'؟')){PDB=PDB.filter(p=>p.id!==F.id);psave();toast('اتمسح');history.back()}};
+ if(view.voice&&!ex)setTimeout(()=>startRec(vt,apply),300);
+}
+function pdup(ph){
+ const d=digits(ph).replace(/\D/g,'');if(d.length<7)return;
+ const o=PDB.find(p=>p.id!==F.id&&digits(p.phone).replace(/\D/g,'')===d);
+ if(o&&confirm('الرقم ده متسجل قبل كده باسم "'+(o.name||'بدون اسم')+'"\nتحب تفتح ملفه بدل ما تضيف جديد؟')){stopRec();view={v:'pform',id:o.id};history.replaceState(view,'');pform()}
 }
 
 render();

@@ -263,6 +263,7 @@ function render(){
  if(v==='prog')return prog();
  if(v==='backup')return backup();
  if(v==='lib')return lib();
+ if(v==='allvids')return allvids();
  if(v==='item')return item();
 }
 
@@ -326,6 +327,7 @@ function home(){
   <button class="tile" onclick="go({v:'list',k:'subs',f:'all'})"><span class="ic" style="background:#F1EAFB">👩</span><b>كل المشتركات</b><span class="n">${c.subs}</span></button>
   <button class="tile" onclick="go({v:'list',k:'inq'})"><span class="ic" style="background:#FFF6CC">🆕</span><b>عميلات بتسأل</b><span class="n">${c.inq}</span></button>
   <button class="tile" onclick="go({v:'programs'})"><span class="ic" style="background:#E3ECFD">🏋️</span><b>برامج الكابتن (1 – 20)</b><span class="n">${ready}/20</span></button>
+  <button class="tile" onclick="go({v:'allvids'})"><span class="ic" style="background:#E8F7F0">🎬</span><b>كل فيديوهات الموقع</b><span class="n">${Object.keys(SITE_VIDEOS).length}</span></button>
   <button class="tile" onclick="go({v:'lib'})"><span class="ic" style="background:#E8F7F0">🎥</span><b>الأجهزة والتمارين (فيديوهات)</b><span class="n">${LIB.filter(x=>(x.videos||[]).length).length}/${LIB.length}</span></button>
   <div class="foot"><button onclick="go({v:'backup'})">💾 النسخة الاحتياطية</button><a href="../clinic/">🏥 تطبيق العيادات</a></div>`;
  };
@@ -594,6 +596,20 @@ async function prog(){
  $('#ok').onclick=()=>{flush();toast('اتحفظ ✓');history.back()};
 }
 
+// ===== كل فيديوهات الموقع =====
+function allvids(){
+ $('#app').innerHTML=`
+ <div class="hdr"><div class="row"><button class="back" onclick="history.back()">→</button><div style="flex:1"><h1>🎬 كل فيديوهات الموقع</h1><div class="sub">${Object.keys(SITE_VIDEOS).length} فيديو · بيتشغلوا من النت</div></div></div>
+ <input class="search" id="avq" type="search" placeholder="🔍 دوّر باسم التمرين أو الجهاز..."></div>
+ <main><div id="avl"></div></main>`;
+ const draw=()=>{
+  const q=normAr($('#avq').value||'').trim();
+  const names=Object.keys(SITE_VIDEOS).filter(n=>!q||normAr(n).includes(q));
+  $('#avl').innerHTML=names.length?names.map(n=>`<div class="card"><div class="nm" style="font-size:18px;margin-bottom:6px">${esc(n)}</div><div class="vid" style="margin:0"><video controls playsinline preload="none" src="${SITE_VIDEOS[n]}" style="width:100%;border-radius:10px;background:#000;display:block;max-height:60vh"></video></div></div>`).join(''):'<div class="empty">مفيش فيديو بالاسم ده</div>';
+ };
+ draw();
+ $('#avq').oninput=draw;
+}
 // ===== الأجهزة والتمارين (فيديوهات) =====
 function ytEmbed(u){
  try{const x=new URL(u);let id='';

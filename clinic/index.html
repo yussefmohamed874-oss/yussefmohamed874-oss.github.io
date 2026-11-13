@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#0B1A4A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="عيادات Physio Art">
+<title>عيادات Physio Art</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zain:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0B1A4A;--purple:#5B1FA8;--gold:#FFD400;--bg:#F4F3EE;--card:#fff;--ink:#141413;--mut:#6b6a63;--line:#E8E6DC;--red:#D92D20;--green:#0E9F6E;--wa:#25D366}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg)}
+body{font-family:Zain,Tahoma,sans-serif;color:var(--ink);font-size:18px;min-height:100vh;padding-bottom:110px}
+button,input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+.hdr{background:linear-gradient(135deg,var(--navy),var(--purple));color:#fff;padding:calc(env(safe-area-inset-top) + 14px) 16px 16px;position:sticky;top:0;z-index:5}
+.hdr .row{display:flex;align-items:center;gap:10px}
+.hdr h1{font-size:25px;font-weight:900;flex:1;line-height:1.2}
+.hdr .sub{font-size:15px;opacity:.8}
+.back{font-size:26px;color:#fff;width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.12);display:grid;place-items:center}
+.search{width:100%;border:0;border-radius:14px;padding:12px 14px;font-size:18px;margin-top:12px;background:#fff;color:var(--ink);outline:none}
+main{padding:14px;max-width:640px;margin:auto}
+.mic-wrap{text-align:center;margin:10px 0 18px}
+.mic{width:116px;height:116px;border-radius:50%;background:var(--gold);font-size:52px;box-shadow:0 0 0 12px rgba(255,212,0,.25),0 0 0 24px rgba(255,212,0,.1);display:inline-grid;place-items:center}
+.mic-wrap b{display:block;margin-top:16px;font-size:20px;font-weight:900;color:var(--navy)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.tile{background:var(--card);border-radius:16px;padding:12px;display:flex;align-items:center;gap:10px;box-shadow:0 1px 3px rgba(0,0,0,.06);text-align:right;width:100%}
+.tile .ic{font-size:24px;width:42px;height:42px;border-radius:12px;display:grid;place-items:center;flex:none}
+.tile b{font-weight:800;font-size:17px;line-height:1.2}
+.tile .n{margin-inline-start:auto;font-weight:900;font-size:21px;color:var(--navy)}
+.branch{background:var(--card);border-radius:18px;padding:12px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.branch h2{font-size:21px;font-weight:900;color:var(--navy);margin:0 4px 8px;display:flex;align-items:center;gap:8px}
+.branch h2 small{font-size:14px;color:var(--mut);font-weight:700}
+.svc{display:flex;align-items:center;gap:10px;padding:10px 6px;border-top:1px solid var(--line);width:100%;text-align:right}
+.svc:first-of-type{border-top:0}
+.svc .ic{font-size:22px;width:38px;height:38px;border-radius:11px;display:grid;place-items:center;flex:none}
+.svc b{font-weight:800;font-size:18px}
+.svc .n{margin-inline-start:auto;font-weight:900;font-size:19px;color:var(--navy);min-width:30px;text-align:center}
+.svc .ar{color:#bbb;font-size:18px}
+.card{background:var(--card);border-radius:16px;padding:12px 14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.card .nm{font-weight:900;font-size:20px}
+.card .ph{font-size:17px;color:var(--navy);font-weight:700;direction:ltr;display:inline-block}
+.card .pr{color:var(--mut);font-size:16px;margin-top:2px}
+.card .ap{font-size:16px;font-weight:800;margin-top:4px;color:var(--purple)}
+.card .ap.past{color:var(--red)}
+.card .ap.today{color:var(--green)}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.tag{font-size:13px;padding:1px 9px;border-radius:20px;font-weight:800}
+.acts{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}
+.acts a,.acts button{flex:1;text-align:center;padding:8px 6px;border-radius:11px;font-weight:800;font-size:16px;text-decoration:none;white-space:nowrap}
+.a-wa{background:var(--wa);color:#fff}.a-call{background:#E8ECFA;color:var(--navy)}.a-ed{background:#eee;color:#333}.a-go{background:var(--navy);color:var(--gold)}
+.empty{text-align:center;color:var(--mut);padding:40px 10px;font-size:18px}
+.fab{position:fixed;left:16px;bottom:calc(env(safe-area-inset-bottom) + 18px);background:var(--gold);color:var(--navy);font-weight:900;font-size:20px;padding:14px 22px;border-radius:30px;box-shadow:0 6px 18px rgba(91,31,168,.35);z-index:6}
+.chips{display:flex;gap:7px;flex-wrap:wrap}
+.chip{border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:8px 12px;font-weight:800;font-size:16px}
+.chip.on{border-color:var(--purple);background:#F1EAFB;color:var(--purple)}
+.lbl{font-size:15px;font-weight:800;color:var(--mut);margin:12px 2px 5px}
+.inp{width:100%;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;font-size:18px;outline:none}
+.inp:focus{border-color:var(--purple)}
+.inp.flash{animation:fl 1.4s}
+@keyframes fl{0%,60%{background:#FFF6CC;border-color:var(--gold)}}
+textarea.inp{min-height:70px;resize:vertical;line-height:1.5}
+.two{display:flex;gap:8px}.two>*{flex:1;min-width:0}
+.voice{background:#F1EAFB;border-radius:16px;padding:12px;margin-bottom:6px}
+.voice .top{display:flex;align-items:center;gap:12px}
+.vbtn{width:64px;height:64px;border-radius:50%;background:var(--gold);font-size:30px;flex:none;box-shadow:0 0 0 7px rgba(255,212,0,.25)}
+.vbtn.rec{background:var(--red);animation:pulse 1.2s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 14px rgba(217,45,32,.15)}}
+.voice .hint{font-size:15px;color:var(--purple);font-weight:700;line-height:1.4}
+.voice textarea{margin-top:10px;background:#fff}
+.btn{display:block;width:100%;background:linear-gradient(135deg,var(--navy),var(--purple));color:#fff;text-align:center;border-radius:14px;padding:14px;font-weight:900;font-size:20px;margin-top:16px}
+.btn.sec{background:#eee;color:#333;font-size:17px;padding:11px;margin-top:8px}
+.btn.del{background:#FFF1F0;color:var(--red);font-size:17px;padding:11px;margin-top:8px}
+.toast{position:fixed;bottom:calc(env(safe-area-inset-bottom) + 90px);left:50%;transform:translateX(-50%);background:var(--navy);color:var(--gold);padding:10px 18px;border-radius:14px;font-weight:800;z-index:50;box-shadow:0 6px 18px rgba(0,0,0,.25);max-width:90vw;text-align:center}
+.warn{background:#FFF6CC;border-radius:14px;padding:10px 12px;font-weight:700;font-size:15px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.warn button{background:var(--navy);color:var(--gold);padding:6px 12px;border-radius:10px;font-weight:800;margin-inline-start:auto;white-space:nowrap}
+.foot{text-align:center;margin-top:8px}
+.foot button{color:var(--purple);font-weight:800;font-size:16px;padding:8px}
+.sec-t{font-size:17px;font-weight:900;color:var(--navy);margin:14px 4px 8px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+// ===== إعدادات =====
+const BRANCHES=[
+ {id:'manshia',name:'المنشية',sub:'Physio Art'},
+ {id:'tebbin',name:'التبين',sub:''},
+ {id:'maasara',name:'المعصرة',sub:''}];
+const SERVICES=[
+ {id:'physio',name:'علاج طبيعي',ic:'🦴',c:'#1E5BD8',bg:'#E3ECFD'},
+ {id:'slim',name:'تخسيس موضعي',ic:'❄️',c:'#5B1FA8',bg:'#F1EAFB'},
+ {id:'diet',name:'متابعة دايت',ic:'🥗',c:'#0E9F6E',bg:'#E3F6EC'},
+ {id:'inj',name:'بديل التكميم',ic:'💉',c:'#C2410C',bg:'#FDECE3'},
+ {id:'beauty',name:'تجميل',ic:'✨',c:'#BE185D',bg:'#FCE7F3'}];
+const B=id=>BRANCHES.find(b=>b.id===id), S=id=>SERVICES.find(s=>s.id===id);
+
+// ===== التخزين =====
+const KEY='pa_clinic_v1';
+let DB=[];
+try{DB=JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){DB=[]}
+function save(){localStorage.setItem(KEY,JSON.stringify(DB))}
+if(navigator.storage&&navigator.storage.persist)navigator.storage.persist();
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+
+// ===== أدوات =====
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const digits=s=>String(s||'').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
+const normAr=s=>digits(s).toLowerCase().replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي');
+const DAYS=['الأحد','الاتنين','التلات','الأربع','الخميس','الجمعة','السبت'];
+const pad=n=>String(n).padStart(2,'0');
+const isoDate=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const todayISO=()=>isoDate(new Date());
+function fmtAppt(p){
+ if(!p.date)return '';
+ const d=new Date(p.date+'T00:00');
+ let s=DAYS[d.getDay()]+' '+d.getDate()+'/'+(d.getMonth()+1);
+ if(p.date===todayISO())s='النهارده';
+ else{const t=new Date();t.setDate(t.getDate()+1);if(p.date===isoDate(t))s='بكره'}
+ if(p.time){let [h,m]=p.time.split(':').map(Number);const am=h<12;h=h%12||12;s+=' · '+h+(m?':'+pad(m):'')+(am?' ص':' م')}
+ return s;
+}
+function apptClass(p){if(!p.date)return '';const t=todayISO();return p.date===t?'today':(p.date<t?'past':'')}
+function waLink(ph){let d=digits(ph).replace(/\D/g,'');if(d.startsWith('0'))d='2'+d;else if(d.startsWith('1')&&d.length===10)d='20'+d;return 'https://wa.me/'+d}
+function toast(m){document.querySelectorAll('.toast').forEach(x=>x.remove());const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2200)}
+function sortList(a){return a.sort((x,y)=>{const ax=x.date?(x.date+(x.time||'99')):'9999',ay=y.date?(y.date+(y.time||'99')):'9999';return ax<ay?-1:ax>ay?1:(x.name||'').localeCompare(y.name||'','ar')})}
+
+// ===== التنقل =====
+let view={v:'home'};
+function go(v){view=v;history.pushState(v,'');render();scrollTo(0,0)}
+window.onpopstate=e=>{stopRec();view=e.state||{v:'home'};render()};
+history.replaceState(view,'');
+
+function render(){
+ const v=view.v;
+ if(v==='home')return home();
+ if(v==='list')return list();
+ if(v==='form')return form();
+ if(v==='backup')return backup();
+}
+
+// ===== الرئيسية =====
+let q='';
+function home(){
+ const newC=DB.filter(p=>p.status==='new').length;
+ const todayC=DB.filter(p=>p.date===todayISO()).length;
+ const last=+localStorage.getItem('pa_last_backup')||Math.min(...DB.map(p=>p.created||Date.now()),Date.now());
+ const needBk=DB.length>0&&Date.now()-last>7*864e5;
+ $('#app').innerHTML=`
+ <div class="hdr"><div class="row"><h1>عيادات Physio Art</h1></div>
+ <input class="search" id="q" type="search" placeholder="🔍 دوّر برقم التليفون أو الاسم..." value="${esc(q)}" autocomplete="off"></div>
+ <main id="hm"></main>`;
+ const hm=$('#hm');
+ const drawBody=()=>{
+  if(q.trim()){hm.innerHTML=results(q);bindCards(hm);return}
+  hm.innerHTML=`
+  ${needBk?`<div class="warn">💾 بقالك فترة ماعملتش نسخة احتياطية<button onclick="go({v:'backup'})">اعملها</button></div>`:''}
+  <div class="mic-wrap"><button class="mic" onclick="go({v:'form',voice:1,status:'new'})">🎤</button><b>دوس واتكلم · عميل جديد</b></div>
+  <div class="tiles">
+   <button class="tile" onclick="go({v:'list',k:'new'})"><span class="ic" style="background:#FFF6CC">🆕</span><b>عملاء جداد</b><span class="n">${newC}</span></button>
+   <button class="tile" onclick="go({v:'list',k:'today'})"><span class="ic" style="background:#E3F6EC">📅</span><b>مواعيد النهارده</b><span class="n">${todayC}</span></button>
+  </div>
+  ${BRANCHES.map(b=>`<div class="branch"><h2>🏥 ${b.name}${b.sub?` <small>${b.sub}</small>`:''}</h2>
+   ${SERVICES.map(s=>{const n=DB.filter(p=>p.status!=='new'&&p.branch===b.id&&p.service===s.id).length;
+    return `<button class="svc" onclick="go({v:'list',k:'svc',b:'${b.id}',s:'${s.id}'})"><span class="ic" style="background:${s.bg}">${s.ic}</span><b>${s.name}</b><span class="n">${n}</span><span class="ar">‹</span></button>`}).join('')}
+  </div>`).join('')}
+  <div class="foot"><button onclick="go({v:'backup'})">💾 النسخة الاحتياطية</button></div>`;
+ };
+ drawBody();
+ $('#q').oninput=e=>{q=e.target.value;drawBody()};
+}
+function matches(p,s){
+ const n=normAr(s).trim();if(!n)return true;
+ const nd=n.replace(/\D/g,'');
+ if(nd.length>=3&&digits(p.phone).replace(/\D/g,'').includes(nd.replace(/^20/,'0')))return true;
+ return normAr(p.name).includes(n)||normAr(p.problem).includes(n);
+}
+function results(s){
+ const r=sortList(DB.filter(p=>matches(p,s)));
+ if(!r.length)return `<div class="empty">مفيش حد بالرقم أو الاسم ده<br><br><button class="btn" style="width:auto;display:inline-block;padding:10px 20px" onclick="go({v:'form',status:'new',prefill:'${esc(s)}'})">＋ ضيفه عميل جديد</button></div>`;
+ return `<div class="sec-t">${r.length} نتيجة</div>`+r.map(p=>cardHTML(p,true)).join('');
+}
+
+// ===== كارت العميل =====
+function cardHTML(p,showWhere){
+ const s=S(p.service),b=B(p.branch);
+ return `<div class="card">
+ <div class="nm">${esc(p.name)||'<span style="color:#aaa">بدون اسم</span>'}</div>
+ ${p.phone?`<div class="ph">${esc(p.phone)}</div>`:''}
+ ${(showWhere||p.status==='new')?`<div class="tags">${p.status==='new'?'<span class="tag" style="background:#FFF6CC;color:#8a6d00">🆕 جديد</span>':''}${s?`<span class="tag" style="background:${s.bg};color:${s.c}">${s.ic} ${s.name}</span>`:''}${b?`<span class="tag" style="background:#eef;color:var(--navy)">${b.name}</span>`:''}</div>`:''}
+ ${p.problem?`<div class="pr">📝 ${esc(p.problem)}</div>`:''}
+ ${p.date?`<div class="ap ${apptClass(p)}">📅 ${fmtAppt(p)}</div>`:''}
+ <div class="acts">
+  ${p.phone?`<a class="a-call" href="tel:${esc(digits(p.phone))}">📞 اتصال</a><a class="a-wa" href="${waLink(p.phone)}" target="_blank">واتساب</a>`:''}
+  <button class="a-ed" data-ed="${p.id}">✏️ تعديل</button>
+  ${p.status==='new'?`<button class="a-go" data-go="${p.id}">✓ بدأ</button>`:''}
+ </div></div>`;
+}
+function bindCards(root){
+ root.querySelectorAll('[data-ed]').forEach(x=>x.onclick=()=>go({v:'form',id:x.dataset.ed}));
+ root.querySelectorAll('[data-go]').forEach(x=>x.onclick=()=>{
+  const p=DB.find(r=>r.id===x.dataset.go);
+  if(!p.branch||!p.service){toast('اختار الفرع والخدمة الأول');go({v:'form',id:p.id});return}
+  p.status='active';save();toast('اتنقل لـ '+S(p.service).name+' · '+B(p.branch).name);render();
+ });
+}
+
+// ===== القوايم =====
+let lq='',lb='all';
+function list(){
+ const k=view.k;let title,sub='',items,add={v:'form',voice:1};
+ if(k==='new'){title='🆕 عملاء جداد';items=DB.filter(p=>p.status==='new');add.status='new'}
+ else if(k==='today'){title='📅 مواعيد النهارده';items=DB.filter(p=>p.date===todayISO());add.status='new'}
+ else{const s=S(view.s),b=B(view.b);title=s.ic+' '+s.name;sub=b.name+(b.sub?' · '+b.sub:'');
+  items=DB.filter(p=>p.status!=='new'&&p.branch===view.b&&p.service===view.s);Object.assign(add,{status:'active',branch:view.b,service:view.s})}
+ const multi=k!=='svc';
+ $('#app').innerHTML=`
+ <div class="hdr"><div class="row"><button class="back" onclick="history.back()">→</button><div style="flex:1"><h1>${title}</h1>${sub?`<div class="sub">${sub}</div>`:''}</div><b style="font-size:24px;color:var(--gold)">${items.length}</b></div>
+ ${items.length>4?`<input class="search" id="lq" type="search" placeholder="🔍 دوّر في القايمة..." value="${esc(lq)}">`:''}</div>
+ <main>${multi?`<div class="chips" style="margin-bottom:12px">${[{id:'all',name:'الكل'},...BRANCHES].map(b=>`<button class="chip ${lb===b.id?'on':''}" data-b="${b.id}">${b.name}</button>`).join('')}</div>`:''}<div id="ls"></div></main>
+ <button class="fab" id="fab">🎤 إضافة</button>`;
+ const draw=()=>{
+  let r=items.filter(p=>matches(p,lq)&&(!multi||lb==='all'||p.branch===lb));
+  r=sortList(r);
+  $('#ls').innerHTML=r.length?r.map(p=>cardHTML(p,multi)).join(''):`<div class="empty">لسه مفيش حد هنا<br>دوس 🎤 إضافة تحت</div>`;
+  bindCards($('#ls'));
+ };
+ draw();
+ if($('#lq'))$('#lq').oninput=e=>{lq=e.target.value;draw()};
+ document.querySelectorAll('[data-b]').forEach(x=>x.onclick=()=>{lb=x.dataset.b;list()});
+ $('#fab').onclick=()=>{if(multi&&lb!=='all')add.branch=lb;go(add)};
+}
+
+// ===== فهم الكلام =====
+const NUMW={'صفر':0,'زيرو':0,'واحد':1,'واحده':1,'اتنين':2,'اثنين':2,'تلاته':3,'ثلاثه':3,'اربعه':4,'خمسه':5,'سته':6,'سبعه':7,'تمانيه':8,'ثمانيه':8,'تمنيه':8,'تسعه':9,'عشره':10,'حداشر':11,'احداشر':11,'اتناشر':12,'اطناشر':12};
+const MONTHS={'يناير':1,'فبراير':2,'مارس':3,'ابريل':4,'مايو':5,'يونيو':6,'يوليو':7,'اغسطس':8,'سبتمبر':9,'اكتوبر':10,'نوفمبر':11,'ديسمبر':12};
+const WD=[[/(^|\s)(ال)?(احد|حد)(\s|$)/,0],[/(^|\s)(ال)?(اتنين|اثنين)(\s|$)/,1],[/(^|\s)(ال)?(تلات|ثلاثاء|تلاتاء|ثلاث)(\s|$)/,2],[/(^|\s)(ال)?(اربع|اربعاء)(\s|$)/,3],[/(^|\s)(ال)?خميس(\s|$)/,4],[/(^|\s)(ال)?جمعه(\s|$)/,5],[/(^|\s)(ال)?سبت(\s|$)/,6]];
+const SVC_KW=[
+ ['inj',['بديل التكميم','بديل تكميم','حقن','حقنه','حقنة','تكميم','مونجارو','اوزمبيك','ساكسندا','بديل الكميم']],
+ ['beauty',['تجميل','بشره','بوتوكس','فيلر','ليزر','تنضيف','تنظيف بشره','هيدرا','بلازما','ميزو','نضاره']],
+ ['slim',['موضعي','كرايو','كريو','كرايوليبوليسيس','نحت','كافيتيشن','كافيتاشن','تفتيت','ار اف','هايفو','اجهزه']],
+ ['physio',['علاج طبيعي','العلاج الطبيعي','كشف عادي','تاهيل','ضهر','ظهر','ركبه','رقبه','غضروف','انزلاق','خشونه','عرق النسا','كتف','فقرات','كسر','شلل','التواء','وتر','مفصل','عضله','اعصاب']],
+ ['diet',['دايت','رجيم','نظام غذائي','كشف دايت','تغذيه','متابعه تخسيس','تخسيس','وزن','تخس','انبودي']]];
+const BR_KW=[['manshia',['منشيه','منشيا','المنشيه','حلوان']],['tebbin',['تبين','تبيين','التبين','التبيين']],['maasara',['معصره','المعصره','معصرة']]];
+const DETAIL_KW=['خشونه','انزلاق غضروفي','انزلاق','غضروف','عرق النسا','ضهر','ظهر','رقبه','ركبه','كتف','فقرات','كسر','التواء','شلل','بطن','كرش','ارداف','جنب','دراع','زراع','فخاد','وش','دقن','كرايو','كافيتيشن','هايفو','ار اف','كشف دايت','كشف'];
+const STOP=['رقم','رقمه','رقمها','تليفون','تليفونه','تليفونها','موبايل','عايز','عايزه','عاوز','عاوزه','عنده','عندها','في','من','بيسال','بتسال','حجز','جديد','جديده','هدي','هديه','هديها','ميعاد','الميعاد','عميل','عميله','مريض','مريضه','و','الساعه','اسمه','اسمها'];
+
+function w2d(tok){if(tok in NUMW)return String(NUMW[tok]);if(tok[0]==='و'&&tok.slice(1) in NUMW)return 'و'+NUMW[tok.slice(1)];return tok}
+function parseSpeech(raw){
+ const out={};
+ const R=digits(raw).replace(/[،,؛.!?؟]/g,' , ').split(/\s+/).filter(Boolean);
+ const N=R.map(x=>w2d(normAr(x)));
+ // يرجّع الكلام بنفس كتابته الأصلية
+ const back=ph=>{const pt=ph.trim().split(/\s+/);for(let i=0;i+pt.length<=N.length;i++){if(pt.every((w,j)=>N[i+j]===w||(j===0&&['ال','لل','بال'].some(x=>N[i]===x+w))))return R.slice(i,i+pt.length).join(' ')}return ph};
+ let t=' '+N.join(' ')+' ';
+ // التليفون
+ const cands=t.match(/\+?\d[\d\s\-]{6,}\d/g)||[];
+ for(const c of cands){
+  let d=c.replace(/\D/g,'');
+  if(d.startsWith('0020'))d=d.slice(2);
+  if(d.startsWith('20')&&d.length===12)d='0'+d.slice(2);
+  if(d.startsWith('1')&&d.length===10)d='0'+d;
+  if(d.length>=7&&d.length<=13){out.phone=d;t=t.replace(c,' , ');break}
+ }
+ // الفرع
+ for(const [id,ks] of BR_KW)if(ks.some(k=>t.includes(k))){out.branch=id;break}
+ // الخدمة
+ for(const [id,ks] of SVC_KW)if(ks.some(k=>t.includes(' '+k)||t.includes('ال'+k))){out.service=id;break}
+ // الحالة
+ if(/(جديد|جديده|بيسال|بتسال|استفسار|اول مره)/.test(t))out.status='new';
+ else if(/(عندي|متابع معايا|متابعه معايا|بيتابع|بتتابع|مريض قديم|مريضه قديمه)/.test(t))out.status='active';
+ // الاسم
+ let nm=t.match(/(?:اسمه|اسمها|الاسم|اسم العميل|اسم المريض)\s+([^\s,\d]+(?:\s+[^\s,\d]+){0,2})/);
+ let cand=nm?nm[1]:(t.trim().split(',')[0]||'').trim();
+ if(cand){
+  const ws=[];for(const w of cand.split(/\s+/)){if(!w||/\d/.test(w)||STOP.includes(w)||SVC_KW.some(([,ks])=>ks.includes(w))||BR_KW.some(([,ks])=>ks.includes(w)))break;ws.push(w);if(ws.length===3)break}
+  if(ws.length)out.name=back(ws.join(' '));
+ }
+ // الميعاد
+ const now=new Date();let date=null;
+ if(/بعد بكر/.test(t)){date=new Date();date.setDate(date.getDate()+2)}
+ else if(/(بكره|بكرا)/.test(t)){date=new Date();date.setDate(date.getDate()+1)}
+ else if(/(النهارده|النهارد|اليوم)/.test(t))date=new Date();
+ else{
+  const md=t.match(/(\d{1,2})\s*(?:\/|-)\s*(\d{1,2})(?!\d)/)||null;
+  const mn=t.match(/(\d{1,2})\s*(يناير|فبراير|مارس|ابريل|مايو|يونيو|يوليو|اغسطس|سبتمبر|اكتوبر|نوفمبر|ديسمبر)/);
+  if(mn||md){const day=+(mn?mn[1]:md[1]),mon=mn?MONTHS[mn[2]]:+md[2];
+   if(day>=1&&day<=31&&mon>=1&&mon<=12){date=new Date(now.getFullYear(),mon-1,day);if(date<new Date(now.getFullYear(),now.getMonth(),now.getDate()))date.setFullYear(date.getFullYear()+1)}}
+  if(!date)for(const [re,wd] of WD)if(re.test(t)){date=new Date();let diff=(wd-date.getDay()+7)%7;if(diff===0)diff=7;date.setDate(date.getDate()+diff);break}
+ }
+ if(date)out.date=isoDate(date);
+ const tm=t.match(/(?:الساعه|ساعه)\s*(\d{1,2})(?:\s*[:٫]\s*(\d{2}))?\s*(و\s*نص|ونص|و\s*ربع|وربع|الا\s*ربع|الا\s*تلت|و\s*تلت|وتلت)?\s*(الصبح|صباحا|ص|الضهر|الظهر|العصر|المغرب|بالليل|مساء|بليل|م)?(?=\s|,|$)/)
+   ||t.match(/\s(\d{1,2})\s*(?:[:٫]\s*(\d{2}))?\s*(و\s*نص|ونص|و\s*ربع|وربع)?\s*(الصبح|صباحا|العصر|المغرب|بالليل|مساء|بليل)(?=\s|,|$)/);
+ if(tm){let h=+tm[1],m=tm[2]?+tm[2]:0;const fr=(tm[3]||'').replace(/\s/g,'');
+  if(fr==='ونص')m=30;else if(fr==='وربع')m=15;else if(fr==='وتلت')m=20;else if(fr==='الاربع'){h-=1;m=45}else if(fr==='الاتلت'){h-=1;m=40}
+  const pd=tm[4]||'';
+  if(h>=1&&h<=12){if(/(الصبح|صباحا|^ص$)/.test(pd)){if(h===12)h=0}else if(h<12)h+=12;
+   out.time=pad(h)+':'+pad(m);if(!out.date)out.date=todayISO()}
+ }
+ // المشكلة
+ const pm=t.match(/(?:عنده|عندها|عندو|مشكلته|مشكلتها|بيشتكي من|بتشتكي من|بيعاني من|بتعاني من|الشكوي|المشكله|شكوته|شكوتها)\s+(.+?)(?=\s,|\s(?:و\s*)?(?:هدي|هديه|هديها|اديله|اديها|ميعاد|الميعاد|رقم|رقمه|رقمها|الساعه|في\s+(?:ال)?(?:منشي|تب|معصر)|بكره|بكرا|النهارده|يوم)\s|$)/);
+ if(pm&&pm[1].trim().length>1)out.problem=back(pm[1].trim().replace(/\s*,\s*/g,' '));
+ else{const found=[];for(const k of DETAIL_KW)if(['',  'ال','لل','بال'].some(x=>t.includes(' '+x+k+' '))){if(!found.some(f=>f.includes(k)))found.push(k)}
+  if(found.length)out.problem=found.slice(0,3).map(back).join(' ')}
+ return out;
+}
+
+// ===== التسجيل الصوتي =====
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+let rec=null,recOn=false;
+function stopRec(){if(rec&&recOn){recOn=false;try{rec.stop()}catch(e){}}}
+function startRec(ta,onDone){
+ if(!SR){toast('دوس على مايك الكيبورد 🎤 واتكلم');ta.focus();return}
+ rec=new SR();rec.lang='ar-EG';rec.interimResults=true;rec.continuous=true;
+ const base=ta.value?ta.value.trim()+' ':'';let fin='';
+ rec.onresult=e=>{let inter='';for(let i=e.resultIndex;i<e.results.length;i++){const r=e.results[i];if(r.isFinal)fin+=r[0].transcript+' ';else inter+=r[0].transcript}ta.value=base+fin+inter};
+ rec.onerror=e=>{if(e.error==='not-allowed')toast('اسمح للتطبيق يستخدم المايك من الإعدادات');else if(e.error!=='no-speech'&&e.error!=='aborted')toast('حصلت مشكلة في المايك، جرّب تاني')};
+ rec.onend=()=>{recOn=false;setBtn(false);onDone()};
+ try{rec.start();recOn=true;setBtn(true)}catch(e){toast('جرّب تاني')}
+}
+function setBtn(on){const b=$('#vb');if(!b)return;b.classList.toggle('rec',on);b.textContent=on?'⏹':'🎤';const h=$('#vh');if(h)h.textContent=on?'بسمعك... اتكلم وبعدين دوس ⏹':'دوس 🎤 وقول: الاسم، الرقم، الفرع، الخدمة، المشكلة، والميعاد'}
+
+// ===== فورم الإضافة/التعديل =====
+let F=null;
+function form(){
+ const ex=view.id?DB.find(p=>p.id===view.id):null;
+ F=ex?{...ex}:{id:null,name:'',phone:'',branch:view.branch||'',service:view.service||'',status:view.status||'new',problem:'',date:'',time:'',notes:''};
+ if(!ex&&view.prefill){const pf=view.prefill;if(/\d{3,}/.test(digits(pf)))F.phone=digits(pf).replace(/\D/g,'');else F.name=pf}
+ $('#app').innerHTML=`
+ <div class="hdr"><div class="row"><button class="back" onclick="history.back()">→</button><h1>${ex?'✏️ تعديل':'＋ عميل جديد'}</h1></div></div>
+ <main>
+ <div class="voice"><div class="top"><button class="vbtn" id="vb">🎤</button><div class="hint" id="vh">دوس 🎤 وقول: الاسم، الرقم، الفرع، الخدمة، المشكلة، والميعاد</div></div>
+ <textarea class="inp" id="vt" placeholder="الكلام هيتكتب هنا... أو اكتب بإيدك ودوس رتّب"></textarea>
+ <button class="btn sec" id="parse" style="background:var(--navy);color:var(--gold)">⬇ رتّب الكلام في الخانات</button></div>
+ <div class="lbl">الاسم</div><input class="inp" id="f-name" value="${esc(F.name)}">
+ <div class="lbl">رقم التليفون</div><input class="inp" id="f-phone" type="tel" inputmode="tel" dir="ltr" style="text-align:right" value="${esc(F.phone)}">
+ <div class="lbl">الفرع</div><div class="chips" id="c-branch">${BRANCHES.map(b=>`<button class="chip" data-v="${b.id}">${b.name}</button>`).join('')}</div>
+ <div class="lbl">الخدمة</div><div class="chips" id="c-service">${SERVICES.map(s=>`<button class="chip" data-v="${s.id}">${s.ic} ${s.name}</button>`).join('')}</div>
+ <div class="lbl">النوع</div><div class="chips" id="c-status"><button class="chip" data-v="new">🆕 عميل جديد</button><button class="chip" data-v="active">✓ مريض عندي</button></div>
+ <div class="lbl">المشكلة / الطلب</div><input class="inp" id="f-problem" value="${esc(F.problem)}">
+ <div class="lbl">أقرب ميعاد</div><div class="two"><input class="inp" id="f-date" type="date" value="${esc(F.date)}"><input class="inp" id="f-time" type="time" value="${esc(F.time)}"></div>
+ <div class="lbl">ملاحظات</div><textarea class="inp" id="f-notes">${esc(F.notes)}</textarea>
+ <button class="btn" id="sv">✓ احفظ</button>
+ ${ex?'<button class="btn del" id="dl">🗑 امسح العميل</button>':''}
+ </main>`;
+ const paintChips=()=>['branch','service','status'].forEach(k=>document.querySelectorAll('#c-'+k+' .chip').forEach(c=>c.classList.toggle('on',F[k]===c.dataset.v)));
+ paintChips();
+ ['branch','service','status'].forEach(k=>document.querySelectorAll('#c-'+k+' .chip').forEach(c=>c.onclick=()=>{F[k]=F[k]===c.dataset.v&&k!=='status'?'':c.dataset.v;paintChips()}));
+ const vt=$('#vt');
+ const apply=()=>{
+  if(!document.body.contains(vt)||!vt.value.trim())return;
+  const r=parseSpeech(vt.value);let n=0;
+  for(const k of ['name','phone','problem','date','time']){if(r[k]){const el=$('#f-'+k);el.value=r[k];el.classList.remove('flash');void el.offsetWidth;el.classList.add('flash');n++}}
+  for(const k of ['branch','service','status'])if(r[k]){F[k]=r[k];n++}
+  paintChips();
+  toast(n?'اتملت '+n+' خانات ✓ راجعها واحفظ':'مافهمتش، جرّب تاني أو اكتب بإيدك');
+  if(r.phone)dupCheck(r.phone);
+ };
+ $('#parse').onclick=apply;
+ $('#vb').onclick=()=>{if(recOn)stopRec();else startRec(vt,apply)};
+ $('#f-phone').onchange=e=>dupCheck(e.target.value);
+ $('#sv').onclick=()=>{
+  F.name=$('#f-name').value.trim();F.phone=digits($('#f-phone').value).replace(/[^\d+]/g,'');F.problem=$('#f-problem').value.trim();
+  F.date=$('#f-date').value;F.time=$('#f-time').value;F.notes=$('#f-notes').value.trim();
+  if(!F.name&&!F.phone){toast('اكتب الاسم أو الرقم على الأقل');return}
+  if(F.status==='active'&&(!F.branch||!F.service)){toast('اختار الفرع والخدمة');return}
+  stopRec();
+  if(F.id){const i=DB.findIndex(p=>p.id===F.id);DB[i]={...F,updated:Date.now()}}
+  else DB.push({...F,id:uid(),created:Date.now()});
+  save();toast('اتحفظ ✓');
+  history.back();
+ };
+ if(ex)$('#dl').onclick=()=>{if(confirm('متأكد إنك عايز تمسح '+(F.name||F.phone)+'؟')){DB=DB.filter(p=>p.id!==F.id);save();toast('اتمسح');history.back()}};
+ if(view.voice&&!ex)setTimeout(()=>startRec(vt,apply),300);
+}
+function dupCheck(ph){
+ const d=digits(ph).replace(/\D/g,'');if(d.length<7)return;
+ const o=DB.find(p=>p.id!==F.id&&digits(p.phone).replace(/\D/g,'')===d);
+ if(o&&confirm('الرقم ده متسجل قبل كده باسم "'+(o.name||'بدون اسم')+'"\nتحب تفتح ملفه بدل ما تضيف جديد؟')){stopRec();view={v:'form',id:o.id};history.replaceState(view,'');form()}
+}
+
+// ===== النسخة الاحتياطية =====
+function backup(){
+ const last=+localStorage.getItem('pa_last_backup')||0;
+ $('#app').innerHTML=`
+ <div class="hdr"><div class="row"><button class="back" onclick="history.back()">→</button><h1>💾 النسخة الاحتياطية</h1></div></div>
+ <main>
+ <div class="card"><b>البيانات محفوظة على التليفون ده بس.</b><div class="pr" style="margin-top:6px">عشان ماتضيعش لو التليفون ضاع أو اتمسح، اعمل نسخة كل أسبوع وابعتها لنفسك على الواتساب أو احفظها على Google Drive.</div>
+ <div class="pr" style="margin-top:6px">عدد العملاء: <b>${DB.length}</b> · آخر نسخة: <b>${last?new Date(last).toLocaleDateString('ar-EG'):'لسه'}</b></div></div>
+ <button class="btn" id="ex">⬆ اعمل نسخة احتياطية دلوقتي</button>
+ <button class="btn sec" id="im">⬇ رجّع نسخة قديمة</button>
+ <input type="file" id="fi" accept=".json,application/json" hidden>
+ </main>`;
+ $('#ex').onclick=async()=>{
+  const name='physio-art-'+todayISO()+'.json';
+  const blob=new Blob([JSON.stringify({app:'physio-art-clinic',v:1,at:Date.now(),data:DB},null,1)],{type:'application/json'});
+  const file=new File([blob],name,{type:'application/json'});
+  try{
+   if(navigator.canShare&&navigator.canShare({files:[file]}))await navigator.share({files:[file],title:name});
+   else{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}
+   localStorage.setItem('pa_last_backup',Date.now());toast('النسخة اتعملت ✓');backup();
+  }catch(e){if(e.name!=='AbortError')toast('ماتعملتش، جرّب تاني')}
+ };
+ $('#im').onclick=()=>$('#fi').click();
+ $('#fi').onchange=async e=>{
+  const f=e.target.files[0];if(!f)return;
+  try{const j=JSON.parse(await f.text());const data=Array.isArray(j)?j:j.data;if(!Array.isArray(data))throw 0;
+   if(!confirm('النسخة فيها '+data.length+' عميل. هتتضاف على اللي موجود (والمكرر هيتحدّث). تكمل؟'))return;
+   const m=new Map(DB.map(p=>[p.id,p]));data.forEach(p=>p&&p.id&&m.set(p.id,p));DB=[...m.values()];save();toast('اترجعت ✓');go({v:'home'});
+  }catch(err){toast('الملف ده مش نسخة صحيحة')}
+ };
+}
+
+render();
+if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+</script>
+</body>
+</html>

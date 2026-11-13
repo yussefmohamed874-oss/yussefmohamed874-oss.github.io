@@ -123,6 +123,10 @@ let LIB;
 if(localStorage.getItem(LKEY)===null){LIB=[...SEED_EQ.map(n=>({id:uid0(),type:'eq',group:'',name:n,notes:'',videos:[]})),...SEED_STR.map(n=>({id:uid0(),type:'ex',group:'إطالات',name:n,notes:'',videos:[]}))];localStorage.setItem(LKEY,JSON.stringify(LIB))}
 else LIB=ld(LKEY,[]);
 const saveLib=()=>localStorage.setItem(LKEY,JSON.stringify(LIB));
+if(localStorage.getItem('gy_seed2')!=='1'){
+ if(!LIB.some(x=>x.type==='eq'&&x.name.includes('ستيب')))LIB.push({id:uid0(),type:'eq',group:'',name:'ستيبات (Step)',notes:'',videos:[]});
+ localStorage.setItem('gy_seed2','1');saveLib();
+}
 let DB=ld(KEY,[]),PG=ld(PKEY,{}),PR=ld(PRKEY,{});
 const save=()=>localStorage.setItem(KEY,JSON.stringify(DB));
 const savePG=()=>localStorage.setItem(PKEY,JSON.stringify(PG));

@@ -80,6 +80,14 @@ section{padding:64px 0}
 .diag .photo{border-radius:18px;overflow:hidden;position:relative}
 .diag .photo img{width:100%;aspect-ratio:4/3;object-fit:cover}
 .diag .photo span{position:absolute;top:12px;inset-inline-start:12px;background:var(--night);color:var(--gold-2);font-weight:700;font-size:13px;padding:4px 12px;border-radius:999px}
+.ib{background:linear-gradient(160deg,var(--night),var(--night-2));color:var(--night-ink);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:14px}
+.ib-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;border-bottom:1px solid rgba(255,255,255,.12);padding-bottom:10px}
+.ib-head span{font-family:var(--display);font-weight:800;color:var(--gold-2)}.ib-head small{font-size:12px;color:var(--night-muted)}
+.ib-row{display:grid;grid-template-columns:110px 1fr 60px;gap:10px;align-items:center;font-size:15px}
+.ib-row i{height:10px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden;display:block}.ib-row i b{display:block;height:100%;border-radius:99px}
+.ib-row em{font-style:normal;font-size:13px;color:var(--night-muted)}
+.ib-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.ib-grid div{background:rgba(255,255,255,.06);border-radius:12px;padding:10px;text-align:center}
+.ib-grid b{display:block;font-family:var(--display);color:#fff}.ib-grid span{font-size:12.5px;color:var(--night-muted)}
 .measure{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;margin:16px 0 20px;list-style:none}
 .measure li{display:flex;gap:8px;align-items:flex-start;font-size:15.5px}
 .measure .ic{color:var(--wa);margin-top:4px}
@@ -216,7 +224,14 @@ footer a{color:var(--gold-2)}
 <section id="diet"><div class="wrap">
   <div class="sec-head"><span class="num">الخطوة 01</span><h2>كشف الدايت بجهاز الإنبادي</h2><p>قبل أي جلسة، لازم نعرف جسمك من جوه. الجهاز بيحلل مكونات الجسم في دقيقة وبيطلع تقرير مفصّل نبني عليه نظامك الغذائي وخطة الجلسات.</p></div>
   <div class="diag">
-    <div class="photo"><img src="../img/inbody.jpg" alt="جهاز الإنبادي لتحليل مكونات الجسم في Physio Art" loading="lazy"><span>تحليل مكونات الجسم</span></div>
+    <div class="ib" role="img" aria-label="شكل توضيحي لتقرير تحليل مكونات الجسم">
+      <div class="ib-head"><span>تقرير تحليل مكونات الجسم</span><small>مثال توضيحي</small></div>
+      <div class="ib-row"><span>الدهون</span><i><b style="width:72%;background:#e8b950"></b></i><em>عالية</em></div>
+      <div class="ib-row"><span>العضلات</span><i><b style="width:48%;background:#5b8def"></b></i><em>طبيعية</em></div>
+      <div class="ib-row"><span>المياه</span><i><b style="width:55%;background:#3fc1c9"></b></i><em>طبيعية</em></div>
+      <div class="ib-row"><span>الدهون الحشوية</span><i><b style="width:64%;background:#ff8f6b"></b></i><em>مرتفعة</em></div>
+      <div class="ib-grid"><div><b>BMR</b><span>معدل الحرق</span></div><div><b>BMI</b><span>مؤشر الكتلة</span></div><div><b>الهدف</b><span>الوزن المثالي</span></div></div>
+    </div>
     <div>
       <h3 style="font-size:20px">الجهاز بيقيس لك:</h3>
       <ul class="measure">
@@ -286,24 +301,24 @@ footer a{color:var(--gold-2)}
 <div class="svc-foot"><span class="pk">ضمن باقة الـ100</span><a class="link-wa" href="https://wa.me/201113270387?text=%D9%85%D8%B1%D8%AD%D8%A8%D9%8B%D8%A7%D8%8C%20%D8%AD%D8%A7%D8%A8%D8%A8%20%D8%A3%D8%AD%D8%AC%D8%B2%20/%20%D8%A3%D8%B3%D8%AA%D9%81%D8%B3%D8%B1%20%D8%B9%D9%86%3A%20%D8%A7%D9%84%D9%84%D9%8A%D8%B2%D8%B1%20%D8%A7%D9%84%D8%A8%D8%A7%D8%B1%D8%AF" target="_blank" rel="noopener"><svg class="ic sm" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wa"/></svg> احجز</a></div></div>
 </article>
 <article class="svc has-media">
-<div class="media"><video data-src="media/offer-150.mp4" poster="media/offer-150.jpg" muted loop playsinline preload="none" aria-label="فيديو الميزوثيرابي – حقن التخسيس الموضعي"></video></div>
+<div class="media"><video data-src="media/meso.mp4" poster="media/meso.jpg" muted loop playsinline preload="none" aria-label="فيديو الميزوثيرابي – حقن التخسيس الموضعي"></video></div>
 <div class="svc-body"><h3>الميزوثيرابي – حقن التخسيس الموضعي</h3><p>حقن موضعية بتساعد على إذابة الدهون العنيدة وشد المنطقة. الجلسة 6 حقن، وبتتحدد المناطق بعد الكشف.</p>
 <div class="svc-foot"><span class="pk">ضمن باقة الـ150</span><a class="link-wa" href="https://wa.me/201113270387?text=%D9%85%D8%B1%D8%AD%D8%A8%D9%8B%D8%A7%D8%8C%20%D8%AD%D8%A7%D8%A8%D8%A8%20%D8%A3%D8%AD%D8%AC%D8%B2%20/%20%D8%A3%D8%B3%D8%AA%D9%81%D8%B3%D8%B1%20%D8%B9%D9%86%3A%20%D8%A7%D9%84%D9%85%D9%8A%D8%B2%D9%88%D8%AB%D9%8A%D8%B1%D8%A7%D8%A8%D9%8A%20%E2%80%93%20%D8%AD%D9%82%D9%86%20%D8%A7%D9%84%D8%AA%D8%AE%D8%B3%D9%8A%D8%B3%20%D8%A7%D9%84%D9%85%D9%88%D8%B6%D8%B9%D9%8A" target="_blank" rel="noopener"><svg class="ic sm" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wa"/></svg> احجز</a></div></div>
 </article>
 <article class="svc">
 <div class="icon-tile"><svg class="ic big" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-slender"/></svg></div>
 <div class="svc-body"><h3>أجهزة السليندر</h3><p>تمارين سلبية بتشغّل العضلات وانت مستريح، مناسبة لشد القوام وتحسين الدورة الدموية في الجسم كله.</p>
-<div class="svc-foot"><span class="pk pk-ask">السعر عند الحجز</span><a class="link-wa" href="https://wa.me/201113270387?text=%D9%85%D8%B1%D8%AD%D8%A8%D9%8B%D8%A7%D8%8C%20%D8%AD%D8%A7%D8%A8%D8%A8%20%D8%A3%D8%AD%D8%AC%D8%B2%20/%20%D8%A3%D8%B3%D8%AA%D9%81%D8%B3%D8%B1%20%D8%B9%D9%86%3A%20%D8%A3%D8%AC%D9%87%D8%B2%D8%A9%20%D8%A7%D9%84%D8%B3%D9%84%D9%8A%D9%86%D8%AF%D8%B1" target="_blank" rel="noopener"><svg class="ic sm" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wa"/></svg> احجز</a></div></div>
+<div class="svc-foot"><span></span><a class="link-wa" href="https://wa.me/201113270387?text=%D9%85%D8%B1%D8%AD%D8%A8%D9%8B%D8%A7%D8%8C%20%D8%AD%D8%A7%D8%A8%D8%A8%20%D8%A3%D8%AD%D8%AC%D8%B2%20/%20%D8%A3%D8%B3%D8%AA%D9%81%D8%B3%D8%B1%20%D8%B9%D9%86%3A%20%D8%A3%D8%AC%D9%87%D8%B2%D8%A9%20%D8%A7%D9%84%D8%B3%D9%84%D9%8A%D9%86%D8%AF%D8%B1" target="_blank" rel="noopener"><svg class="ic sm" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wa"/></svg> احجز</a></div></div>
 </article>
 <article class="svc">
 <div class="icon-tile"><svg class="ic big" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-bolt"/></svg></div>
 <div class="svc-body"><h3>الـ EMS – تحفيز العضلات</h3><p>نبضات كهربية بتعمل انقباضات عضلية قوية، تقوّي عضلات البطن والأرداف وتساعد في النحت مع الحرق.</p>
-<div class="svc-foot"><span class="pk pk-ask">السعر عند الحجز</span><a class="link-wa" href="https://wa.me/201113270387?text=%D9%85%D8%B1%D8%AD%D8%A8%D9%8B%D8%A7%D8%8C%20%D8%AD%D8%A7%D8%A8%D8%A8%20%D8%A3%D8%AD%D8%AC%D8%B2%20/%20%D8%A3%D8%B3%D8%AA%D9%81%D8%B3%D8%B1%20%D8%B9%D9%86%3A%20%D8%A7%D9%84%D9%80%20EMS%20%E2%80%93%20%D8%AA%D8%AD%D9%81%D9%8A%D8%B2%20%D8%A7%D9%84%D8%B9%D8%B6%D9%84%D8%A7%D8%AA" target="_blank" rel="noopener"><svg class="ic sm" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wa"/></svg> احجز</a></div></div>
+<div class="svc-foot"><span></span><a class="link-wa" href="https://wa.me/201113270387?text=%D9%85%D8%B1%D8%AD%D8%A8%D9%8B%D8%A7%D8%8C%20%D8%AD%D8%A7%D8%A8%D8%A8%20%D8%A3%D8%AD%D8%AC%D8%B2%20/%20%D8%A3%D8%B3%D8%AA%D9%81%D8%B3%D8%B1%20%D8%B9%D9%86%3A%20%D8%A7%D9%84%D9%80%20EMS%20%E2%80%93%20%D8%AA%D8%AD%D9%81%D9%8A%D8%B2%20%D8%A7%D9%84%D8%B9%D8%B6%D9%84%D8%A7%D8%AA" target="_blank" rel="noopener"><svg class="ic sm" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wa"/></svg> احجز</a></div></div>
 </article>
 <article class="svc has-media">
 <div class="media"><video data-src="../gym/videos/crazyfit.mp4" muted loop playsinline preload="none" aria-label="فيديو الكريزي فيت"></video></div>
 <div class="svc-body"><h3>الكريزي فيت</h3><p>منصة اهتزاز بتنشّط الدورة الدموية والليمفاوية وبتقوّي العضلات وتزوّد الحرق في دقايق.</p>
-<div class="svc-foot"><span class="pk pk-ask">السعر عند الحجز</span><a class="link-wa" href="https://wa.me/201113270387?text=%D9%85%D8%B1%D8%AD%D8%A8%D9%8B%D8%A7%D8%8C%20%D8%AD%D8%A7%D8%A8%D8%A8%20%D8%A3%D8%AD%D8%AC%D8%B2%20/%20%D8%A3%D8%B3%D8%AA%D9%81%D8%B3%D8%B1%20%D8%B9%D9%86%3A%20%D8%A7%D9%84%D9%83%D8%B1%D9%8A%D8%B2%D9%8A%20%D9%81%D9%8A%D8%AA" target="_blank" rel="noopener"><svg class="ic sm" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wa"/></svg> احجز</a></div></div>
+<div class="svc-foot"><span></span><a class="link-wa" href="https://wa.me/201113270387?text=%D9%85%D8%B1%D8%AD%D8%A8%D9%8B%D8%A7%D8%8C%20%D8%AD%D8%A7%D8%A8%D8%A8%20%D8%A3%D8%AD%D8%AC%D8%B2%20/%20%D8%A3%D8%B3%D8%AA%D9%81%D8%B3%D8%B1%20%D8%B9%D9%86%3A%20%D8%A7%D9%84%D9%83%D8%B1%D9%8A%D8%B2%D9%8A%20%D9%81%D9%8A%D8%AA" target="_blank" rel="noopener"><svg class="ic sm" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wa"/></svg> احجز</a></div></div>
 </article></div></div><div class="cat" data-cat="tight" id="tight"><div class="cat-head"><h3 class="cat-title">شد الترهلات</h3><p>بعد التخسيس أو الولادة: نرجّع للجلد شدّه ومرونته.</p></div>
 <div class="svc-grid"><article class="svc has-media">
 <div class="media"><svg class="hifu" viewBox="0 0 320 400" role="img" aria-label="رسم توضيحي لطريقة عمل الهايفو: موجات فوق صوتية مركزة بتتجمع في نقطة داخل طبقة الشد العميقة">
@@ -338,22 +353,22 @@ footer a{color:var(--gold-2)}
 <div class="svc-grid"><article class="svc">
 <div class="icon-tile"><svg class="ic big" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-drop"/></svg></div>
 <div class="svc-body"><h3>الهيدروفيشيال</h3><p>تنظيف عميق للبشرة بخطوات: تقشير وشفط للرؤوس السوداء وترطيب بسيرومات، فتطلع البشرة نضرة من أول جلسة.</p>
-<div class="svc-foot"><span class="pk pk-ask">السعر عند الحجز</span><a class="link-wa" href="https://wa.me/201113270387?text=%D9%85%D8%B1%D8%AD%D8%A8%D9%8B%D8%A7%D8%8C%20%D8%AD%D8%A7%D8%A8%D8%A8%20%D8%A3%D8%AD%D8%AC%D8%B2%20/%20%D8%A3%D8%B3%D8%AA%D9%81%D8%B3%D8%B1%20%D8%B9%D9%86%3A%20%D8%A7%D9%84%D9%87%D9%8A%D8%AF%D8%B1%D9%88%D9%81%D9%8A%D8%B4%D9%8A%D8%A7%D9%84" target="_blank" rel="noopener"><svg class="ic sm" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wa"/></svg> احجز</a></div></div>
+<div class="svc-foot"><span></span><a class="link-wa" href="https://wa.me/201113270387?text=%D9%85%D8%B1%D8%AD%D8%A8%D9%8B%D8%A7%D8%8C%20%D8%AD%D8%A7%D8%A8%D8%A8%20%D8%A3%D8%AD%D8%AC%D8%B2%20/%20%D8%A3%D8%B3%D8%AA%D9%81%D8%B3%D8%B1%20%D8%B9%D9%86%3A%20%D8%A7%D9%84%D9%87%D9%8A%D8%AF%D8%B1%D9%88%D9%81%D9%8A%D8%B4%D9%8A%D8%A7%D9%84" target="_blank" rel="noopener"><svg class="ic sm" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wa"/></svg> احجز</a></div></div>
 </article>
 <article class="svc">
 <div class="icon-tile"><svg class="ic big" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-spark"/></svg></div>
 <div class="svc-body"><h3>البلازما</h3><p>حقن البلازما الغنية بالصفائح من دمك لتجديد البشرة وتحسين النضارة والهالات، وتستخدم كمان لتقوية الشعر.</p>
-<div class="svc-foot"><span class="pk pk-ask">السعر عند الحجز</span><a class="link-wa" href="https://wa.me/201113270387?text=%D9%85%D8%B1%D8%AD%D8%A8%D9%8B%D8%A7%D8%8C%20%D8%AD%D8%A7%D8%A8%D8%A8%20%D8%A3%D8%AD%D8%AC%D8%B2%20/%20%D8%A3%D8%B3%D8%AA%D9%81%D8%B3%D8%B1%20%D8%B9%D9%86%3A%20%D8%A7%D9%84%D8%A8%D9%84%D8%A7%D8%B2%D9%85%D8%A7" target="_blank" rel="noopener"><svg class="ic sm" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wa"/></svg> احجز</a></div></div>
+<div class="svc-foot"><span></span><a class="link-wa" href="https://wa.me/201113270387?text=%D9%85%D8%B1%D8%AD%D8%A8%D9%8B%D8%A7%D8%8C%20%D8%AD%D8%A7%D8%A8%D8%A8%20%D8%A3%D8%AD%D8%AC%D8%B2%20/%20%D8%A3%D8%B3%D8%AA%D9%81%D8%B3%D8%B1%20%D8%B9%D9%86%3A%20%D8%A7%D9%84%D8%A8%D9%84%D8%A7%D8%B2%D9%85%D8%A7" target="_blank" rel="noopener"><svg class="ic sm" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wa"/></svg> احجز</a></div></div>
 </article>
 <article class="svc">
 <div class="icon-tile"><svg class="ic big" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-dots"/></svg></div>
 <div class="svc-body"><h3>الديرمابن</h3><p>إبر دقيقة بتحفّز الكولاجين وبتعالج آثار الحبوب والمسام الواسعة وعلامات التمدد، وبتساعد السيروم يوصل لعمق البشرة.</p>
-<div class="svc-foot"><span class="pk pk-ask">السعر عند الحجز</span><a class="link-wa" href="https://wa.me/201113270387?text=%D9%85%D8%B1%D8%AD%D8%A8%D9%8B%D8%A7%D8%8C%20%D8%AD%D8%A7%D8%A8%D8%A8%20%D8%A3%D8%AD%D8%AC%D8%B2%20/%20%D8%A3%D8%B3%D8%AA%D9%81%D8%B3%D8%B1%20%D8%B9%D9%86%3A%20%D8%A7%D9%84%D8%AF%D9%8A%D8%B1%D9%85%D8%A7%D8%A8%D9%86" target="_blank" rel="noopener"><svg class="ic sm" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wa"/></svg> احجز</a></div></div>
+<div class="svc-foot"><span></span><a class="link-wa" href="https://wa.me/201113270387?text=%D9%85%D8%B1%D8%AD%D8%A8%D9%8B%D8%A7%D8%8C%20%D8%AD%D8%A7%D8%A8%D8%A8%20%D8%A3%D8%AD%D8%AC%D8%B2%20/%20%D8%A3%D8%B3%D8%AA%D9%81%D8%B3%D8%B1%20%D8%B9%D9%86%3A%20%D8%A7%D9%84%D8%AF%D9%8A%D8%B1%D9%85%D8%A7%D8%A8%D9%86" target="_blank" rel="noopener"><svg class="ic sm" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wa"/></svg> احجز</a></div></div>
 </article></div></div><div class="cat" data-cat="laser" id="laser"><div class="cat-head"><h3 class="cat-title">إزالة الشعر بالليزر</h3><p>جلسات ليزر لكل مناطق الجسم.</p></div>
 <div class="svc-grid"><article class="svc">
 <div class="icon-tile"><svg class="ic big" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-sun"/></svg></div>
 <div class="svc-body"><h3>ليزر إزالة الشعر – جهاز سان شور</h3><p>إزالة الشعر بجهاز ليزر سان شور، مع تبريد لراحتك أثناء الجلسة. عدد الجلسات بيتحدد حسب المنطقة ونوع الشعر والبشرة.</p>
-<div class="svc-foot"><span class="pk pk-ask">السعر عند الحجز</span><a class="link-wa" href="https://wa.me/201113270387?text=%D9%85%D8%B1%D8%AD%D8%A8%D9%8B%D8%A7%D8%8C%20%D8%AD%D8%A7%D8%A8%D8%A8%20%D8%A3%D8%AD%D8%AC%D8%B2%20/%20%D8%A3%D8%B3%D8%AA%D9%81%D8%B3%D8%B1%20%D8%B9%D9%86%3A%20%D9%84%D9%8A%D8%B2%D8%B1%20%D8%A5%D8%B2%D8%A7%D9%84%D8%A9%20%D8%A7%D9%84%D8%B4%D8%B9%D8%B1%20%E2%80%93%20%D8%AC%D9%87%D8%A7%D8%B2%20%D8%B3%D8%A7%D9%86%20%D8%B4%D9%88%D8%B1" target="_blank" rel="noopener"><svg class="ic sm" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wa"/></svg> احجز</a></div></div>
+<div class="svc-foot"><span></span><a class="link-wa" href="https://wa.me/201113270387?text=%D9%85%D8%B1%D8%AD%D8%A8%D9%8B%D8%A7%D8%8C%20%D8%AD%D8%A7%D8%A8%D8%A8%20%D8%A3%D8%AD%D8%AC%D8%B2%20/%20%D8%A3%D8%B3%D8%AA%D9%81%D8%B3%D8%B1%20%D8%B9%D9%86%3A%20%D9%84%D9%8A%D8%B2%D8%B1%20%D8%A5%D8%B2%D8%A7%D9%84%D8%A9%20%D8%A7%D9%84%D8%B4%D8%B9%D8%B1%20%E2%80%93%20%D8%AC%D9%87%D8%A7%D8%B2%20%D8%B3%D8%A7%D9%86%20%D8%B4%D9%88%D8%B1" target="_blank" rel="noopener"><svg class="ic sm" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-wa"/></svg> احجز</a></div></div>
 </article></div></div>
 </div></section>
 

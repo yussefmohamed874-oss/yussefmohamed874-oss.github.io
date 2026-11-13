@@ -80,6 +80,14 @@ section{padding:64px 0}
 .diag .photo{border-radius:18px;overflow:hidden;position:relative}
 .diag .photo img{width:100%;aspect-ratio:4/3;object-fit:cover}
 .diag .photo span{position:absolute;top:12px;inset-inline-start:12px;background:var(--night);color:var(--gold-2);font-weight:700;font-size:13px;padding:4px 12px;border-radius:999px}
+.ib{background:linear-gradient(160deg,var(--night),var(--night-2));color:var(--night-ink);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:14px}
+.ib-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;border-bottom:1px solid rgba(255,255,255,.12);padding-bottom:10px}
+.ib-head span{font-family:var(--display);font-weight:800;color:var(--gold-2)}.ib-head small{font-size:12px;color:var(--night-muted)}
+.ib-row{display:grid;grid-template-columns:110px 1fr 60px;gap:10px;align-items:center;font-size:15px}
+.ib-row i{height:10px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden;display:block}.ib-row i b{display:block;height:100%;border-radius:99px}
+.ib-row em{font-style:normal;font-size:13px;color:var(--night-muted)}
+.ib-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.ib-grid div{background:rgba(255,255,255,.06);border-radius:12px;padding:10px;text-align:center}
+.ib-grid b{display:block;font-family:var(--display);color:#fff}.ib-grid span{font-size:12.5px;color:var(--night-muted)}
 .measure{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;margin:16px 0 20px;list-style:none}
 .measure li{display:flex;gap:8px;align-items:flex-start;font-size:15.5px}
 .measure .ic{color:var(--wa);margin-top:4px}
@@ -216,7 +224,14 @@ footer a{color:var(--gold-2)}
 <section id="diet"><div class="wrap">
   <div class="sec-head"><span class="num">الخطوة 01</span><h2>كشف الدايت بجهاز الإنبادي</h2><p>قبل أي جلسة، لازم نعرف جسمك من جوه. الجهاز بيحلل مكونات الجسم في دقيقة وبيطلع تقرير مفصّل نبني عليه نظامك الغذائي وخطة الجلسات.</p></div>
   <div class="diag">
-    <div class="photo"><img src="../img/inbody.jpg" alt="جهاز الإنبادي لتحليل مكونات الجسم في Physio Art" loading="lazy"><span>تحليل مكونات الجسم</span></div>
+    <div class="ib" role="img" aria-label="شكل توضيحي لتقرير تحليل مكونات الجسم">
+      <div class="ib-head"><span>تقرير تحليل مكونات الجسم</span><small>مثال توضيحي</small></div>
+      <div class="ib-row"><span>الدهون</span><i><b style="width:72%;background:#e8b950"></b></i><em>عالية</em></div>
+      <div class="ib-row"><span>العضلات</span><i><b style="width:48%;background:#5b8def"></b></i><em>طبيعية</em></div>
+      <div class="ib-row"><span>المياه</span><i><b style="width:55%;background:#3fc1c9"></b></i><em>طبيعية</em></div>
+      <div class="ib-row"><span>الدهون الحشوية</span><i><b style="width:64%;background:#ff8f6b"></b></i><em>مرتفعة</em></div>
+      <div class="ib-grid"><div><b>BMR</b><span>معدل الحرق</span></div><div><b>BMI</b><span>مؤشر الكتلة</span></div><div><b>الهدف</b><span>الوزن المثالي</span></div></div>
+    </div>
     <div>
       <h3 style="font-size:20px">الجهاز بيقيس لك:</h3>
       <ul class="measure">

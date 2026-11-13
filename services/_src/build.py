@@ -75,7 +75,7 @@ SECTIONS = [
        d="حرارة عميقة بتنشّط الكولاجين وبتشد الجلد بعد نزول الوزن، وبتحسّن ملمس البشرة والسيلوليت.", pk="ضمن باقة الـ100"),
   dict(n="الليزر البارد", ic="laser", m=("video","media/lipolaser.mp4","media/lipolaser.jpg"),
        d="ألواح ليزر منخفض الطاقة بتحفّز خلايا الدهون تفرّغ محتواها، جلسة مريحة تمامًا ومن غير ألم.", pk="ضمن باقة الـ100"),
-  dict(n="الميزوثيرابي – حقن التخسيس الموضعي", ic="syringe", m=("video","media/offer-150.mp4","media/offer-150.jpg"),
+  dict(n="الميزوثيرابي – حقن التخسيس الموضعي", ic="syringe", m=("video","media/meso.mp4","media/meso.jpg"),
        d="حقن موضعية بتساعد على إذابة الدهون العنيدة وشد المنطقة. الجلسة 6 حقن، وبتتحدد المناطق بعد الكشف.", pk="ضمن باقة الـ150"),
   dict(n="أجهزة السليندر", ic="slender", m=("icon",),
        d="تمارين سلبية بتشغّل العضلات وانت مستريح، مناسبة لشد القوام وتحسين الدورة الدموية في الجسم كله.", pk=""),
@@ -127,7 +127,7 @@ def media(m, name):
 
 def svc_card(s):
     has_media = s["m"][0] != "icon"
-    pk = f'<span class="pk">{e(s["pk"])}</span>' if s["pk"] else '<span class="pk pk-ask">السعر عند الحجز</span>'
+    pk = f'<span class="pk">{e(s["pk"])}</span>' if s["pk"] else '<span></span>'
     head = "" if has_media else f'<div class="icon-tile">{icon(s["ic"], "big")}</div>'
     return f'''<article class="svc{' has-media' if has_media else ''}">
 {media(s["m"], s["n"])}{head}

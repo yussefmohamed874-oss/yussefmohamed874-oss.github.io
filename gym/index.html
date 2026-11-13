@@ -270,6 +270,7 @@ function render(){
  if(v==='backup')return backup();
  if(v==='lib')return lib();
  if(v==='allvids')return allvids();
+ if(v==='classes')return classesView();
  if(v==='item')return item();
 }
 
@@ -292,12 +293,13 @@ function cardHTML(p){
  ${p.note?`<div class="pr">📝 ${esc(p.note)}</div>`:''}
  <div class="acts">
   ${p.phone?`<a class="a-call" href="tel:${esc(digits(p.phone))}">📞 اتصال</a><a class="a-wa" href="${waLink(p.phone,(inq||s.k==='soon'||s.k==='exp')?remindText(p):'')}" target="_blank">واتساب</a>`:''}
-  ${inq?`<button class="a-go" data-conv="${p.id}">✓ اشتركت</button>`:`<button class="a-rn" data-rn="${p.id}">🔄 تجديد</button>`}
+  ${inq?`<button class="a-go" data-conv="${p.id}">✓ اشتركت</button>`:`<button class="a-rn" data-rn="${p.id}">🔄 تجديد</button><button class="a-go" data-link="${p.id}">📲 تطبيقها</button>`}
   <button class="a-ed" data-ed="${p.id}">✏️ تعديل</button>
  </div></div>`;
 }
 function bindCards(root){
  root.querySelectorAll('[data-ed]').forEach(x=>x.onclick=()=>go({v:'form',id:x.dataset.ed}));
+ root.querySelectorAll('[data-link]').forEach(x=>x.onclick=()=>memberLinkUI(DB.find(p=>p.id===x.dataset.link)));
  root.querySelectorAll('[data-rn]').forEach(x=>x.onclick=()=>go({v:'form',id:x.dataset.rn,renew:1}));
  root.querySelectorAll('[data-conv]').forEach(x=>x.onclick=()=>go({v:'form',id:x.dataset.conv,convert:1}));
 }
@@ -333,6 +335,7 @@ function home(){
   <button class="tile" onclick="go({v:'list',k:'subs',f:'all'})"><span class="ic" style="background:#F1EAFB">👩</span><b>كل المشتركات</b><span class="n">${c.subs}</span></button>
   <button class="tile" onclick="go({v:'list',k:'inq'})"><span class="ic" style="background:#FFF6CC">🆕</span><b>عميلات بتسأل</b><span class="n">${c.inq}</span></button>
   <button class="tile" onclick="go({v:'programs'})"><span class="ic" style="background:#E3ECFD">🏋️</span><b>برامج الكابتن (1 – 20)</b><span class="n">${ready}/20</span></button>
+  <button class="tile" onclick="go({v:'classes'})"><span class="ic" style="background:#FFF1E0">📅</span><b>جدول الكلاسات</b><span class="n">${CLASSES.length}</span></button>
   <button class="tile" onclick="go({v:'allvids'})"><span class="ic" style="background:#E8F7F0">🎬</span><b>كل فيديوهات الموقع</b><span class="n">${Object.keys(SITE_VIDEOS).length}</span></button>
   <button class="tile" onclick="go({v:'lib'})"><span class="ic" style="background:#E8F7F0">🎥</span><b>الأجهزة والتمارين (فيديوهات)</b><span class="n">${LIB.filter(x=>(x.videos||[]).length).length}/${LIB.length}</span></button>
   <div class="foot"><button onclick="go({v:'backup'})">💾 النسخة الاحتياطية</button><a href="../clinic/">🏥 تطبيق العيادات</a></div>`;
@@ -449,10 +452,10 @@ function setBtn(on){const b=$('#vb');if(!b)return;b.classList.toggle('rec',on);b
 let F=null;
 function form(){
  const ex=view.id?DB.find(p=>p.id===view.id):null;
- F=ex?{...ex}:{id:null,kind:view.kind||'sub',name:'',phone:'',plan:'',months:0,price:'',start:'',end:'',program:'',note:''};
+ F=ex?{...ex}:{id:null,kind:view.kind||'sub',name:'',phone:'',plan:'',months:0,price:'',start:'',end:'',program:'',note:'',height:'',weight:'',goal:'',health:'',inbody:[],history:[]};
  let title=ex?'✏️ تعديل':(F.kind==='inq'?'＋ عميلة بتسأل':'＋ مشتركة جديدة');
  if(ex&&view.convert){F.kind='sub';F.start=todayISO();title='✓ اشتراك جديد'}
- if(ex&&view.renew){F.kind='sub';title='🔄 تجديد اشتراك';F.start=(F.end&&daysLeft(F.end)>=0)?F.end:todayISO();const m=F.months||(PLAN(F.plan)||{}).m;if(m)F.end=addMonths(F.start,m)}
+ if(ex&&view.renew){F._prev={plan:ex.plan,months:ex.months,price:ex.price,start:ex.start,end:ex.end};F.kind='sub';title='🔄 تجديد اشتراك';F.start=(F.end&&daysLeft(F.end)>=0)?F.end:todayISO();const m=F.months||(PLAN(F.plan)||{}).m;if(m)F.end=addMonths(F.start,m)}
  if(!ex&&F.kind==='sub'&&!F.start)F.start=todayISO();
  if(!ex&&view.prefill){const pf=view.prefill;if(/\d{3,}/.test(digits(pf)))F.phone=digits(pf).replace(/\D/g,'');else F.name=pf}
  $('#app').innerHTML=`
@@ -469,15 +472,32 @@ function form(){
   <div class="lbl">قيمة الاشتراك (جنيه)</div><input class="inp" id="f-price" type="number" inputmode="numeric" value="${esc(F.price)}">
   <div class="lbl">تاريخ البدء ← تاريخ الانتهاء</div><div class="two"><input class="inp" id="f-start" type="date" value="${esc(F.start)}"><input class="inp" id="f-end" type="date" value="${esc(F.end)}"></div>
   <div class="lbl">رقم البرنامج (1 – 20) · اختياري</div><input class="inp" id="f-program" type="number" inputmode="numeric" min="1" max="20" value="${esc(F.program)}">
+  <div class="sec-t" style="margin-top:18px">🩺 الملف الصحي (بيظهر للمشتركة في تطبيقها)</div>
+  <div class="two"><div><div class="lbl">الطول (سم)</div><input class="inp" id="f-height" type="number" inputmode="decimal" value="${esc(F.height)}"></div><div><div class="lbl">الوزن (كجم)</div><input class="inp" id="f-weight" type="number" inputmode="decimal" value="${esc(F.weight)}"></div></div>
+  <div class="lbl">الهدف</div><div class="chips" id="c-goal">${GOALS.map(g=>`<button class="chip" data-v="${g}">${g}</button>`).join('')}</div>
+  <div class="lbl">الحالة الصحية</div><textarea class="inp" id="f-health" placeholder="أمراض مزمنة، إصابات، عمليات، أدوية، حمل أو رضاعة، أي ملاحظة للكابتن...">${esc(F.health)}</textarea>
+  <div class="lbl">قياسات InBody</div><div id="ib-list"></div>
+  <div class="card" style="background:#F7F4FC">
+   <div class="two"><div><div class="lbl" style="margin-top:0">التاريخ</div><input class="inp" id="ib-date" type="date" value="${todayISO()}"></div><div><div class="lbl" style="margin-top:0">الوزن</div><input class="inp" id="ib-w" type="number" inputmode="decimal"></div></div>
+   <div class="two"><div><div class="lbl">الدهون %</div><input class="inp" id="ib-fat" type="number" inputmode="decimal"></div><div><div class="lbl">العضلات (كجم)</div><input class="inp" id="ib-mus" type="number" inputmode="decimal"></div></div>
+   <div class="two"><div><div class="lbl">المياه %</div><input class="inp" id="ib-wat" type="number" inputmode="decimal"></div><div><div class="lbl">الدهون الحشوية</div><input class="inp" id="ib-vis" type="number" inputmode="decimal"></div></div>
+   <div class="two"><div><div class="lbl">معدل الحرق BMR</div><input class="inp" id="ib-bmr" type="number" inputmode="numeric"></div><div><div class="lbl">الوسط (سم)</div><input class="inp" id="ib-waist" type="number" inputmode="decimal"></div></div>
+   <button class="btn sec" id="ib-add" style="background:var(--navy);color:var(--gold)">＋ إضافة القياس</button>
+  </div>
  </div>
  <div class="lbl" id="nl">ملاحظات</div><textarea class="inp" id="f-note">${esc(F.note)}</textarea>
  <button class="btn" id="sv">✓ احفظ</button>
  ${ex?'<button class="btn del" id="dl">🗑 امسح</button>':''}
  </main>`;
+ F.inbody=F.inbody||[];F.history=F.history||[];
+ const drawIB=()=>{const b=$('#ib-list');if(!b)return;const l=[...F.inbody].sort((a,c)=>a.date<c.date?1:-1);
+  b.innerHTML=l.length?l.map(r=>`<div class="card" style="padding:8px 12px;font-size:15px"><b>${fmtD(r.date)}</b> · وزن ${r.w||'—'} · دهون ${r.fat||'—'}% · عضلات ${r.mus||'—'} · مياه ${r.wat||'—'}% · حشوية ${r.vis||'—'} · BMR ${r.bmr||'—'}${r.waist?' · وسط '+r.waist:''} <button data-ibd="${r.id}" style="color:var(--red);font-weight:800;float:left">✕</button></div>`).join(''):'<div class="pr" style="margin-bottom:6px">لسه مفيش قياسات</div>';
+  b.querySelectorAll('[data-ibd]').forEach(x=>x.onclick=()=>{F.inbody=F.inbody.filter(r=>r.id!==x.dataset.ibd);drawIB()})};
  const paint=()=>{
   document.querySelectorAll('#c-kind .chip').forEach(c=>c.classList.toggle('on',F.kind===c.dataset.v));
   document.querySelectorAll('#c-plan .chip').forEach(c=>c.classList.toggle('on',F.plan===c.dataset.v));
   $('#sf').style.display=F.kind==='sub'?'block':'none';
+  document.querySelectorAll('#c-goal .chip').forEach(c=>c.classList.toggle('on',F.goal===c.dataset.v));
   $('#nl').textContent=F.kind==='inq'?'بتسأل عن إيه؟':'ملاحظات';
  };
  const setv=(id,v)=>{const el=$('#f-'+id);el.value=v;el.classList.remove('flash');void el.offsetWidth;el.classList.add('flash')};
@@ -487,6 +507,11 @@ function form(){
  document.querySelectorAll('#c-kind .chip').forEach(c=>c.onclick=()=>{F.kind=c.dataset.v;if(F.kind==='sub'&&!$('#f-start').value)$('#f-start').value=todayISO();paint()});
  document.querySelectorAll('#c-plan .chip').forEach(c=>c.onclick=()=>{F.plan=c.dataset.v;const pl=PLAN(F.plan);F.months=pl.m;paint();if(pl.m){recalc();fillPrice()}});
  $('#f-start').onchange=recalc;
+ drawIB();
+ document.querySelectorAll('#c-goal .chip').forEach(c=>c.onclick=()=>{F.goal=F.goal===c.dataset.v?'':c.dataset.v;paint()});
+ $('#ib-add').onclick=()=>{const v=id=>$('#'+id).value.trim();const r={id:'b'+uid(),date:v('ib-date')||todayISO(),w:v('ib-w'),fat:v('ib-fat'),mus:v('ib-mus'),wat:v('ib-wat'),vis:v('ib-vis'),bmr:v('ib-bmr'),waist:v('ib-waist')};
+  if(!r.w&&!r.fat&&!r.mus){toast('اكتب الوزن أو الدهون أو العضلات على الأقل');return}
+  F.inbody.push(r);if(r.w)$('#f-weight').value=r.w;['ib-w','ib-fat','ib-mus','ib-wat','ib-vis','ib-bmr','ib-waist'].forEach(i=>$('#'+i).value='');drawIB();toast('اتضاف القياس ✓')};
  const vt=$('#vt');
  const apply=()=>{
   if(!document.body.contains(vt)||!vt.value.trim())return;
@@ -512,8 +537,10 @@ function form(){
    if(F.program&&(+F.program<1||+F.program>20)){toast('رقم البرنامج من 1 لـ 20');return}
    if(F.start&&F.end&&F.end<F.start){toast('تاريخ الانتهاء قبل البدء!');return}
    if(F.plan&&F.plan!=='x'&&F.price){PR[F.plan]=F.price;savePR()}
+   F.height=$('#f-height').value.trim();F.weight=$('#f-weight').value.trim();F.health=$('#f-health').value.trim();
+   if(view.renew&&F._prev&&F._prev.start)F.history=[...(F.history||[]),F._prev];
   }else{F.plan='';F.months=0;F.price='';F.start='';F.end='';F.program=''}
-  stopRec();
+  stopRec();delete F._prev;
   if(F.id){const i=DB.findIndex(p=>p.id===F.id);DB[i]={...F,updated:Date.now()}}
   else DB.push({...F,id:uid(),created:Date.now()});
   save();toast('اتحفظ ✓');
@@ -602,10 +629,67 @@ async function prog(){
  $('#ok').onclick=()=>{flush();toast('اتحفظ ✓');history.back()};
 }
 
+// ===== جدول الكلاسات + إعدادات + رابط المشتركة =====
+const GOALS=['تخسيس','زيادة وزن','شد وتنشيف','لياقة عامة','تأهيل بعد إصابة أو ولادة'];
+const WDAYS=['السبت','الأحد','الاتنين','التلات','الأربع','الخميس','الجمعة'];
+let CLASSES=ld('gy_classes_v1',[]);const saveClasses=()=>localStorage.setItem('gy_classes_v1',JSON.stringify(CLASSES));
+let SET=ld('gy_settings_v1',{wa:''});const saveSet=()=>localStorage.setItem('gy_settings_v1',JSON.stringify(SET));
+function fmtT(t){if(!t)return '';let [h,m]=t.split(':').map(Number);const am=h<12;h=h%12||12;return h+(m?':'+pad(m):'')+(am?' ص':' م')}
+function classesView(){
+ const sorted=[...CLASSES].sort((a,b)=>WDAYS.indexOf(a.day)-WDAYS.indexOf(b.day)||(a.time<b.time?-1:1));
+ $('#app').innerHTML=`
+ <div class="hdr"><div class="row"><button class="back" onclick="history.back()">→</button><div style="flex:1"><h1>📅 جدول الكلاسات</h1><div class="sub">بيتبعت للمشتركات مع رابط تطبيقهم</div></div></div></div>
+ <main>
+ <div class="card"><div class="lbl" style="margin-top:0">رقم واتساب الجيم (بتستقبل عليه اختيارات المشتركات)</div><input class="inp" id="s-wa" type="tel" dir="ltr" style="text-align:right" value="${esc(SET.wa)}" placeholder="01xxxxxxxxx"></div>
+ <div class="card" style="background:#F7F4FC">
+  <div class="two"><div><div class="lbl" style="margin-top:0">اليوم</div><select class="inp" id="c-day">${WDAYS.map(d=>`<option>${d}</option>`).join('')}</select></div><div><div class="lbl" style="margin-top:0">الساعة</div><input class="inp" id="c-time" type="time" value="18:00"></div></div>
+  <div class="lbl">الكلاس</div><input class="inp" id="c-name" list="c-names" placeholder="زومبا، إيروبكس، بانجي...">
+  <datalist id="c-names"><option>زومبا</option><option>إيروبكس</option><option>بانجي فيتنس</option><option>الألعاب التفاعلية</option><option>كارديو وحرق دهون</option><option>شد وتنشيف</option><option>إطالات ومرونة</option></datalist>
+  <div class="two"><div><div class="lbl">الكابتن</div><input class="inp" id="c-coach" value="كابتن هبة"></div><div><div class="lbl">المدة (دقيقة)</div><input class="inp" id="c-dur" type="number" value="45"></div></div>
+  <button class="btn" id="c-add" style="margin-top:12px">＋ إضافة كلاس</button>
+ </div>
+ <div id="c-list">${sorted.length?sorted.map(c=>`<div class="card"><div class="top"><div class="nm" style="font-size:18px">${esc(c.name)}</div><button data-cd="${c.id}" style="color:var(--red);font-weight:800">🗑</button></div><div class="pr">📅 ${c.day} · ⏰ ${fmtT(c.time)} · ${esc(c.dur||'')} دقيقة · 👩‍🏫 ${esc(c.coach||'')}</div></div>`).join(''):'<div class="empty">لسه مفيش كلاسات</div>'}</div>
+ </main>`;
+ $('#s-wa').onchange=e=>{SET.wa=digits(e.target.value).replace(/\D/g,'');saveSet();toast('اتحفظ رقم الجيم ✓')};
+ $('#c-add').onclick=()=>{const n=$('#c-name').value.trim();if(!n){toast('اكتب اسم الكلاس');return}
+  CLASSES.push({id:'c'+uid(),day:$('#c-day').value,time:$('#c-time').value,name:n,coach:$('#c-coach').value.trim(),dur:$('#c-dur').value.trim()});saveClasses();toast('اتضاف ✓');classesView()};
+ document.querySelectorAll('[data-cd]').forEach(b=>b.onclick=()=>{if(confirm('تمسح الكلاس ده؟')){CLASSES=CLASSES.filter(c=>c.id!==b.dataset.cd);saveClasses();classesView()}});
+}
+const b64u=u8=>{let s='';for(let i=0;i<u8.length;i+=0x8000)s+=String.fromCharCode.apply(null,u8.subarray(i,i+0x8000));return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')};
+function memberPayload(p){
+ const n=+p.program||0,g=n?PG[n]:null,meta=n?PLAN20[n-1]:null;
+ return {v:1,at:Date.now(),gym:{name:'Women Health GYM',wa:SET.wa||''},
+  m:{name:p.name||'',phone:p.phone||'',plan:planName(p),price:p.price||'',start:p.start||'',end:p.end||'',history:(p.history||[]).map(h=>({plan:planName(h),start:h.start,end:h.end})),goal:p.goal||'',height:p.height||'',weight:p.weight||'',health:p.health||'',inbody:(p.inbody||[]).map(({id,...r})=>r),
+   program:n?{no:n,name:(g&&g.title)||(meta&&meta.name)||'',kind:meta?meta.kind:'',goal:meta?meta.goal:'',lvl:meta?meta.lvl:'',ms:meta?meta.ms:[],text:(g&&g.notes)||(meta&&meta.text)||''}:null},
+  classes:CLASSES.map(({id,...c})=>({id,...c}))};
+}
+async function memberLink(p){
+ const json=JSON.stringify(memberPayload(p));let enc;
+ try{if(!window.CompressionStream)throw 0;const buf=await new Response(new Blob([json]).stream().pipeThrough(new CompressionStream('deflate-raw'))).arrayBuffer();enc='z'+b64u(new Uint8Array(buf))}
+ catch(e){enc='p'+b64u(new TextEncoder().encode(json))}
+ return new URL('../member/',location.href).href+'#d='+enc;
+}
+async function memberLinkUI(p){
+ if(!p)return;
+ if(!p.program)toast('ملحوظة: المشتركة دي مالهاش رقم برنامج');
+ const link=await memberLink(p);
+ const msg='أهلاً يا '+(p.name||'')+' 🌸\nده تطبيقك الخاص في Women Health GYM مع كابتن هبة تحت إشراف د. يوسف المصري.\nافتحي الرابط، وبعدين من قايمة المتصفح اختاري "إضافة إلى الشاشة الرئيسية" عشان يفضل معاكي:\n'+link;
+ const o=document.createElement('div');o.className='ov';o.style.alignItems='end';
+ o.innerHTML=`<div class="card" style="width:100%;max-width:520px;margin:0 auto 18px;border-radius:18px" onclick="event.stopPropagation()">
+  <div class="nm">📲 تطبيق ${esc(p.name||'المشتركة')}</div>
+  <div class="pr" style="margin:6px 0 10px">الرابط فيه بياناتها وبرنامجها وجدول الكلاسات. ولما تعدّلي حاجة، ابعتيلها رابط جديد.</div>
+  ${p.phone?`<a class="btn" style="background:var(--wa);text-decoration:none" href="${waLink(p.phone,msg)}" target="_blank">ابعتيه على واتساب</a>`:'<div class="pr">مفيش رقم موبايل للمشتركة</div>'}
+  <button class="btn sec" id="lk-copy">📋 نسخ الرابط</button>
+  <a class="btn sec" style="text-decoration:none" href="${link}" target="_blank">👁 افتحيه للتجربة</a>
+  <button class="btn sec" id="lk-close">إغلاق</button></div>`;
+ o.onclick=()=>o.remove();document.body.appendChild(o);
+ o.querySelector('#lk-close').onclick=()=>o.remove();
+ o.querySelector('#lk-copy').onclick=async()=>{try{await navigator.clipboard.writeText(link);toast('اتنسخ ✓')}catch(e){prompt('انسخي الرابط:',link)}};
+}
 // ===== شرح كابتن هبة =====
 const EXPL={"تريدميل (جهاز المشي)": {"m": "القلب والرئة، والرجلين (الفخذ والسمانة والأرداف)، وبيحرق سعرات.", "s": ["اطلعي على جانبي الجهاز قبل ما تشغّليه، وابدئي بسرعة بطيئة (3 لـ 4 كم/س).", "زوّدي السرعة بالتدريج لحد مشي سريع (5 لـ 6 كم/س)، ولو البرنامج فيه ميل خليه من 2 لـ 5%.", "خلي ضهرك مفرود وبصي قدامك، والدراعين بيتحركوا طبيعي جنبك.", "الخطوة: الكعب الأول وبعدين المشط، ومتتشبطيش في المقابض.", "في الآخر قللي السرعة بالتدريج دقيقتين قبل ما توقفي."], "b": "نفس منتظم. لو مش قادرة تقولي جملة كاملة وانتي ماشية، يبقى السرعة عالية عليكي.", "e": ["مسك المقابض طول الوقت.", "البص في الأرض أو في الموبايل.", "خطوات طويلة زيادة عن اللزوم.", "النزول من الجهاز وهو شغال."], "t": "اربطي كليب الأمان في هدومك. ولو حسيتي بدوخة أو ألم في الصدر، وقفي فورًا."}, "عجل (بايسكل)": {"m": "القلب والرئة، والفخذ الأمامي والخلفي، والأرداف، والسمانة.", "s": ["اضبطي الكرسي: لما الدواسة تبقى تحت، الركبة تبقى شبه مفرودة بثنية بسيطة.", "اقعدي وضهرك مفرود، وإيديك على المقبض من غير ما تتسندي عليه بقوة.", "ابدئي بمقاومة خفيفة من 3 لـ 5 دقايق.", "بدّلي بانتظام، وادفعي بمشط القدم.", "زوّدي المقاومة على حسب البرنامج."], "b": "نفس هادي ومنتظم مع إيقاع البدال.", "e": ["كرسي واطي جدًا (بيتعب الركبة) أو عالي جدًا (الحوض بيتمايل).", "تقويس الضهر لقدام.", "مقاومة عالية من أول دقيقة."], "t": "مناسب مع آلام الركبة الخفيفة لو المقاومة خفيفة، بس بعد ما تسألي الكابتن."}, "أوربتراك (إليبتيكال)": {"m": "الجسم كامل: الرجلين، والأرداف، والدراعين، والضهر. وبيحرق سعرات من غير خبط على المفاصل.", "s": ["اطلعي على الدواسات وامسكي المقابض المتحركة.", "ابدئي حركة الرجلين ببطء في شكل بيضاوي.", "ادفعي واسحبي المقابض مع حركة الرجلين.", "خلي جسمك مفرود وبطنك مشدودة.", "زوّدي المقاومة بالتدريج."], "b": "نفس منتظم.", "e": ["الميل لقدام والاتكاء على المقابض.", "الوقوف على أطراف الصوابع.", "سرعة عالية مع مقاومة ضعيفة جدًا."], "t": "ممتاز للي عندها وزن زيادة أو آلام في المفاصل، لأنه من غير خبط."}, "الكريزي (Crazy Fit)": {"m": "تنشيط الدورة الدموية، والرجلين، والأرداف، وعضلات الثبات (الكور).", "s": ["اطلعي على الجهاز وهو مقفول وامسكي المقبض.", "القدمين بعرض الكتفين، والركبة مثنية شوية. ماتقفليش الركبة.", "شغّلي الجهاز على أقل سرعة.", "اعملي سكوات خفيف ببطء من 10 لـ 15 مرة، أو وقفة ثابتة من 30 لـ 60 ثانية.", "زوّدي السرعة بالتدريج على حسب تعليمات الكابتن."], "b": "نفس هادي.", "e": ["الركبة مفرودة ومقفولة، فالاهتزاز بيوصل للراس.", "سرعة عالية من الأول.", "الوقوف أكتر من المدة المحددة."], "t": "ممنوع للحوامل، ولأصحاب الأجهزة المزروعة (منظم ضربات القلب، أو شرايح ومسامير حديثة)، والصرع، وجلطات الأوردة، وبعد العمليات الحديثة. استشيري الدكتور الأول."}, "سحب أمامي": {"m": "عضلات الضهر العريضة، والبايسبس، والكتف الخلفي.", "s": ["اضبطي المسند بحيث يثبّت فخدك.", "امسكي البار بقبضة أعرض من كتافك شوية.", "اقعدي والصدر مرفوع والضهر مفرود، مع ميل بسيط لورا.", "اسحبي البار لحد أعلى صدرك، والكوعين نازلين لتحت ولورا.", "رجّعي البار لفوق ببطء لحد ما دراعك يتفرد."], "b": "زفير وانتي بتسحبي، وشهيق وانتي بترجّعي.", "e": ["سحب البار ورا الرقبة.", "الميل الكتير لورا والتمرجح.", "رفع الكتاف ناحية الودان.", "الرجوع بسرعة."], "t": "ابدئي بوزن خفيف تقدري تعملي بيه من 12 لـ 15 عدّة صح."}, "سحب خلفي": {"m": "وسط الضهر، واللاتس، والترابيس، والبايسبس.", "s": ["اقعدي ورجليكي على المسند والركبة مثنية شوية.", "امسكي المقبض ودراعك مفرود وضهرك مفرود.", "اسحبي المقبض ناحية بطنك، والكوعين قريبين من جسمك.", "اضغطي لوحي الكتف لورا ثانية.", "رجّعي ببطء من غير ما ضهرك يتقوس."], "b": "زفير مع السحب، وشهيق مع الرجوع.", "e": ["المرجحة بالضهر لقدام ولورا.", "تقويس الضهر.", "رفع الكتاف."], "t": "لو عندك ألم في أسفل الضهر، خففي الوزن وخلي الضهر ثابت تمامًا."}, "ليج بريس": {"m": "الفخذ الأمامي والخلفي، والأرداف.", "s": ["اقعدي وضهرك وحوضك ملزقين في المسند.", "حطي رجليكي على اللوح بعرض الكتفين، والركبة في اتجاه الصوابع.", "فكّي الأمان، ونزّلي اللوح ببطء لحد ما ركبتك تعمل حوالي 90 درجة.", "ادفعي بالكعب لفوق من غير ما تقفلي الركبة.", "رجّعي الأمان بعد آخر عدّة."], "b": "شهيق مع النزول، وزفير مع الدفع.", "e": ["قفل الركبة في آخر الحركة.", "رفع الحوض من الكرسي.", "دخول الركبة لجوه.", "النزول عميق أكتر من اللازم."], "t": "القدم فوق في اللوح بتشغّل الأرداف والخلفي أكتر، والقدم تحت بتشغّل الأمامي أكتر."}, "فراشة": {"m": "الصدر، والكتف الأمامي.", "s": ["اضبطي الكرسي بحيث المقابض تبقى في مستوى صدرك.", "اقعدي وضهرك ملزق في المسند وصدرك مرفوع.", "امسكي المقابض والكوع مثني شوية.", "قفّلي دراعاتك قدام صدرك في حركة نص دايرة.", "ارجعي ببطء لحد ما تحسي بفتح خفيف في الصدر."], "b": "زفير مع القفل، وشهيق مع الفتح.", "e": ["فتح الدراعين لورا زيادة عن اللزوم.", "رفع الكتاف.", "تقويس الضهر وإبعاده عن المسند."], "t": "ابدئي بوزن خفيف، وركزي على إحساس العضلة مش على التقل."}, "سوبرمان": {"m": "أسفل الضهر، والأرداف، والضهر العلوي.", "s": ["نامي على بطنك على المات، ودراعاتك مفرودة قدامك.", "رقبتك مستقيمة وعينك في الأرض.", "ارفعي دراعاتك ورجليكي من الأرض شوية (من 5 لـ 10 سم) في نفس الوقت.", "اثبتي ثانيتين.", "انزلي ببطء."], "b": "زفير مع الرفع، وشهيق مع النزول.", "e": ["رفع الراس لفوق.", "الرفع العالي قوي.", "الحركة السريعة."], "t": "لو فيه ألم في أسفل الضهر، ارفعي الدراعين بس أو الرجلين بس."}, "بيرد دوج": {"m": "الكور، وأسفل الضهر، والأرداف، والكتف.", "s": ["انزلي على ركبك وإيديكي، والإيد تحت الكتف والركبة تحت الحوض.", "ضهرك مفرود زي الترابيزة.", "افردي دراعك اليمين لقدام ورجلك الشمال لورا في نفس الوقت.", "اثبتي ثانيتين والحوض مستوي.", "ارجعي وبدّلي الجنب."], "b": "زفير مع الفرد، وشهيق مع الرجوع.", "e": ["تقويس الضهر.", "ميل الحوض لجنب.", "الحركة السريعة."], "t": "تمرين ممتاز لأصحاب آلام الضهر الخفيفة."}, "كرانش": {"m": "عضلات البطن العليا.", "s": ["نامي على ضهرك، والركبة مثنية والقدمين على الأرض.", "حطي إيديكي ورا راسك بخفة، من غير ما تشدي رقبتك.", "ارفعي لوحي الكتف من الأرض بعضلات البطن.", "اثبتي ثانية.", "انزلي ببطء."], "b": "زفير مع الطلوع، وشهيق مع النزول.", "e": ["شد الرقبة بالإيدين.", "الطلوع لحد ما تقعدي.", "رفع أسفل الضهر من الأرض."], "t": "خلي بين دقنك وصدرك مسافة قد قبضة الإيد."}, "ريفرس كرانش": {"m": "البطن السفلية.", "s": ["نامي على ضهرك ودراعاتك جنبك.", "ارفعي رجليكي والركبة مثنية 90 درجة.", "اسحبي الحوض من الأرض ناحية صدرك بعضلات البطن.", "انزلي ببطء."], "b": "زفير مع الرفع، وشهيق مع النزول.", "e": ["المرجحة بالرجلين.", "النزول بسرعة.", "شد الرقبة."], "t": "الحركة صغيرة، ومش لازم ترفعي الحوض كتير."}, "بايسكل كرانش": {"m": "البطن والجوانب (الخواصر).", "s": ["نامي على ضهرك وإيديكي ورا راسك.", "ارفعي كتافك ورجليكي من الأرض.", "قرّبي كوعك اليمين من ركبتك الشمال، ورجلك اليمين تتفرد.", "بدّلي للناحية التانية بإيقاع هادي."], "b": "زفير مع كل لفة.", "e": ["شد الرقبة.", "السرعة العالية.", "تحريك الكوع بس من غير لف الجذع."], "t": "ركزي على لف الكتف ناحية الركبة، مش الكوع."}, "ليج ريز": {"m": "البطن السفلية وعضلات الحوض.", "s": ["نامي على ضهرك ورجليكي مفرودين.", "حطي إيديكي تحت الحوض أو جنبك.", "ارفعي الرجلين مع بعض لحد ما يبقوا عموديين.", "نزّليهم ببطء لحد قبل الأرض بشوية."], "b": "زفير مع الرفع، وشهيق مع النزول.", "e": ["تقويس أسفل الضهر.", "النزول بسرعة.", "المرجحة."], "t": "لو أسفل ضهرك بيترفع من الأرض، اثني الركبة شوية."}, "بلانك على الكوعين": {"m": "الكور كله، والكتف، والأرداف.", "s": ["حطي الكوعين على المات تحت كتافك بالظبط.", "افردي رجليكي لورا على مشط القدم.", "جسمك خط مستقيم من الراس للكعب.", "اشدي البطن والأرداف.", "اثبتي المدة المطلوبة."], "b": "نفس هادي ومنتظم، وماتكتميش نفسك.", "e": ["نزول الحوض لتحت.", "رفع الحوض لفوق.", "البص لقدام."], "t": "ابدئي بـ 20 ثانية وزوّدي بالتدريج."}, "بلانك جانبي": {"m": "عضلات الجنب (الخواصر)، والكور، والكتف.", "s": ["نامي على جنبك والكوع تحت الكتف.", "حطي القدمين فوق بعض أو قدام بعض.", "ارفعي الحوض لحد ما جسمك يبقى خط مستقيم.", "ارفعي الدراع التاني لفوق.", "اثبتي، وبعدين بدّلي الجنب."], "b": "نفس هادي.", "e": ["نزول الحوض.", "ميل الجسم لقدام أو لورا."], "t": "النسخة الأسهل: سيبي الركبة التحتانية على الأرض."}, "بلانك لمس الكتف": {"m": "الكور، والكتف، والدراعين.", "s": ["خدي وضع البلانك العالي، والإيد تحت الكتف.", "افتحي القدمين أعرض من الحوض شوية عشان الثبات.", "المسي كتفك الشمال بإيدك اليمين.", "رجّعي الإيد وبدّلي.", "الحوض ثابت من غير مرجحة."], "b": "نفس منتظم.", "e": ["مرجحة الحوض يمين وشمال.", "رفع الأرداف لفوق."], "t": "النسخة الأسهل: اعمليه وانتي على ركبك."}, "ضغط على الركبة": {"m": "الصدر، والترايسبس، والكتف.", "s": ["الإيدين تحت الكتف أعرض شوية، والركب على المات.", "جسمك خط مستقيم من الراس للركبة.", "انزلي بصدرك ناحية الأرض، والكوع زاوية 45 درجة من جسمك.", "ادفعي لفوق."], "b": "شهيق مع النزول، وزفير مع الطلوع.", "e": ["نزول الحوض.", "فتح الكوع لبرة زيادة.", "النزول بالراس بس."], "t": "لو صعب عليكي، ابدئي بالضغط على الحيطة."}, "جلوت بريدج": {"m": "الأرداف، والفخذ الخلفي، وأسفل الضهر.", "s": ["نامي على ضهرك، والركبة مثنية والقدمين بعرض الحوض.", "دراعاتك جنبك.", "ارفعي الحوض لحد ما الكتف والحوض والركبة يبقوا خط واحد.", "اضغطي الأرداف ثانية.", "انزلي ببطء."], "b": "زفير مع الرفع، وشهيق مع النزول.", "e": ["تقويس الضهر في آخر الحركة.", "الدفع بالصوابع بدل الكعب."], "t": "ادفعي بالكعب، هتحسي بالأرداف أكتر."}, "دونكي كيك": {"m": "الأرداف.", "s": ["انزلي على ركبك وإيديكي، وضهرك مفرود.", "الركبة مثنية 90 درجة.", "ارفعي الرجل لورا ولفوق، وباطن القدم ناحية السقف.", "اثبتي ثانية.", "انزلي من غير ما الركبة تلمس الأرض، وكرري."], "b": "زفير مع الرفع.", "e": ["تقويس الضهر.", "ميل الحوض لجنب."], "t": "الحركة بتيجي من الأرداف، مش من الضهر."}, "كلام شيل": {"m": "الأرداف الجانبية والفخذ الخارجي.", "s": ["نامي على جنبك، والركبتين مثنيين والقدمين مع بعض.", "راسك على دراعك.", "افتحي الركبة الفوقانية، والقدمين لازقين في بعض.", "قفّلي ببطء."], "b": "زفير مع الفتح.", "e": ["لف الحوض لورا.", "الفتح بسرعة."], "t": "ممكن تحطي مطاط فوق الركبة عشان يصعب."}, "فاير هايدرانت": {"m": "الأرداف الجانبية والفخذ الخارجي.", "s": ["انزلي على ركبك وإيديكي، وضهرك مفرود.", "ارفعي ركبة لجنب لحد مستوى الحوض، والركبة مثنية.", "خلي الحوض ثابت.", "انزلي ببطء."], "b": "زفير مع الرفع.", "e": ["ميل الجسم للناحية التانية.", "تقويس الضهر."], "t": "ملحوظة: في الفيديو الرجل بتطلع لورا أكتر. الصح إن الركبة تطلع لجنب."}, "سايد ليج ريز": {"m": "الفخذ الخارجي والأرداف الجانبية.", "s": ["نامي على جنبك، والرجل التحتانية مثنية عشان الثبات.", "الرجل الفوقانية مفرودة.", "ارفعيها لحد 45 درجة تقريبًا، والصوابع لقدام.", "انزلي ببطء."], "b": "زفير مع الرفع.", "e": ["لف الحوض لورا.", "الرفع العالي قوي."], "t": "الحركة بطيئة أحسن من العدد الكتير."}, "بايسبس كيرل بدمبل": {"m": "البايسبس.", "s": ["اقفي والدمبل في كل إيد، وكف الإيد لقدام.", "الكوع لازق في جنبك.", "اطلعي بالدمبل لحد الكتف.", "انزلي ببطء."], "b": "زفير مع الطلوع، وشهيق مع النزول.", "e": ["المرجحة بالجسم.", "تحريك الكوع لقدام.", "النزول بسرعة."], "t": "ابدئي بوزن خفيف من 1 لـ 3 كيلو."}, "إطالة الفخذ الأمامي": {"m": "الفخذ الأمامي.", "s": ["اقفي وامسكي في حيطة.", "اثني ركبتك وامسكي قدمك بإيدك.", "قرّبي الكعب من الأرداف، والركبتين جنب بعض.", "اثبتي من 20 لـ 30 ثانية.", "بدّلي الرجل."], "b": "نفس عميق وهادي.", "e": ["ميل الجسم لقدام.", "فتح الركبة لبرة."], "t": "المفروض تحسي بشد مش بألم."}, "إطالة الفخذ الخلفي": {"m": "الفخذ الخلفي.", "s": ["اقعدي على المات، ورجل مفرودة ورجل مثنية.", "انحني من الحوض ناحية القدم المفرودة، وضهرك مفرود.", "اثبتي من 20 لـ 30 ثانية.", "بدّلي الرجل."], "b": "زفير وانتي بتنزلي.", "e": ["تقويس الضهر.", "الشد بقوة.", "الهز."], "t": "مش لازم توصلي لصوابع رجلك."}, "جامبينج جاك": {"m": "الجسم كامل، كارديو وتسخين.", "s": ["اقفي والقدمين مع بعض.", "اقفزي وافتحي رجليكي، والدراعين يطلعوا لفوق.", "ارجعي لنفس الوضع.", "حافظي على إيقاع منتظم."], "b": "نفس منتظم.", "e": ["النزول على الكعب.", "قفل الركبة."], "t": "النسخة من غير قفز: خطوة لجنب مع رفع الدراعين."}, "ركبة عالية": {"m": "كارديو، والفخذ الأمامي، والبطن.", "s": ["اقفي مستقيمة.", "ارفعي ركبتك لمستوى الحوض بالتبادل.", "حركي دراعاتك مع رجليكي.", "انزلي على مشط القدم."], "b": "نفس منتظم.", "e": ["الميل لورا.", "الركبة مش طالعة كفاية."], "t": "النسخة الأسهل: مشي في المكان بركبة عالية من غير قفز."}, "إطالة الأرداف": {"m": "الأرداف وأسفل الضهر.", "s": ["نامي على ضهرك والركبة مثنية.", "حطي رجل فوق الركبة التانية (شكل رقم 4).", "اسحبي الفخذ ناحية صدرك بإيديكي.", "اثبتي من 20 لـ 30 ثانية، وبدّلي."], "b": "نفس عميق.", "e": ["رفع الراس والكتاف من الأرض.", "الشد بقوة."], "t": "مفيدة جدًا بعد تمارين الأرداف والجري."}, "إطالة الصدر والأكتاف": {"m": "الصدر والكتف الأمامي.", "s": ["اقفي مستقيمة.", "شبّكي صوابعك ورا ضهرك.", "افردي دراعاتك وارفعيهم شوية مع فتح الصدر.", "الكتاف لتحت والبص لقدام.", "اثبتي من 20 لـ 30 ثانية."], "b": "نفس عميق.", "e": ["الميل لقدام.", "رفع الكتاف ناحية الودان."], "t": "ممتازة للي بتقعد كتير على الموبايل أو المكتب."}, "تنفس عميق": {"m": "تهدئة الجسم والقلب بعد التمرين.", "s": ["اقفي مسترخية.", "خدي شهيق بطيء من مناخيرك (4 عدّات) وانتي بترفعي دراعاتك.", "اعملي زفير بطيء من بُقك (6 عدّات) وانتي بتنزّليهم.", "كرري من 5 لـ 8 مرات."], "b": "الزفير أطول من الشهيق.", "e": ["التنفس بسرعة.", "رفع الكتاف مع الشهيق."], "t": "اعمليه في آخر كل حصة عشان النبض يهدى."}, "سكوات بوزن الجسم": {"m": "الفخذ الأمامي، والأرداف، والفخذ الخلفي.", "s": ["القدمين بعرض الكتفين، والصوابع لبرة شوية.", "الدراعين قدامك.", "انزلي بالحوض لورا ولتحت كأنك بتقعدي على كرسي.", "انزلي لحد ما الفخذ يبقى موازي للأرض، أو على قد قدرتك.", "اطلعي وانتي بتدفعي بالكعب."], "b": "شهيق مع النزول، وزفير مع الطلوع.", "e": ["دخول الركبة لجوه.", "رفع الكعب من الأرض.", "تقويس الضهر."], "t": "ابدئي بالسكوات على كرسي لو لسه بتتعلمي."}, "ماونتن كلايمبر": {"m": "البطن، والكتف، وكارديو.", "s": ["خدي وضع البلانك العالي.", "اسحبي ركبة ناحية صدرك وبدّلي.", "سرعة متوسطة ومنتظمة.", "الحوض واطي وثابت."], "b": "نفس منتظم.", "e": ["رفع الأرداف.", "الإيد قدام الكتف."], "t": "النسخة الأسهل: اعمليها ببطء خطوة خطوة."}, "روسيان تويست": {"m": "الجوانب والبطن.", "s": ["اقعدي والركبة مثنية، والكعب على الأرض أو مرفوع شوية.", "ميلي لورا شوية وضهرك مفرود.", "لفي الجذع يمين وشمال."], "b": "زفير مع كل لفة.", "e": ["تقويس الضهر.", "اللف بالدراعين بس."], "t": "الكعب على الأرض أسهل للمبتدئين."}, "إطالة الظهر (وضعية الطفل)": {"m": "الضهر، والحوض، والكتف.", "s": ["اركعي على المات.", "ارجعي بالحوض ناحية الكعب.", "افردي دراعاتك لقدام على الأرض.", "حطي جبهتك على الأرض.", "خدي نفس عميق من 30 لـ 45 ثانية."], "b": "نفس عميق وبطيء.", "e": ["الشد بقوة.", "رفع الحوض لفوق."], "t": "لو الركبة بتوجعك، حطي مخدة صغيرة تحتها."}, "إطالة الظهر العلوي (عناق الذراعين)": {"m": "الضهر العلوي والكتف.", "s": ["اقفي مستقيمة.", "شبّكي إيديكي قدامك.", "ادفعي دراعاتك لقدام، وقوّسي أعلى ضهرك.", "الكتاف مسترخية.", "اثبتي من 20 لـ 30 ثانية."], "b": "نفس عميق.", "e": ["رفع الكتاف.", "حني الرقبة بقوة."], "t": "مفيدة جدًا بعد تمارين السحب."}, "كيك باك ترايسبس بدمبل": {"m": "الترايسبس.", "s": ["ميلي لقدام من الحوض وضهرك مفرود، وإيد على البنش.", "الكوع جنب جسمك، والدراع العلوي موازي للأرض.", "افردي دراعك لورا لحد ما يتفرد خالص.", "ارجعي ببطء."], "b": "زفير مع الفرد.", "e": ["تحريك الكوع لتحت وفوق.", "المرجحة بالجسم."], "t": "وزن خفيف، والتركيز على عضلة ورا الدراع."}, "دبس": {"m": "الترايسبس والكتف.", "s": ["اقعدي على طرف البنش، والإيدين جنب الحوض.", "انزلي من على البنش، ورجليكي قدامك.", "نزّلي جسمك بثني الكوع لورا لحد 90 درجة.", "اطلعي وانتي بتفردي دراعاتك."], "b": "شهيق مع النزول، وزفير مع الطلوع.", "e": ["فتح الكوع لبرة.", "النزول عميق قوي، وده بيضغط على الكتف."], "t": "الركبة مثنية أسهل، والرجل مفرودة أصعب."}};
 function explHTML(n){const x=EXPL[n];if(!x)return '';
- return `<details class="ex" open><summary>👩‍🏫 شرح كابتن هبة</summary>
+ return `<details class="ex" open><summary>👩‍🏫 شرح كابتن هبة · تحت إشراف د. يوسف المصري</summary>
  <div class="exb"><b>🎯 بيشتغل على:</b> ${esc(x.m)}</div>
  <div class="exb"><b>📋 طريقة الأداء:</b><ol>${x.s.map(i=>`<li>${esc(i)}</li>`).join('')}</ol></div>
  <div class="exb"><b>🫁 التنفس:</b> ${esc(x.b)}</div>
@@ -737,7 +821,7 @@ function backup(){
    const images={};
    for(const g of Object.values(PG))for(const id of (g.imgs||[])){const b=await idbGet(id);if(b)images[id]=await blob2url(b)}
    const name='women-health-gym-'+todayISO()+'.json';
-   const blob=new Blob([JSON.stringify({app:'women-health-gym',v:1,at:Date.now(),plan20:true,members:DB,programs:PG,prices:PR,images,lib:LIB.map(x=>({...x,videos:(x.videos||[]).filter(v=>v.kind==='link')}))},null,1)],{type:'application/json'});
+   const blob=new Blob([JSON.stringify({app:'women-health-gym',v:1,at:Date.now(),plan20:true,classes:CLASSES,settings:SET,members:DB,programs:PG,prices:PR,images,lib:LIB.map(x=>({...x,videos:(x.videos||[]).filter(v=>v.kind==='link')}))},null,1)],{type:'application/json'});
    const file=new File([blob],name,{type:'application/json'});
    if(navigator.canShare&&navigator.canShare({files:[file]}))await navigator.share({files:[file],title:name});
    else{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}
@@ -754,6 +838,7 @@ function backup(){
    const imgs=j.images||{};for(const id in imgs){const b=await (await fetch(imgs[id])).blob();await idbPut(id,b)}
    if(j.plan20)for(const n in (j.programs||{})){const g=j.programs[n];if(g&&(g.title||g.notes||(g.imgs&&g.imgs.length)))PG[n]=g}
    savePG();Object.assign(PR,j.prices||{});savePR();
+   if(Array.isArray(j.classes)&&j.classes.length){CLASSES=j.classes;saveClasses()}if(j.settings&&j.settings.wa){SET=j.settings;saveSet()}
    if(Array.isArray(j.lib)){for(const x of j.lib){if(!x||!x.id)continue;const o=LIB.find(y=>y.id===x.id);if(!o)LIB.push({...x,videos:x.videos||[]});else{o.name=x.name;o.notes=x.notes;o.group=x.group;for(const v of (x.videos||[]))if(!o.videos.some(y=>y.id===v.id))o.videos.push(v)}}saveLib()}
    toast('اترجعت ✓');go({v:'home'});
   }catch(err){toast('الملف ده مش نسخة صحيحة')}

@@ -138,6 +138,10 @@ if(localStorage.getItem('gy_seed7')!=='1'){
  for(const n of ['كرانش','ريفرس كرانش'])if(!LIB.some(x=>x.type==='ex'&&x.name===n))LIB.push({id:uid0(),type:'ex',group:'البطن',name:n,notes:'',videos:[]});
  localStorage.setItem('gy_seed7','1');saveLib();
 }
+if(localStorage.getItem('gy_seed8')!=='1'){
+ for(const n of ['بايسكل كرانش','ليج ريز'])if(!LIB.some(x=>x.type==='ex'&&x.name===n))LIB.push({id:uid0(),type:'ex',group:'البطن',name:n,notes:'',videos:[]});
+ localStorage.setItem('gy_seed8','1');saveLib();
+}
 if(localStorage.getItem('gy_seed6')!=='1'){
  for(const [g,n] of [['الظهر','سوبرمان'],['الظهر','بيرد دوج']])if(!LIB.some(x=>x.type==='ex'&&x.name===n))LIB.push({id:uid0(),type:'ex',group:g,name:n,notes:'',videos:[]});
  localStorage.setItem('gy_seed6','1');saveLib();
@@ -562,7 +566,7 @@ function ytEmbed(u){
   return /^[\w-]{6,}$/.test(id)?'https://www.youtube-nocookie.com/embed/'+id:'';
  }catch(e){return ''}
 }
-const SITE_VIDEOS={'تريدميل (جهاز المشي)':'videos/treadmill.mp4','عجل (بايسكل)':'videos/bike.mp4','أوربتراك (إليبتيكال)':'videos/elliptical.mp4','الكريزي (Crazy Fit)':'videos/crazyfit.mp4','سحب أمامي':'videos/lat-pulldown.mp4','سحب خلفي':'videos/seated-row.mp4','ليج بريس':'videos/leg-press.mp4','فراشة':'videos/butterfly.mp4','سوبرمان':'videos/superman.mp4','بيرد دوج':'videos/bird-dog.mp4','كرانش':'videos/crunch.mp4','ريفرس كرانش':'videos/reverse-crunch.mp4'};
+const SITE_VIDEOS={'تريدميل (جهاز المشي)':'videos/treadmill.mp4','عجل (بايسكل)':'videos/bike.mp4','أوربتراك (إليبتيكال)':'videos/elliptical.mp4','الكريزي (Crazy Fit)':'videos/crazyfit.mp4','سحب أمامي':'videos/lat-pulldown.mp4','سحب خلفي':'videos/seated-row.mp4','ليج بريس':'videos/leg-press.mp4','فراشة':'videos/butterfly.mp4','سوبرمان':'videos/superman.mp4','بيرد دوج':'videos/bird-dog.mp4','كرانش':'videos/crunch.mp4','ريفرس كرانش':'videos/reverse-crunch.mp4','بايسكل كرانش':'videos/bicycle-crunch.mp4','ليج ريز':'videos/leg-raise.mp4'};
 let lt='eq',lbq='';
 function lib(){
  const eqs=LIB.filter(x=>x.type==='eq'),exs=LIB.filter(x=>x.type==='ex');

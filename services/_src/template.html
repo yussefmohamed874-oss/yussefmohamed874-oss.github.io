@@ -78,7 +78,7 @@ section{padding:64px 0}
 /* step 1 inbody */
 .diag{display:grid;grid-template-columns:.9fr 1.1fr;gap:28px;align-items:center;background:var(--surface);border-radius:26px;padding:22px;box-shadow:0 10px 40px rgba(18,26,51,.07);border:1px solid var(--line)}
 .diag .photo{border-radius:18px;overflow:hidden;position:relative}
-.diag .photo img{width:100%;aspect-ratio:4/3;object-fit:cover}
+.diag .photo img{width:100%;aspect-ratio:4/5;object-fit:cover;object-position:center 8%;max-height:520px}
 .diag .photo span{position:absolute;top:12px;inset-inline-start:12px;background:var(--night);color:var(--gold-2);font-weight:700;font-size:13px;padding:4px 12px;border-radius:999px}
 .ib{background:linear-gradient(160deg,var(--night),var(--night-2));color:var(--night-ink);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:14px}
 .ib-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;border-bottom:1px solid rgba(255,255,255,.12);padding-bottom:10px}
@@ -97,6 +97,14 @@ section{padding:64px 0}
 .dp small{display:block;color:var(--muted);font-size:14px}
 @media(max-width:820px){.diag{grid-template-columns:1fr}.measure{grid-template-columns:1fr}}
 /* packages */
+.feat{position:relative;display:grid;grid-template-columns:1.4fr 1fr;gap:24px;align-items:center;margin-bottom:26px;padding:26px 24px 22px;border-radius:24px;background:linear-gradient(120deg,rgba(232,185,80,.18),rgba(232,185,80,.04));border:1.5px solid var(--gold-2)}
+.feat h3{font-size:24px;margin-bottom:6px}
+.feat ul{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:4px 16px}
+.feat li{display:flex;gap:8px;font-size:15.5px;padding:3px 0}.feat li .ic{color:var(--gold-2);margin-top:4px}
+.feat-side{display:flex;flex-direction:column;gap:10px}
+.gift{background:#d92d20;color:#fff;border-radius:14px;padding:9px 14px;font-weight:700;text-align:center}
+.feat .price b{font-size:56px}
+@media(max-width:760px){.feat{grid-template-columns:1fr}.feat ul{grid-template-columns:1fr}}
 .pkgs{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
 .pkg{position:relative;background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.02));border:1px solid rgba(232,185,80,.28);border-radius:22px;padding:24px 20px 20px;display:flex;flex-direction:column}
 .pkg h3{font-size:19px}
@@ -128,7 +136,7 @@ section{padding:64px 0}
 .svc{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column;transition:box-shadow .2s,transform .2s}
 .svc:hover{box-shadow:0 14px 34px rgba(18,26,51,.1);transform:translateY(-2px)}
 .svc .media{position:relative;aspect-ratio:4/5;background:var(--night);overflow:hidden}
-.svc .media video,.svc .media svg{width:100%;height:100%;object-fit:cover}
+.svc .media video,.svc .media svg,.svc .media img{width:100%;height:100%;object-fit:cover}
 .svc .media .note{position:absolute;top:10px;inset-inline-start:10px;background:rgba(12,20,48,.8);color:var(--night-muted);font-size:12px;padding:2px 10px;border-radius:999px}
 .icon-tile{height:118px;display:grid;place-items:center;background:radial-gradient(240px 120px at 70% 0,rgba(232,185,80,.25),transparent 70%),linear-gradient(150deg,var(--night),var(--night-2));color:var(--gold-2)}
 .svc-body{padding:16px 18px 18px;display:flex;flex-direction:column;flex:1}
@@ -224,14 +232,7 @@ footer a{color:var(--gold-2)}
 <section id="diet"><div class="wrap">
   <div class="sec-head"><span class="num">الخطوة 01</span><h2>كشف الدايت بجهاز الإنبادي</h2><p>قبل أي جلسة، لازم نعرف جسمك من جوه. الجهاز بيحلل مكونات الجسم في دقيقة وبيطلع تقرير مفصّل نبني عليه نظامك الغذائي وخطة الجلسات.</p></div>
   <div class="diag">
-    <div class="ib" role="img" aria-label="شكل توضيحي لتقرير تحليل مكونات الجسم">
-      <div class="ib-head"><span>تقرير تحليل مكونات الجسم</span><small>مثال توضيحي</small></div>
-      <div class="ib-row"><span>الدهون</span><i><b style="width:72%;background:#e8b950"></b></i><em>عالية</em></div>
-      <div class="ib-row"><span>العضلات</span><i><b style="width:48%;background:#5b8def"></b></i><em>طبيعية</em></div>
-      <div class="ib-row"><span>المياه</span><i><b style="width:55%;background:#3fc1c9"></b></i><em>طبيعية</em></div>
-      <div class="ib-row"><span>الدهون الحشوية</span><i><b style="width:64%;background:#ff8f6b"></b></i><em>مرتفعة</em></div>
-      <div class="ib-grid"><div><b>BMR</b><span>معدل الحرق</span></div><div><b>BMI</b><span>مؤشر الكتلة</span></div><div><b>الهدف</b><span>الوزن المثالي</span></div></div>
-    </div>
+    <div class="photo"><img src="media/dev-inbody.jpg" alt="جهاز تحليل مكونات الجسم في Physio Art" loading="lazy"><span>جهاز تحليل مكونات الجسم</span></div>
     <div>
       <h3 style="font-size:20px">الجهاز بيقيس لك:</h3>
       <ul class="measure">
@@ -253,6 +254,14 @@ footer a{color:var(--gold-2)}
 
 <section id="offers" class="dark"><div class="wrap">
   <div class="sec-head"><span class="num">الخطوة 02</span><h2>عروض النحت وشد الترهلات <span class="off">خصم 50%</span></h2><p>كل باقة جلسة كاملة بأكتر من جهاز في نفس اليوم. الأسعار للجلسة الواحدة.</p></div>
+  <div class="feat">
+    <span class="ribbon">عرض خاص + هدية</span>
+    <div class="feat-main"><h3>عرض الـ15 جلسة نحت</h3>
+      <ul><li>{{ICON_CHECK}}3 جلسات كرايو لتكسير الدهون بالتجميد</li><li>{{ICON_CHECK}}3 جلسات كافيتيشن لتفتيت الدهون</li><li>{{ICON_CHECK}}3 جلسات راديو فريكونسي لشد الترهلات</li><li>{{ICON_CHECK}}3 جلسات ليزر بارد</li><li>{{ICON_CHECK}}3 جلسات سليندر لتصريف الدهون وشد الجلد</li></ul></div>
+    <div class="feat-side"><div class="gift">🎁 هدية: <b>10 حقن ميزوثيرابي</b></div>
+      <div class="price"><b>450</b><span>جنيه للـ15 جلسة</span><s>900 ج</s></div>
+      <a class="btn btn-gold" href="{{WA_FEAT}}" target="_blank" rel="noopener">احجز العرض</a></div>
+  </div>
   <div class="pkgs">{{PACKAGES}}</div>
   <div class="mounj">
     <video data-src="media/mounjaro.mp4" poster="media/mounjaro.jpg" muted loop playsinline preload="none" aria-label="فيديو عرض المونجارو"></video>

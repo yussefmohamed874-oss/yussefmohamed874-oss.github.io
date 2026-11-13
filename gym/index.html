@@ -142,6 +142,12 @@ let DB=ld(KEY,[]),PG=ld(PKEY,{}),PR=ld(PRKEY,{});
 const save=()=>localStorage.setItem(KEY,JSON.stringify(DB));
 const savePG=()=>localStorage.setItem(PKEY,JSON.stringify(PG));
 const savePR=()=>localStorage.setItem(PRKEY,JSON.stringify(PR));
+const PCOUNT=100;
+const PNAMES=['حرق دهون للمبتدئات','حرق دهون متوسط','حرق دهون متقدم','هيت 20 دقيقة','كارديو خفيف','حرق الكرش','حرق دهون الأرداف والفخذين','حرق دهون الذراعين','حرق دهون الجسم كامل','تحدي حرق الدهون 30 يوم','تضخيم الأرداف','نحت الأرداف للمبتدئات','أرداف مرفوعة','فخذين مشدودين','نحت السمانة','قوام الساعة الرملية','نحت الخصر','تناسق الجسم السفلي','الأرداف بالمطاط','الأرداف بالدمبلز','بطن مشدود للمبتدئات','بطن مسطح','نحت الخصر والجنب','تقوية الكور','البطن بعد الولادة','شد الكرش المترهل','تحدي البلانك 14 يوم','البطن بالأوزان','البطن السفلي','البطن في 10 دقايق','ذراعين مشدودين','شد ترهلات الذراع','الأكتاف والذراعين','الظهر الجميل','الصدر والأكتاف','تقوية الظهر','تصحيح الوقفة','الجزء العلوي بالدمبلز','الجزء العلوي بالمطاط','دمبلز خفيف للمبتدئات','فول بودي للمبتدئات','فول بودي متوسط','فول بودي متقدم','جسم كامل 3 أيام','جسم كامل 4 أيام','جسم كامل 5 أيام','تمارين الدايرة (Circuit)','تمارين بوزن الجسم','تمارين في 30 دقيقة','برنامج الأسبوع الأول','برنامج التريدميل','برنامج الأوربتراك','برنامج العجل (البايسكل)','ليج بريس وليج إكستنشن','السحب الأمامي والخلفي','الفراشة وتمارين الصدر','الأجهزة للمبتدئات','الأجهزة متوسط','جولة الأجهزة كاملة','برنامج الستيبات','دمبلز للمبتدئات','دمبلز متوسط','دمبلز متقدم','المطاط للجسم كامل','المطاط للأرداف','المطاط للذراعين','المطاط للبطن','الستيب والدمبلز','كارديو بالستيب','أوزان خفيفة وعدّات كتير','زومبا للمبتدئات','زومبا حرق دهون','زومبا بالطاقة العالية','إيروبكس للمبتدئات','إيروبكس متوسط','إيروبكس حرق دهون','نط الحبل','نط الحبل والكارديو','بانجي فيتنس','البانجي لشد الجسم','الألعاب التفاعلية','الألعاب التفاعلية للكارديو','مرونة وإطالات الصباح','إطالات بعد التمرين','فوم رولر للاسترخاء','يوجا للمبتدئات','يوجا للمرونة','تنفس واسترخاء','تمارين لطيفة للظهر','تمارين لطيفة للركبة','برنامج الشهر الأول','برنامج الشهر التاني','برنامج الشهر التالت','تثبيت الوزن','التنشيف','جسم الصيف','تجهيز العروسة','تمارين رمضان الخفيفة','تمارين المكتب','تمارين البيت'];
+if(localStorage.getItem('gy_pnames')!=='1'){
+ for(let n=1;n<=PCOUNT;n++){const g=PG[n]=PG[n]||{title:'',notes:'',imgs:[]};if(!g.title)g.title=PNAMES[n-1]}
+ localStorage.setItem('gy_pnames','1');savePG();
+}
 if(navigator.storage&&navigator.storage.persist)navigator.storage.persist();
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 
@@ -235,12 +241,12 @@ function bindCards(root){
 // ===== الرئيسية =====
 let q='';
 function counts(){const c={act:0,soon:0,exp:0,inq:0,subs:0};DB.forEach(p=>{if(p.kind==='inq'){c.inq++;return}c.subs++;const s=status(p);if(s.k==='act')c.act++;else if(s.k==='soon'){c.act++;c.soon++}else if(s.k==='exp')c.exp++});return c}
-function progReady(n){const g=PG[n];return !!(g&&(g.title||g.notes||(g.imgs&&g.imgs.length)))}
+function progReady(n){const g=PG[n];return !!(g&&(g.notes||(g.imgs&&g.imgs.length)||(g.ex&&g.ex.length)))}
 function home(){
  const c=counts();
  const last=+localStorage.getItem('gy_last_backup')||Math.min(...DB.map(p=>p.created||Date.now()),Date.now());
  const needBk=(DB.length>0||Object.keys(PG).length>0)&&Date.now()-last>7*864e5;
- const ready=Array.from({length:50},(_,i)=>i+1).filter(progReady).length;
+ const ready=Array.from({length:PCOUNT},(_,i)=>i+1).filter(progReady).length;
  $('#app').innerHTML=`
  <div class="hdr"><div class="row"><div style="flex:1"><h1>Women Health GYM</h1><div class="sub">إدارة المشتركات والبرامج</div></div></div>
  <input class="search" id="q" type="search" placeholder="🔍 دوّر برقم التليفون أو الاسم..." value="${esc(q)}" autocomplete="off"></div>
@@ -262,7 +268,7 @@ function home(){
   </div>
   <button class="tile" onclick="go({v:'list',k:'subs',f:'all'})"><span class="ic" style="background:#F1EAFB">👩</span><b>كل المشتركات</b><span class="n">${c.subs}</span></button>
   <button class="tile" onclick="go({v:'list',k:'inq'})"><span class="ic" style="background:#FFF6CC">🆕</span><b>عميلات بتسأل</b><span class="n">${c.inq}</span></button>
-  <button class="tile" onclick="go({v:'programs'})"><span class="ic" style="background:#E3ECFD">🏋️</span><b>برامج الكابتن (1 – 50)</b><span class="n">${ready}/50</span></button>
+  <button class="tile" onclick="go({v:'programs'})"><span class="ic" style="background:#E3ECFD">🏋️</span><b>برامج الكابتن (1 – 100)</b><span class="n">${ready}/100</span></button>
   <button class="tile" onclick="go({v:'lib'})"><span class="ic" style="background:#E8F7F0">🎥</span><b>الأجهزة والتمارين (فيديوهات)</b><span class="n">${LIB.filter(x=>(x.videos||[]).length).length}/${LIB.length}</span></button>
   <div class="foot"><button onclick="go({v:'backup'})">💾 النسخة الاحتياطية</button><a href="../clinic/">🏥 تطبيق العيادات</a></div>`;
  };
@@ -321,7 +327,7 @@ function parseGym(raw){
  if(/(بتسال|بتستفسر|استفسار|عايزه تعرف|بتسال)/.test(t))out.kind='inq';
  // البرنامج
  const pg=t.match(/برنامج\s*(?:رقم\s*)?(\d{1,2})(?!\d)/);
- if(pg&&+pg[1]>=1&&+pg[1]<=50){out.program=pg[1];t=t.replace(pg[0],' , ')}
+ if(pg&&+pg[1]>=1&&+pg[1]<=100){out.program=pg[1];t=t.replace(pg[0],' , ')}
  // المدة
  let m=null;const mm=t.match(/(\d{1,2})\s*(?:شهور|اشهر|شهر)/);
  if(mm)m=+mm[1];
@@ -397,7 +403,7 @@ function form(){
   <div class="lbl">نوع الاشتراك</div><div class="chips" id="c-plan">${PLANS.map(p=>`<button class="chip" data-v="${p.id}">${p.name}</button>`).join('')}</div>
   <div class="lbl">قيمة الاشتراك (جنيه)</div><input class="inp" id="f-price" type="number" inputmode="numeric" value="${esc(F.price)}">
   <div class="lbl">تاريخ البدء ← تاريخ الانتهاء</div><div class="two"><input class="inp" id="f-start" type="date" value="${esc(F.start)}"><input class="inp" id="f-end" type="date" value="${esc(F.end)}"></div>
-  <div class="lbl">رقم البرنامج (1 – 50) · اختياري</div><input class="inp" id="f-program" type="number" inputmode="numeric" min="1" max="50" value="${esc(F.program)}">
+  <div class="lbl">رقم البرنامج (1 – 100) · اختياري</div><input class="inp" id="f-program" type="number" inputmode="numeric" min="1" max="100" value="${esc(F.program)}">
  </div>
  <div class="lbl" id="nl">ملاحظات</div><textarea class="inp" id="f-note">${esc(F.note)}</textarea>
  <button class="btn" id="sv">✓ احفظ</button>
@@ -438,7 +444,7 @@ function form(){
   if(!F.name&&!F.phone){toast('اكتب الاسم أو الرقم على الأقل');return}
   if(F.kind==='sub'){
    F.price=$('#f-price').value.trim();F.start=$('#f-start').value;F.end=$('#f-end').value;F.program=$('#f-program').value.trim();
-   if(F.program&&(+F.program<1||+F.program>50)){toast('رقم البرنامج من 1 لـ 50');return}
+   if(F.program&&(+F.program<1||+F.program>100)){toast('رقم البرنامج من 1 لـ 100');return}
    if(F.start&&F.end&&F.end<F.start){toast('تاريخ الانتهاء قبل البدء!');return}
    if(F.plan&&F.plan!=='x'&&F.price){PR[F.plan]=F.price;savePR()}
   }else{F.plan='';F.months=0;F.price='';F.start='';F.end='';F.program=''}
@@ -458,12 +464,21 @@ function dupCheck(ph){
 }
 
 // ===== برامج الكابتن =====
+let pgq='';
 function programs(){
- const ready=Array.from({length:50},(_,i)=>i+1).filter(progReady).length;
+ const ready=Array.from({length:PCOUNT},(_,i)=>i+1).filter(progReady).length;
  $('#app').innerHTML=`
- <div class="hdr"><div class="row"><button class="back" onclick="history.back()">→</button><div style="flex:1"><h1>🏋️ برامج الكابتن</h1><div class="sub">${ready} من 50 جاهزين · دوس على رقم البرنامج</div></div></div></div>
- <main><div class="grid">${Array.from({length:50},(_,i)=>i+1).map(n=>{const g=PG[n]||{};return `<button class="cell ${progReady(n)?'on':''}" data-n="${n}"><b>${n}</b><span>${esc(g.title||'')}</span></button>`}).join('')}</div></main>`;
- document.querySelectorAll('[data-n]').forEach(x=>x.onclick=()=>go({v:'prog',n:+x.dataset.n}));
+ <div class="hdr"><div class="row"><button class="back" onclick="history.back()">→</button><div style="flex:1"><h1>🏋️ برامج الكابتن</h1><div class="sub">${PCOUNT} برنامج · ${ready} فيهم تمارين أو صور</div></div></div>
+ <input class="search" id="pgq" type="search" placeholder="🔍 دوّر برقم البرنامج أو اسمه..." value="${esc(pgq)}"></div>
+ <main><div id="pl"></div></main>`;
+ const draw=()=>{
+  const q=normAr(pgq).trim();
+  const rows=Array.from({length:PCOUNT},(_,i)=>i+1).filter(n=>!q||String(n)===q||normAr((PG[n]||{}).title).includes(q));
+  $('#pl').innerHTML=rows.length?rows.map(n=>{const g=PG[n]||{};return `<button class="li" data-n="${n}"><span class="badge b-none" style="background:${progReady(n)?'#FFF6CC':'#F1EAFB'};color:${progReady(n)?'#8a6d00':'var(--purple)'};min-width:42px;text-align:center;font-size:17px">${n}</span><b>${esc(g.title||'برنامج '+n)}</b>${progReady(n)?'<span class="vb">✓ جاهز</span>':''}<span style="color:#bbb">‹</span></button>`}).join(''):'<div class="empty">مفيش برنامج بالاسم ده</div>';
+  document.querySelectorAll('[data-n]').forEach(x=>x.onclick=()=>go({v:'prog',n:+x.dataset.n}));
+ };
+ draw();
+ $('#pgq').oninput=e=>{pgq=e.target.value;draw()};
 }
 async function prog(){
  const n=view.n;
@@ -479,7 +494,7 @@ async function prog(){
  <div class="lbl">تمارين البرنامج (من مكتبة الفيديوهات)</div><div class="chips" id="gx"></div>
  <select class="inp" id="gsel" style="margin-top:8px"><option value="">＋ ضيف تمرين للبرنامج...</option>${[...GROUPS,''].map(gr=>{const it=LIB.filter(x=>x.type==='ex'&&(x.group||'')===gr);return it.length?`<optgroup label="${esc(gr||'تانية')}">${it.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('')}</optgroup>`:''}).join('')}</select>
  ${on.length?`<div class="lbl">المشتركات على البرنامج ده (${on.length})</div><div class="chips">${on.map(p=>`<span class="chip">${esc(p.name||p.phone)}</span>`).join('')}</div>`:''}
- <div class="nav2"><button id="pv" ${n<=1?'disabled style="opacity:.4"':''}>› السابق</button><button id="nx" ${n>=50?'disabled style="opacity:.4"':''}>التالي ‹</button></div>
+ <div class="nav2"><button id="pv" ${n<=1?'disabled style="opacity:.4"':''}>› السابق</button><button id="nx" ${n>=100?'disabled style="opacity:.4"':''}>التالي ‹</button></div>
  <button class="btn" id="ok">✓ تمام</button>
  </main>`;
  let tm;const auto=()=>{clearTimeout(tm);tm=setTimeout(()=>{g.title=$('#g-title').value.trim();g.notes=$('#g-notes').value;savePG()},300)};

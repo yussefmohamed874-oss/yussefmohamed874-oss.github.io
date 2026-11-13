@@ -206,9 +206,21 @@ function cardHTML(p,showWhere){
   ${p.phone?`<a class="a-call" href="tel:${esc(digits(p.phone))}">📞 اتصال</a><a class="a-wa" href="${waLink(p.phone)}" target="_blank">واتساب</a>`:''}
   <button class="a-ed" data-ed="${p.id}">✏️ تعديل</button>
   ${p.status==='new'?`<button class="a-go" data-go="${p.id}">✓ بدأ</button>`:''}
- </div></div>`;
+ </div>
+ ${(p.photos||[]).length?`<div class="cmpstrip" data-cmp="${p.id}" style="margin-top:8px;cursor:pointer"></div>`:''}
+ </div>`;
 }
 function bindCards(root){
+ root.querySelectorAll('[data-cmp]').forEach(async box=>{
+  const rec=DB.find(r=>r.id===box.dataset.cmp);if(!rec)return;
+  const ph=sortPh(rec.photos||[]),bef=ph.filter(x=>x.kind==='before').pop()||ph[0],aft=ph.filter(x=>x.kind==='after').pop()||ph[ph.length-1];
+  const pair=(bef&&aft&&bef.id!==aft.id)?[bef,aft]:[ph[ph.length-1]];
+  const urls=[];for(const x of pair){const bl=await idbGet(x.id);if(bl)urls.push({u:URL.createObjectURL(bl),x})}
+  if(!urls.length)return;
+  box.innerHTML=`<div style="display:grid;grid-template-columns:${urls.length===2?'1fr 1fr':'1fr'};gap:6px">${urls.map(o=>`<div style="position:relative;aspect-ratio:3/4;border-radius:10px;overflow:hidden;background:#ddd"><img src="${o.u}" style="width:100%;height:100%;object-fit:cover"><div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.55);color:#fff;font-size:12px;text-align:center">${o.x.kind==='after'?'بعد':'قبل'} · ${phDate(o.x.date)}</div></div>`).join('')}</div><div class="pr" style="font-size:13px;text-align:center;margin-top:4px">👆 دوسي عشان تقارني الصور بالحجم الكبير</div>`;
+  box.onclick=()=>openCmp(rec);
+ });
+
  root.querySelectorAll('[data-ped]').forEach(x=>x.onclick=()=>go({v:'pform',id:x.dataset.ped}));
  root.querySelectorAll('[data-ed]').forEach(x=>x.onclick=()=>go({v:'form',id:x.dataset.ed}));
  root.querySelectorAll('[data-go]').forEach(x=>x.onclick=()=>{
@@ -334,6 +346,24 @@ function setBtn(on){const b=$('#vb');if(!b)return;b.classList.toggle('rec',on);b
 
 // ===== فورم الإضافة/التعديل =====
 let F=null;
+// ===== صور قبل وبعد (على الموبايل بس) =====
+const pidb=new Promise((res,rej)=>{const r=indexedDB.open('pa_img',1);r.onupgradeneeded=()=>r.result.createObjectStore('i');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});
+async function pidbOp(mode,fn){const d=await pidb;return new Promise((res,rej)=>{const t=d.transaction('i',mode);const rq=fn(t.objectStore('i'));t.oncomplete=()=>res(rq&&rq.result);t.onerror=()=>rej(t.error)})}
+const idbPut=(k,v)=>pidbOp('readwrite',s=>s.put(v,k)),idbGet=k=>pidbOp('readonly',s=>s.get(k)),idbDel=k=>pidbOp('readwrite',s=>s.delete(k));
+function compressImg(file){return new Promise((res,rej)=>{const u=URL.createObjectURL(file),im=new Image();im.onload=()=>{const M=1200,sc=Math.min(1,M/Math.max(im.width,im.height));const c=document.createElement('canvas');c.width=Math.round(im.width*sc);c.height=Math.round(im.height*sc);c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);c.toBlob(b=>b?res(b):rej(new Error('x')),'image/jpeg',.82)};im.onerror=()=>rej(new Error('img'));im.src=u})}
+const sortPh=a=>[...a].sort((x,y)=>x.date<y.date?-1:x.date>y.date?1:0);
+const phDate=d=>{try{return new Date(d+'T00:00').toLocaleDateString('ar-EG',{day:'numeric',month:'short',year:'numeric'})}catch(e){return d}};
+async function openCmp(rec){
+ const ph=sortPh(rec.photos||[]);if(!ph.length)return;
+ const bef=ph.filter(x=>x.kind==='before'),aft=ph.filter(x=>x.kind==='after');
+ const pick=[bef[bef.length-1]||ph[0],aft[aft.length-1]||ph[ph.length-1]];
+ const urls=[];for(const x of pick){const bl=await idbGet(x.id);if(bl)urls.push({u:URL.createObjectURL(bl),x})}
+ const o=document.createElement('div');o.className='ov';o.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:60;overflow:auto;padding:16px';
+ o.innerHTML=`<div style="color:#fff;text-align:center;font-weight:900;font-size:20px;margin:8px 0 12px">${esc(rec.name||'')} · قبل وبعد</div>
+ <div style="display:grid;grid-template-columns:${urls.length===2?'1fr 1fr':'1fr'};gap:8px">${urls.map(z=>`<div><img src="${z.u}" style="width:100%;border-radius:12px"><div style="color:#fff;text-align:center;font-weight:800;margin-top:4px">${z.x.kind==='after'?'بعد':'قبل'} · ${phDate(z.x.date)}</div></div>`).join('')}</div>
+ <div style="color:#ddd;text-align:center;font-size:14px;margin:12px 0">دوسي في أي مكان عشان تقفلي</div>`;
+ o.onclick=()=>o.remove();document.body.appendChild(o);
+}
 function form(){
  const ex=view.id?DB.find(p=>p.id===view.id):null;
  F=ex?{...ex}:{id:null,name:'',phone:'',branch:view.branch||'',service:view.service||'',status:view.status||'new',problem:'',date:'',time:'',notes:''};
@@ -352,6 +382,11 @@ function form(){
  <div class="lbl">المشكلة / الطلب</div><input class="inp" id="f-problem" value="${esc(F.problem)}">
  <div class="lbl">أقرب ميعاد</div><div class="two"><input class="inp" id="f-date" type="date" value="${esc(F.date)}"><input class="inp" id="f-time" type="time" value="${esc(F.time)}"></div>
  <div class="lbl">ملاحظات</div><textarea class="inp" id="f-notes">${esc(F.notes)}</textarea>
+ ${ex?`<div class="lbl">📸 صور قبل وبعد (على موبايلك بس 🔒)</div>
+ <div class="chips" id="ph-kind"><button class="chip on" data-k="before">قبل</button><button class="chip" data-k="after">بعد</button></div>
+ <button class="btn sec" id="ph-add" style="margin-top:8px">📷 إضافة صورة</button><input type="file" id="ph-in" accept="image/*" hidden>
+ <div id="ph-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px"></div>
+ <div class="pr" style="font-size:13px;margin-top:6px">الصور دي مش بتتبعت لحد، وبتفضل على الموبايل ده. لو غيّرتي الموبايل، لازم تحفظيها بإيدك من معرض الصور.</div>`:'<div class="pr" style="margin-top:12px">📸 احفظي العميلة الأول عشان تقدري تضيفي صور قبل وبعد.</div>'}
  <button class="btn" id="sv">✓ احفظ</button>
  ${ex?'<button class="btn del" id="dl">🗑 امسح العميل</button>':''}
  </main>`;
@@ -377,11 +412,33 @@ function form(){
   if(!F.name&&!F.phone){toast('اكتب الاسم أو الرقم على الأقل');return}
   if(F.status==='active'&&(!F.branch||!F.service)){toast('اختار الفرع والخدمة');return}
   stopRec();
-  if(F.id){const i=DB.findIndex(p=>p.id===F.id);DB[i]={...F,updated:Date.now()}}
+  if(F.id){const i=DB.findIndex(p=>p.id===F.id);F.photos=DB[i].photos||[];DB[i]={...F,updated:Date.now()}}
   else DB.push({...F,id:uid(),created:Date.now()});
   save();toast('اتحفظ ✓');
   history.back();
  };
+ if(ex){
+  let phKind='before';
+  document.querySelectorAll('#ph-kind .chip').forEach(c=>c.onclick=()=>{phKind=c.dataset.k;document.querySelectorAll('#ph-kind .chip').forEach(x=>x.classList.toggle('on',x===c))});
+  const drawPh=async()=>{
+   const g=$('#ph-grid');if(!g)return;g.innerHTML='';
+   const rec=DB.find(r=>r.id===ex.id);const list=sortPh((rec&&rec.photos)||[]);
+   for(const x of list){const bl=await idbGet(x.id);if(!bl)continue;const u=URL.createObjectURL(bl);
+    const d=document.createElement('div');d.style.cssText='position:relative;aspect-ratio:3/4;border-radius:12px;overflow:hidden;background:#ddd';
+    d.innerHTML=`<img src="${u}" style="width:100%;height:100%;object-fit:cover"><div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.6);color:#fff;font-size:12px;text-align:center">${x.kind==='after'?'بعد':'قبل'} · ${phDate(x.date)}</div><button style="position:absolute;top:4px;left:4px;background:rgba(0,0,0,.6);color:#fff;border-radius:50%;width:28px;height:28px">✕</button>`;
+    d.querySelector('img').onclick=()=>{const o=document.createElement('div');o.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:60;display:grid;place-items:center;padding:12px';o.innerHTML=`<img src="${u}" style="max-width:100%;max-height:100%;border-radius:12px">`;o.onclick=()=>o.remove();document.body.appendChild(o)};
+    d.querySelector('button').onclick=async()=>{if(!confirm('تمسحي الصورة دي؟'))return;const r2=DB.find(r=>r.id===ex.id);if(r2){r2.photos=(r2.photos||[]).filter(q=>q.id!==x.id);save()}await idbDel(x.id);toast('اتمسحت');drawPh()};
+    g.appendChild(d)}
+   if(!list.length)g.innerHTML='<div class="pr" style="grid-column:1/-1">لسه مفيش صور. اختاري قبل أو بعد ودوسي إضافة.</div>';
+  };
+  drawPh();
+  $('#ph-add').onclick=()=>$('#ph-in').click();
+  $('#ph-in').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;
+   try{toast('بحفظ الصورة...');const b=await compressImg(f);const id='ph'+uid();await idbPut(id,b);
+    const r2=DB.find(r=>r.id===ex.id);if(!r2){toast('احفظي العميلة الأول');return}
+    r2.photos=[...(r2.photos||[]),{id,date:todayISO(),kind:phKind}];save();toast('اتحفظت الصورة 🔒');drawPh()}
+   catch(err){toast('الصورة ماتحفظتش، جربي تاني')}};
+ }
  if(ex)$('#dl').onclick=()=>{if(confirm('متأكد إنك عايز تمسح '+(F.name||F.phone)+'؟')){DB=DB.filter(p=>p.id!==F.id);save();toast('اتمسح');history.back()}};
  if(view.voice&&!ex)setTimeout(()=>startRec(vt,apply),300);
 }

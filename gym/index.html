@@ -550,6 +550,7 @@ function ytEmbed(u){
   return /^[\w-]{6,}$/.test(id)?'https://www.youtube-nocookie.com/embed/'+id:'';
  }catch(e){return ''}
 }
+const SITE_VIDEOS={'تريدميل (جهاز المشي)':'videos/treadmill.mp4','عجل (بايسكل)':'videos/bike.mp4'};
 let lt='eq',lbq='';
 function lib(){
  const eqs=LIB.filter(x=>x.type==='eq'),exs=LIB.filter(x=>x.type==='ex');
@@ -602,7 +603,9 @@ async function item(){
  $('#i-name').oninput=auto;$('#i-notes').oninput=auto;if($('#i-group'))$('#i-group').onchange=auto;
  const drawV=async()=>{
   const box=$('#vd');if(!box)return;box.innerHTML='';
-  if(!it.videos.length)box.innerHTML='<div class="pr" style="margin-bottom:8px">لسه مفيش فيديو</div>';
+  const site=SITE_VIDEOS[it.name];
+  if(site){const d=document.createElement('div');d.className='vid';d.innerHTML=`<video controls playsinline preload="metadata" src="${site}" style="width:100%;border-radius:10px;background:#000;display:block;max-height:70vh"></video><div class="pr" style="margin:6px 2px 0">🎬 فيديو الموقع (بيشتغل من غير ما تحمّله)</div>`;box.appendChild(d)}
+  if(!it.videos.length&&!site)box.innerHTML='<div class="pr" style="margin-bottom:8px">لسه مفيش فيديو</div>';
   for(const v of it.videos){
    const d=document.createElement('div');d.className='vid';
    if(v.kind==='file'){const b=await idbGet(v.id);if(b){const e=document.createElement('video');e.controls=true;e.playsInline=true;e.preload='metadata';e.src=URL.createObjectURL(b);d.appendChild(e)}else d.textContent='الفيديو مش موجود على الموبايل ده'}

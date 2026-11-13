@@ -101,7 +101,7 @@ SECTIONS = [
        d="حقن البلازما الغنية بالصفائح من دمك لتجديد البشرة وتحسين النضارة والهالات، وتستخدم كمان لتقوية الشعر.", pk=""),
   dict(n="ميزوثيرابي البشرة", ic="syringe", m=("video","media/face-meso.mp4","media/face-meso.jpg"),
        d="حقن ميزو للبشرة بتغذّي الجلد وتحسّن النضارة والملمس، بإبر دقيقة وتحت إشراف الطبيب.", pk=""),
-  dict(n="الديرمابن", ic="dots", m=("icon",),
+  dict(n="الديرمابن", ic="dots", m=("img","media/derm-2.jpg"),
        d="إبر دقيقة بتحفّز الكولاجين وبتعالج آثار الحبوب والمسام الواسعة وعلامات التمدد، وبتساعد السيروم يوصل لعمق البشرة.", pk=""),
  ]),
  ("laser", "إزالة الشعر بالليزر", "جلسات ليزر لكل مناطق الجسم.", [
@@ -141,13 +141,21 @@ def svc_card(s):
 <div class="svc-foot">{pk}<a class="link-wa" href="{wa("مرحبًا، حابب أحجز / أستفسر عن: " + s["n"])}" target="_blank" rel="noopener">{icon("wa","sm")} احجز</a></div></div>
 </article>'''
 
+
+DERM_BLOCK = """<div class="derm"><div class="derm-text"><span class="num">الديرمابن</span><h4>شكل البشرة بعد الجلسة وبعد التعافي</h4>
+<p>الإبر الدقيقة بتعمل ثقوب مجهرية بتحفّز الكولاجين. بعد الجلسة بيبان احمرار خفيف وده طبيعي، وبيهدى تدريجيًا وتبان بعده البشرة أنضر وأنعم.</p>
+<div class="thumbs" id="dthumbs"><button type="button" data-i="2" class="on"><img src="media/derm-2.jpg" alt="مرحلة التعافي 2" loading="lazy"><span>مرحلة 2</span></button><button type="button" data-i="3"><img src="media/derm-3.jpg" alt="مرحلة التعافي 3" loading="lazy"><span>مرحلة 3</span></button><button type="button" data-i="4"><img src="media/derm-4.jpg" alt="مرحلة التعافي 4" loading="lazy"><span>مرحلة 4</span></button></div>
+<p class="fine">اسحب الخط لمقارنة البشرة بعد الجلسة بمراحل التعافي. النتائج بتختلف من شخص لآخر.</p>
+<a class="btn btn-gold" href="WA_DERM" target="_blank" rel="noopener">احجز جلسة ديرمابن</a></div>
+<div class="cmp" id="cmp" dir="ltr" style="--p:50%"><img class="after" id="cmp-after" src="media/derm-2.jpg" alt="البشرة بعد التعافي" loading="lazy"><img class="before" src="media/derm-1.jpg" alt="البشرة بعد الجلسة مباشرة" loading="lazy"><span class="lb l">بعد الجلسة</span><span class="lb r" id="cmp-r">بعد التعافي</span><div class="bar-line"></div><input type="range" min="2" max="98" value="50" aria-label="مقارنة قبل وبعد" id="cmp-range"></div></div>""".replace("WA_DERM", wa("مرحبًا، حابب أحجز جلسة ديرمابن"))
+
 sections_html = ""
 tabs_html = '<button class="chip on" data-f="all">الكل</button>'
 for sid, title, sub, items in SECTIONS:
     tabs_html += f'<button class="chip" data-f="{sid}">{e(title)}</button>'
     cards = "\n".join(svc_card(s) for s in items)
     sections_html += f'''<div class="cat" data-cat="{sid}" id="{sid}"><div class="cat-head"><h3 class="cat-title">{e(title)}</h3><p>{e(sub)}</p></div>
-<div class="svc-grid">{cards}</div></div>'''
+<div class="svc-grid">{cards}</div>{DERM_BLOCK if sid=="beauty" else ""}</div>'''
 
 pk_html = ""
 FEAT_MSG = 'مرحبًا، حابب أحجز عرض الـ15 جلسة بـ 450 جنيه + 10 حقن ميزوثيرابي هدية'

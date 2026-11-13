@@ -81,7 +81,7 @@ textarea.inp{min-height:70px;resize:vertical;line-height:1.5}
 .toast{position:fixed;bottom:calc(env(safe-area-inset-bottom) + 90px);left:50%;transform:translateX(-50%);background:var(--navy);color:var(--gold);padding:10px 18px;border-radius:14px;font-weight:800;z-index:50;box-shadow:0 6px 18px rgba(0,0,0,.25);max-width:90vw;text-align:center}
 .warn{background:#FFF6CC;border-radius:14px;padding:10px 12px;font-weight:700;font-size:15px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
 .warn button{background:var(--navy);color:var(--gold);padding:6px 12px;border-radius:10px;font-weight:800;margin-inline-start:auto;white-space:nowrap}
-.foot{text-align:center;margin-top:8px}
+.foot{text-align:center;margin-top:8px;display:flex;justify-content:center;gap:6px;flex-wrap:wrap}
 .foot button{color:var(--purple);font-weight:800;font-size:16px;padding:8px}
 .sec-t{font-size:17px;font-weight:900;color:var(--navy);margin:14px 4px 8px}
 </style>
@@ -175,7 +175,7 @@ function home(){
    ${SERVICES.map(s=>{const n=DB.filter(p=>p.status!=='new'&&p.branch===b.id&&p.service===s.id).length;
     return `<button class="svc" onclick="go({v:'list',k:'svc',b:'${b.id}',s:'${s.id}'})"><span class="ic" style="background:${s.bg}">${s.ic}</span><b>${s.name}</b><span class="n">${n}</span><span class="ar">‹</span></button>`}).join('')}
   </div>`).join('')}
-  <div class="foot"><button onclick="go({v:'backup'})">💾 النسخة الاحتياطية</button></div>`;
+  <div class="foot"><button onclick="go({v:'backup'})">💾 النسخة الاحتياطية</button><a href="../gym/" style="color:var(--purple);font-weight:800;font-size:16px;padding:8px;text-decoration:none">💪 تطبيق الجيم</a></div>`;
  };
  drawBody();
  $('#q').oninput=e=>{q=e.target.value;drawBody()};
@@ -269,11 +269,10 @@ function parseSpeech(raw){
  // التليفون
  const cands=t.match(/\+?\d[\d\s\-]{6,}\d/g)||[];
  for(const c of cands){
-  let d=c.replace(/\D/g,'');
-  if(d.startsWith('0020'))d=d.slice(2);
-  if(d.startsWith('20')&&d.length===12)d='0'+d.slice(2);
-  if(d.startsWith('1')&&d.length===10)d='0'+d;
-  if(d.length>=7&&d.length<=13){out.phone=d;t=t.replace(c,' , ');break}
+  const d=c.replace(/\D/g,'');
+  const m=d.match(/^(?:0020|20|0)?(1[0125]\d{8})/);
+  if(m){out.phone='0'+m[1];let cnt=0,i=0;while(i<c.length&&cnt<m[0].length){if(/\d/.test(c[i]))cnt++;i++}t=t.replace(c,' , '+c.slice(i));break}
+  if(d.length>=7&&d.length<=11){out.phone=d;t=t.replace(c,' , ');break}
  }
  // الفرع
  for(const [id,ks] of BR_KW)if(ks.some(k=>t.includes(k))){out.branch=id;break}

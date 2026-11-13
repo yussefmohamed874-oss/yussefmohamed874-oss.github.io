@@ -158,11 +158,6 @@ const srcIcon=r=>r.src==='gym'?'🏋️ الجيم':'🏥 العيادة';
 // مية
 const WKEY='whm_water_v1';let WAT=ld(WKEY,{});const saveW=()=>localStorage.setItem(WKEY,JSON.stringify(WAT));
 // صور قبل وبعد (على الموبايل بس)
-const PHKEY='whm_photos_v1';let PH=ld(PHKEY,[]);const savePH=()=>localStorage.setItem(PHKEY,JSON.stringify(PH));
-const idb=new Promise((res,rej)=>{const r=indexedDB.open('whm_img',1);r.onupgradeneeded=()=>r.result.createObjectStore('i');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});
-async function idbOp(mode,fn){const d=await idb;return new Promise((res,rej)=>{const t=d.transaction('i',mode);const rq=fn(t.objectStore('i'));t.oncomplete=()=>res(rq&&rq.result);t.onerror=()=>rej(t.error)})}
-const idbPut=(k,v)=>idbOp('readwrite',s=>s.put(v,k)),idbGet=k=>idbOp('readonly',s=>s.get(k)),idbDel=k=>idbOp('readwrite',s=>s.delete(k));
-function compress(file){return new Promise((res,rej)=>{const u=URL.createObjectURL(file),im=new Image();im.onload=()=>{const M=1400,sc=Math.min(1,M/Math.max(im.width,im.height));const c=document.createElement('canvas');c.width=Math.round(im.width*sc);c.height=Math.round(im.height*sc);c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);c.toBlob(b=>b?res(b):rej(new Error('x')),'image/jpeg',.82)};im.onerror=()=>rej(new Error('img'));im.src=u})}
 
 // ---------- التنقل ----------
 let view='home';
@@ -306,31 +301,17 @@ function profile(){
   <div class="stats" style="margin-bottom:10px"><div class="st"><b>${latest('vis')||'—'}</b><span>الدهون الحشوية</span>${delta('vis',true)}</div><div class="st"><b>${latest('bmr')||'—'}</b><span>معدل الحرق</span></div><div class="st"><b>${latest('waist')||'—'}</b><span>الوسط سم</span>${delta('waist',true)}</div></div>
   ${chart?'<div class="pr">منحنى وزنك:</div>'+chart:''}
   ${stepsHTML()}<table style="margin-top:8px"><tr><th>التاريخ</th><th>المكان</th><th>وزن</th><th>دهون</th><th>عضلات</th><th>مياه</th></tr>${[...ib].reverse().map(r=>`<tr><td>${fmtD(r.date)}</td><td>${r.src==='gym'?'🏋️':'🏥'}</td><td>${r.w||'—'}</td><td>${r.fat||'—'}</td><td>${r.mus||'—'}</td><td>${r.wat||'—'}</td></tr>`).join('')}</table>`:'<div class="pr">لسه مفيش قياسات. أول قياس InBody هيظهر هنا.</div>'}</div>
- <div class="card"><div class="ct">📸 صوري قبل وبعد <span class="r" style="color:var(--mut)">على موبايلك بس 🔒</span></div>
-  <div class="pr" style="font-size:14px">الصور دي مش بتتبعت لحد. صوّري نفسك كل شهر بنفس المكان والإضاءة عشان تشوفي الفرق.</div>
-  <div id="cmp"></div><div id="phs" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px"></div>
-  <button class="btn" id="ph-add">📷 إضافة صورة</button><input type="file" id="ph-in" accept="image/*" hidden></div>
  ${D.gym.wa?`<a class="btn wa" target="_blank" href="${waLink(D.gym.wa,'أهلاً كابتن هبة 🌸 أنا '+(m.name||''))}">💬 كلمي كابتن هبة</a><a class="btn sec" target="_blank" href="${waLink(D.gym.wa,'أهلاً كابتن هبة 🌸 أنا '+(m.name||'')+'، ممكن تبعتيلي رابط تحديث تطبيقي؟')}">🔄 اطلبي تحديث بياناتك</a>`:''}
  <div class="pr" style="text-align:center;margin-top:10px;font-size:14px">آخر تحديث لبياناتك: ${D.at?new Date(D.at).toLocaleDateString('ar-EG'):'—'}</div>
  <button class="btn sec" id="wipe" style="background:#FFF1F0;color:var(--red)">🗑 مسح بياناتي من الموبايل ده</button>
  </main>`;
- drawPhotos();
- $('#ph-add').onclick=()=>$('#ph-in').click();
- $('#ph-in').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;try{const b=await compress(f);const id='p'+Date.now().toString(36);await idbPut(id,b);PH.push({id,date:todayISO()});savePH();toast('اتحفظت الصورة 🔒');drawPhotos()}catch(err){toast('الصورة ماتحفظتش')}};
  $('#wipe').onclick=()=>{if(confirm('هتتمسح بياناتك من الموبايل ده. تقدري ترجعيها بالرابط من كابتن هبة. تكملي؟')){localStorage.removeItem(KEY);D=null;view='home';render()}};
 }
 
 function stepsHTML(){const f=follow();if(!f||!f.steps.length)return '';
  return `<div class="pr" style="margin-top:6px"><b>تقدّمك من متابعة للتانية:</b></div>`+f.steps.map(x=>`<div class="kv"><span>${fmtD(x.r.date)} · بعد ${dayWord(x.days)} · ${srcIcon(x.r)}</span><b class="${(M().goal==='زيادة وزن'?x.diff>0:x.diff<0)?'down':x.diff===0?'':'up'}">${x.diff>0?'+':''}${x.diff} كجم</b></div>`).join('')}
-async function drawPhotos(){const box=$('#phs'),cmp=$('#cmp');if(!box)return;box.innerHTML='';cmp.innerHTML='';
- const list=[...PH].sort((a,b)=>a.date<b.date?-1:1);const urls={};
- for(const p of list){const bl=await idbGet(p.id);if(!bl)continue;urls[p.id]=URL.createObjectURL(bl);
-  const d=document.createElement('div');d.style.cssText='position:relative;aspect-ratio:3/4;border-radius:12px;overflow:hidden;background:#ddd';
-  d.innerHTML=`<img src="${urls[p.id]}" style="width:100%;height:100%;object-fit:cover"><div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.55);color:#fff;font-size:12px;text-align:center">${fmtD(p.date)}</div><button style="position:absolute;top:4px;left:4px;background:rgba(0,0,0,.55);color:#fff;border-radius:50%;width:26px;height:26px">✕</button>`;
-  d.querySelector('button').onclick=async()=>{if(!confirm('تمسحي الصورة دي؟'))return;PH=PH.filter(x=>x.id!==p.id);savePH();await idbDel(p.id);drawPhotos()};box.appendChild(d)}
- const ok=list.filter(p=>urls[p.id]);if(ok.length>=2){const a=ok[0],b=ok[ok.length-1];
-  cmp.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">${[[a,'قبل'],[b,'بعد']].map(([p,l])=>`<div><img src="${urls[p.id]}" style="width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:12px"><div style="text-align:center;font-weight:800">${l} · ${fmtD(p.date)}</div></div>`).join('')}</div>`}}
-
+// تنظيف صور قبل وبعد (الخاصية اتشالت)
+try{localStorage.removeItem('whm_photos_v1');indexedDB.deleteDatabase('whm_img')}catch(e){}
 // ---------- البداية ----------
 (async()=>{
  const mt=location.hash.match(/[#&]d=([^&]+)/);

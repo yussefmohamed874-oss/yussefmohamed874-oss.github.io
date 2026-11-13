@@ -162,6 +162,10 @@ if(localStorage.getItem('gy_seed13')!=='1'){
  if(!LIB.some(x=>x.type==='ex'&&x.name==='بايسبس كيرل بدمبل'))LIB.push({id:uid0(),type:'ex',group:'الذراعين',name:'بايسبس كيرل بدمبل',notes:'',videos:[]});
  localStorage.setItem('gy_seed13','1');saveLib();
 }
+if(localStorage.getItem('gy_seed14')!=='1'){
+ for(const [g,n] of [['كارديو وحرق دهون','جامبينج جاك'],['كارديو وحرق دهون','ركبة عالية']])if(!LIB.some(x=>x.type==='ex'&&x.name===n))LIB.push({id:uid0(),type:'ex',group:g,name:n,notes:'',videos:[]});
+ localStorage.setItem('gy_seed14','1');saveLib();
+}
 if(localStorage.getItem('gy_seed6')!=='1'){
  for(const [g,n] of [['الظهر','سوبرمان'],['الظهر','بيرد دوج']])if(!LIB.some(x=>x.type==='ex'&&x.name===n))LIB.push({id:uid0(),type:'ex',group:g,name:n,notes:'',videos:[]});
  localStorage.setItem('gy_seed6','1');saveLib();
@@ -586,7 +590,7 @@ function ytEmbed(u){
   return /^[\w-]{6,}$/.test(id)?'https://www.youtube-nocookie.com/embed/'+id:'';
  }catch(e){return ''}
 }
-const SITE_VIDEOS={'تريدميل (جهاز المشي)':'videos/treadmill.mp4','عجل (بايسكل)':'videos/bike.mp4','أوربتراك (إليبتيكال)':'videos/elliptical.mp4','الكريزي (Crazy Fit)':'videos/crazyfit.mp4','سحب أمامي':'videos/lat-pulldown.mp4','سحب خلفي':'videos/seated-row.mp4','ليج بريس':'videos/leg-press.mp4','فراشة':'videos/butterfly.mp4','سوبرمان':'videos/superman.mp4','بيرد دوج':'videos/bird-dog.mp4','كرانش':'videos/crunch.mp4','ريفرس كرانش':'videos/reverse-crunch.mp4','بايسكل كرانش':'videos/bicycle-crunch.mp4','ليج ريز':'videos/leg-raise.mp4','بلانك على الكوعين':'videos/forearm-plank.mp4','بلانك جانبي':'videos/side-plank.mp4','بلانك لمس الكتف':'videos/shoulder-tap-plank.mp4','ضغط على الركبة':'videos/knee-pushup.mp4','جلوت بريدج':'videos/glute-bridge.mp4','دونكي كيك':'videos/donkey-kick.mp4','كلام شيل':'videos/clamshell.mp4','فاير هايدرانت':'videos/fire-hydrant.mp4','سايد ليج ريز':'videos/side-leg-raise.mp4','بايسبس كيرل بدمبل':'videos/biceps-curl.mp4'};
+const SITE_VIDEOS={'تريدميل (جهاز المشي)':'videos/treadmill.mp4','عجل (بايسكل)':'videos/bike.mp4','أوربتراك (إليبتيكال)':'videos/elliptical.mp4','الكريزي (Crazy Fit)':'videos/crazyfit.mp4','سحب أمامي':'videos/lat-pulldown.mp4','سحب خلفي':'videos/seated-row.mp4','ليج بريس':'videos/leg-press.mp4','فراشة':'videos/butterfly.mp4','سوبرمان':'videos/superman.mp4','بيرد دوج':'videos/bird-dog.mp4','كرانش':'videos/crunch.mp4','ريفرس كرانش':'videos/reverse-crunch.mp4','بايسكل كرانش':'videos/bicycle-crunch.mp4','ليج ريز':'videos/leg-raise.mp4','بلانك على الكوعين':'videos/forearm-plank.mp4','بلانك جانبي':'videos/side-plank.mp4','بلانك لمس الكتف':'videos/shoulder-tap-plank.mp4','ضغط على الركبة':'videos/knee-pushup.mp4','جلوت بريدج':'videos/glute-bridge.mp4','دونكي كيك':'videos/donkey-kick.mp4','كلام شيل':'videos/clamshell.mp4','فاير هايدرانت':'videos/fire-hydrant.mp4','سايد ليج ريز':'videos/side-leg-raise.mp4','بايسبس كيرل بدمبل':'videos/biceps-curl.mp4','إطالة الفخذ الأمامي':'videos/front-thigh-stretch.mp4','إطالة الفخذ الخلفي':'videos/back-thigh-stretch.mp4','جامبينج جاك':'videos/jumping-jacks.mp4','ركبة عالية':'videos/high-knees.mp4'};
 let lt='eq',lbq='';
 function lib(){
  const eqs=LIB.filter(x=>x.type==='eq'),exs=LIB.filter(x=>x.type==='ex');

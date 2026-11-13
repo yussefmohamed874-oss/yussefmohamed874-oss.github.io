@@ -143,6 +143,27 @@ function nextClasses(k){const cl=(D&&D.classes)||[];if(!cl.length)return [];cons
  const wi=JS2W[now.getDay()];const nowT=pad(now.getHours())+':'+pad(now.getMinutes());
  return [...cl].map(c=>{let dd=(WDAYS.indexOf(c.day)-wi+7)%7;if(dd===0&&c.time<nowT)dd=7;return {...c,dd}}).sort((a,b)=>a.dd-b.dd||(a.time<b.time?-1:1)).slice(0,k)}
 
+// ---------- المتابعة (العيادة والجيم) ----------
+function follow(){const l=ibSorted().filter(r=>+r.w);if(!l.length)return null;const s0=l[0],c=l[l.length-1],d0=toD(s0.date);
+ const wk=l.find(r=>(toD(r.date)-d0)/864e5>=5);
+ return {start:s0,cur:c,total:+(c.w-s0.w).toFixed(1),week:wk?{r:wk,diff:+(wk.w-s0.w).toFixed(1),days:Math.round((toD(wk.date)-d0)/864e5)}:null,
+  steps:l.slice(1).map((r,i)=>({r,diff:+(r.w-l[i].w).toFixed(1),days:Math.round((toD(r.date)-toD(l[i].date))/864e5)}))}}
+function changeText(d){const m=M(),gain=m&&m.goal==='زيادة وزن';if(d===0)return 'وزنك ثابت';
+ if(d<0)return gain?'نقصتي '+Math.abs(d)+' كيلو':'نزلتي '+Math.abs(d)+' كيلو 🎉';
+ return gain?'زودتي '+d+' كيلو 💪':'زيادة '+d+' كيلو، ولا يهمك هنكمل مع بعض'}
+function targetPct(){const m=M(),f=follow();if(!m||!f||!+m.target)return null;const s0=+f.start.w,c=+f.cur.w,t=+m.target;if(s0===t)return 100;
+ return Math.max(0,Math.min(100,Math.round((m.goal==='زيادة وزن'?(c-s0)/(t-s0):(s0-c)/(s0-t))*100)))}
+function lastNote(){const l=ibSorted().filter(r=>r.note);return l.length?l[l.length-1]:null}
+const srcIcon=r=>r.src==='gym'?'🏋️ الجيم':'🏥 العيادة';
+// مية
+const WKEY='whm_water_v1';let WAT=ld(WKEY,{});const saveW=()=>localStorage.setItem(WKEY,JSON.stringify(WAT));
+// صور قبل وبعد (على الموبايل بس)
+const PHKEY='whm_photos_v1';let PH=ld(PHKEY,[]);const savePH=()=>localStorage.setItem(PHKEY,JSON.stringify(PH));
+const idb=new Promise((res,rej)=>{const r=indexedDB.open('whm_img',1);r.onupgradeneeded=()=>r.result.createObjectStore('i');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});
+async function idbOp(mode,fn){const d=await idb;return new Promise((res,rej)=>{const t=d.transaction('i',mode);const rq=fn(t.objectStore('i'));t.oncomplete=()=>res(rq&&rq.result);t.onerror=()=>rej(t.error)})}
+const idbPut=(k,v)=>idbOp('readwrite',s=>s.put(v,k)),idbGet=k=>idbOp('readonly',s=>s.get(k)),idbDel=k=>idbOp('readwrite',s=>s.delete(k));
+function compress(file){return new Promise((res,rej)=>{const u=URL.createObjectURL(file),im=new Image();im.onload=()=>{const M=1400,sc=Math.min(1,M/Math.max(im.width,im.height));const c=document.createElement('canvas');c.width=Math.round(im.width*sc);c.height=Math.round(im.height*sc);c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);c.toBlob(b=>b?res(b):rej(new Error('x')),'image/jpeg',.82)};im.onerror=()=>rej(new Error('img'));im.src=u})}
+
 // ---------- التنقل ----------
 let view='home';
 const TABS=[['home','🏠','الرئيسية'],['program','🏋️','برنامجي'],['classes','📅','الكلاسات'],['lib','🎬','التمارين'],['profile','👤','ملفي']];
@@ -158,6 +179,22 @@ function welcome(){
  <div class="card"><div class="ct" style="justify-content:center">أهلاً بيكي 🌸</div><div class="pr">التطبيق ده خاص بمشتركات Women Health GYM.<br>افتحي الرابط الخاص بيكي اللي بعتتهولك كابتن هبة على الواتساب، وهتلاقي هنا اشتراكك وبرنامجك وقياساتك وجدول الكلاسات.</div></div>
  <button class="btn" onclick="go('lib')">🎬 اتفرجي على مكتبة التمارين</button></main>`;
 }
+
+// ---------- كروت الرئيسية ----------
+function followCard(){const m=M(),f=follow();
+ if(!f)return `<div class="card"><div class="ct">🏥 متابعتك</div><div class="pr">أول قياس ليكي في العيادة أو الجيم هيظهر هنا، ومعاه تقدّمك أسبوع بأسبوع.</div></div>`;
+ const tp=targetPct(),n=lastNote();
+ return `<div class="card"><div class="ct">🏥 متابعتك مع د. يوسف وكابتن هبة</div>
+ <div class="stats"><div class="st"><b>${f.start.w}</b><span>وزن البداية</span><em style="color:var(--mut)">${fmtD(f.start.date)}</em></div><div class="st"><b>${f.cur.w}</b><span>وزنك دلوقتي</span><em style="color:var(--mut)">${fmtD(f.cur.date)}</em></div><div class="st"><b>${Math.abs(f.total)}</b><span>${f.total<=0?'كيلو نزلتيهم':'كيلو زادوا'}</span></div></div>
+ ${f.week?`<div class="hello" style="margin:10px 0 0;padding:10px"><b>📆 ${f.week.days<=10?'في أول أسبوع':'في أول '+dayWord(f.week.days)}:</b> ${changeText(f.week.diff)}</div>`:''}
+ <div class="kv"><span>الهدف</span><b>${esc(m.goal||'—')}${+m.target?' · '+esc(m.target)+' كجم':''}</b></div>
+ ${tp!=null?`<div class="pr" style="margin-top:6px">قطعتي <b style="color:var(--purple)">${tp}%</b> من طريقك للهدف</div><div class="bar"><i style="width:${tp}%"></i></div>`:''}
+ ${n?`<div class="exb tip" style="margin-top:10px"><b>📝 ملاحظة الدكتور (${fmtD(n.date)}):</b> ${esc(n.note)}</div>`:''}
+ <button class="btn sec" onclick="go('profile')">كل القياسات والتفاصيل</button></div>`}
+function waterCard(){const t=todayISO(),c=WAT[t]||0;
+ return `<div class="card"><div class="ct">💧 مية النهارده <span class="r" style="color:var(--navy)">${c} من 8 كوبايات</span></div>
+ <div style="display:flex;gap:4px;justify-content:space-between">${Array.from({length:8},(_,i)=>`<button data-wc="${i+1}" style="font-size:28px;opacity:${i<c?1:.25}">🥛</button>`).join('')}</div>
+ <div class="pr" style="font-size:14px;margin-top:4px">${c>=8?'برافو! كملتي المية النهارده 🎉':'دوسي على الكوباية كل ما تشربي.'}</div></div>`}
 
 // ---------- الرئيسية ----------
 function home(){
@@ -177,6 +214,7 @@ function home(){
   ${(s.k==='soon'||s.k==='exp')&&D.gym.wa?`<a class="btn gold" target="_blank" href="${waLink(D.gym.wa,'أهلاً كابتن هبة 🌸 أنا '+(m.name||'')+'، عايزة أجدد اشتراكي.')}">🔄 جددي اشتراكك</a>`:''}</div>
  <div class="card"><div class="ct">📊 جسمك النهارده <span class="r" onclick="go('profile')">التفاصيل ‹</span></div>
   <div class="stats"><div class="st"><b>${w||'—'}</b><span>الوزن (كجم)</span>${delta('w',m.goal!=='زيادة وزن')}</div><div class="st"><b>${b?b.toFixed(1):'—'}</b><span>مؤشر كتلة الجسم</span></div><div class="st"><b>${fat?fat+'%':'—'}</b><span>نسبة الدهون</span>${delta('fat',true)}</div></div></div>
+ ${followCard()}${waterCard()}
  <div class="card"><div class="ct">🏋️ برنامجك</div>${m.program?`<div style="font-size:20px;font-weight:900">${esc(m.program.name)}</div><div class="pr">${esc(m.program.goal||'')}${m.program.lvl?' · المستوى: '+esc(m.program.lvl):''}</div><button class="btn" onclick="go('program')">افتحي برنامجك والفيديوهات</button>`:'<div class="pr">كابتن هبة هتحددلك برنامجك قريب 💪</div>'}</div>
  <div class="card"><div class="ct">✅ حضورك</div>
   <div class="pr">حضرتي <b style="color:var(--purple)">${monthN}</b> مرة الشهر ده</div>
@@ -185,6 +223,7 @@ function home(){
  ${nx.length?`<div class="card"><div class="ct">📅 الكلاسات الجاية <span class="r" onclick="go('classes')">الجدول ‹</span></div>${nx.map(c=>`<div class="cls ${PREF.classes.includes(c.id)?'on':''}"><div class="tm">${fmtT(c.time)}</div><div><b>${esc(c.name)}</b><div class="pr" style="font-size:14px">${c.dd===0?'النهارده':c.dd===1?'بكره':c.day} · ${esc(c.coach||'')}</div></div>${PREF.classes.includes(c.id)?'<span class="ck">⭐</span>':''}</div>`).join('')}</div>`:''}
  <div class="hello"><b>💡 نصيحة النهارده من كابتن هبة:</b><div class="pr" style="color:var(--ink);margin-top:4px">${esc(tip)}</div></div>
  </main>`;
+ document.querySelectorAll('[data-wc]').forEach(b=>b.onclick=()=>{const n=+b.dataset.wc,cur=WAT[t]||0;WAT[t]=cur===n?n-1:n;saveW();home()});
  if($('#chk'))$('#chk').onclick=()=>{if(!CHK.includes(t))CHK.push(t);saveChk();toast('برافو عليكي! 💪 اتسجل حضورك');home()};
 }
 
@@ -214,7 +253,15 @@ function classes(){
  <div class="card"><div class="ct">⏰ الوقت اللي يناسبك تيجي فيه</div><div class="chips">${TIMES.map(t=>`<button class="chip ${PREF.times.includes(t)?'on':''}" data-t="${t}">${t}</button>`).join('')}</div>
   <div class="pr" style="margin-top:10px">ملاحظة لكابتن هبة (اختياري)</div><textarea id="pnote" style="width:100%;border:1.5px solid var(--line);border-radius:12px;padding:10px;margin-top:4px;min-height:60px">${esc(PREF.note)}</textarea>
   ${D.gym.wa?'<button class="btn wa" id="send">📤 ابعتي اختياراتك لكابتن هبة</button>':'<div class="pr" style="margin-top:8px">رقم الجيم مش متسجل لسه.</div>'}</div>
+ <div class="card"><div class="ct">⭐ قيّمي آخر كلاس حضرتيه</div>
+  <select id="rt-c" style="width:100%;border:1.5px solid var(--line);border-radius:12px;padding:10px;font-family:inherit;font-size:16px;background:#fff">${[...new Set(cl.map(c=>c.name))].map(n=>`<option>${esc(n)}</option>`).join('')}<option>كلاس تاني</option></select>
+  <div id="rt-s" style="display:flex;gap:6px;justify-content:center;margin:10px 0">${[1,2,3,4,5].map(i=>`<button data-s="${i}" style="font-size:34px;opacity:.3">⭐</button>`).join('')}</div>
+  <textarea id="rt-n" placeholder="رأيك في الكلاس (اختياري)" style="width:100%;border:1.5px solid var(--line);border-radius:12px;padding:10px;min-height:56px"></textarea>
+  ${D.gym.wa?'<button class="btn" id="rt-send">📤 ابعتي التقييم لكابتن هبة</button>':''}</div>
  </main>`;
+ let stars=0;document.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{stars=+b.dataset.s;document.querySelectorAll('[data-s]').forEach(x=>x.style.opacity=+x.dataset.s<=stars?1:.3)});
+ if($('#rt-send'))$('#rt-send').onclick=()=>{if(!stars){toast('اختاري عدد النجوم الأول');return}
+  window.open(waLink(D.gym.wa,'أهلاً كابتن هبة 🌸 أنا '+(m.name||'')+'\nتقييمي لكلاس '+$('#rt-c').value+': '+'⭐'.repeat(stars)+($('#rt-n').value.trim()?'\n'+$('#rt-n').value.trim():'')),'_blank');toast('شكرًا على تقييمك 💜')};
  document.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{const id=b.dataset.c;PREF.classes=PREF.classes.includes(id)?PREF.classes.filter(x=>x!==id):[...PREF.classes,id];savePref();classes()});
  document.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{const t=b.dataset.t;PREF.times=PREF.times.includes(t)?PREF.times.filter(x=>x!==t):[...PREF.times,t];savePref();classes()});
  $('#pnote').oninput=e=>{PREF.note=e.target.value;savePref()};
@@ -250,19 +297,39 @@ function profile(){
  <div class="card"><div class="ct">🩺 حالتك الصحية</div>
   <div class="kv"><span>الطول</span><b>${m.height?esc(m.height)+' سم':'—'}</b></div><div class="kv"><span>الوزن الحالي</span><b>${curWeight()?curWeight()+' كجم':'—'}</b></div>
   <div class="kv"><span>مؤشر كتلة الجسم</span><b>${b?b.toFixed(1)+' · '+bmiLabel(b):'—'}</b></div>
+  ${(m.conds||[]).length?`<div class="chips" style="margin-top:10px">${m.conds.map(c=>`<span class="chip on" style="font-size:14px;padding:4px 10px">${esc(c)}</span>`).join('')}</div>`:''}
+  ${+m.target?`<div class="kv"><span>الوزن المستهدف</span><b>${esc(m.target)} كجم</b></div>`:''}
   ${m.health?`<div class="pr" style="margin-top:10px;color:var(--ink)"><b>ملاحظات صحية:</b> ${esc(m.health)}</div><div class="pr" style="font-size:14px;margin-top:4px">كابتن هبة عارفة الملاحظات دي وبتراعيها في تمرينك.</div>`:''}
   <div class="pr" style="font-size:13px;margin-top:8px">مؤشر كتلة الجسم رقم تقريبي، ومش تشخيص طبي.</div></div>
  <div class="card"><div class="ct">📈 قياسات InBody</div>
   ${ib.length?`<div class="stats" style="margin-bottom:10px"><div class="st"><b>${latest('fat')||'—'}${latest('fat')?'%':''}</b><span>الدهون</span>${delta('fat',true)}</div><div class="st"><b>${latest('mus')||'—'}</b><span>العضلات كجم</span>${delta('mus',false)}</div><div class="st"><b>${latest('wat')||'—'}${latest('wat')?'%':''}</b><span>المياه</span></div></div>
   <div class="stats" style="margin-bottom:10px"><div class="st"><b>${latest('vis')||'—'}</b><span>الدهون الحشوية</span>${delta('vis',true)}</div><div class="st"><b>${latest('bmr')||'—'}</b><span>معدل الحرق</span></div><div class="st"><b>${latest('waist')||'—'}</b><span>الوسط سم</span>${delta('waist',true)}</div></div>
   ${chart?'<div class="pr">منحنى وزنك:</div>'+chart:''}
-  <table style="margin-top:8px"><tr><th>التاريخ</th><th>وزن</th><th>دهون</th><th>عضلات</th><th>مياه</th></tr>${[...ib].reverse().map(r=>`<tr><td>${fmtD(r.date)}</td><td>${r.w||'—'}</td><td>${r.fat||'—'}</td><td>${r.mus||'—'}</td><td>${r.wat||'—'}</td></tr>`).join('')}</table>`:'<div class="pr">لسه مفيش قياسات. أول قياس InBody هيظهر هنا.</div>'}</div>
+  ${stepsHTML()}<table style="margin-top:8px"><tr><th>التاريخ</th><th>المكان</th><th>وزن</th><th>دهون</th><th>عضلات</th><th>مياه</th></tr>${[...ib].reverse().map(r=>`<tr><td>${fmtD(r.date)}</td><td>${r.src==='gym'?'🏋️':'🏥'}</td><td>${r.w||'—'}</td><td>${r.fat||'—'}</td><td>${r.mus||'—'}</td><td>${r.wat||'—'}</td></tr>`).join('')}</table>`:'<div class="pr">لسه مفيش قياسات. أول قياس InBody هيظهر هنا.</div>'}</div>
+ <div class="card"><div class="ct">📸 صوري قبل وبعد <span class="r" style="color:var(--mut)">على موبايلك بس 🔒</span></div>
+  <div class="pr" style="font-size:14px">الصور دي مش بتتبعت لحد. صوّري نفسك كل شهر بنفس المكان والإضاءة عشان تشوفي الفرق.</div>
+  <div id="cmp"></div><div id="phs" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px"></div>
+  <button class="btn" id="ph-add">📷 إضافة صورة</button><input type="file" id="ph-in" accept="image/*" hidden></div>
  ${D.gym.wa?`<a class="btn wa" target="_blank" href="${waLink(D.gym.wa,'أهلاً كابتن هبة 🌸 أنا '+(m.name||''))}">💬 كلمي كابتن هبة</a><a class="btn sec" target="_blank" href="${waLink(D.gym.wa,'أهلاً كابتن هبة 🌸 أنا '+(m.name||'')+'، ممكن تبعتيلي رابط تحديث تطبيقي؟')}">🔄 اطلبي تحديث بياناتك</a>`:''}
  <div class="pr" style="text-align:center;margin-top:10px;font-size:14px">آخر تحديث لبياناتك: ${D.at?new Date(D.at).toLocaleDateString('ar-EG'):'—'}</div>
  <button class="btn sec" id="wipe" style="background:#FFF1F0;color:var(--red)">🗑 مسح بياناتي من الموبايل ده</button>
  </main>`;
+ drawPhotos();
+ $('#ph-add').onclick=()=>$('#ph-in').click();
+ $('#ph-in').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;try{const b=await compress(f);const id='p'+Date.now().toString(36);await idbPut(id,b);PH.push({id,date:todayISO()});savePH();toast('اتحفظت الصورة 🔒');drawPhotos()}catch(err){toast('الصورة ماتحفظتش')}};
  $('#wipe').onclick=()=>{if(confirm('هتتمسح بياناتك من الموبايل ده. تقدري ترجعيها بالرابط من كابتن هبة. تكملي؟')){localStorage.removeItem(KEY);D=null;view='home';render()}};
 }
+
+function stepsHTML(){const f=follow();if(!f||!f.steps.length)return '';
+ return `<div class="pr" style="margin-top:6px"><b>تقدّمك من متابعة للتانية:</b></div>`+f.steps.map(x=>`<div class="kv"><span>${fmtD(x.r.date)} · بعد ${dayWord(x.days)} · ${srcIcon(x.r)}</span><b class="${(M().goal==='زيادة وزن'?x.diff>0:x.diff<0)?'down':x.diff===0?'':'up'}">${x.diff>0?'+':''}${x.diff} كجم</b></div>`).join('')}
+async function drawPhotos(){const box=$('#phs'),cmp=$('#cmp');if(!box)return;box.innerHTML='';cmp.innerHTML='';
+ const list=[...PH].sort((a,b)=>a.date<b.date?-1:1);const urls={};
+ for(const p of list){const bl=await idbGet(p.id);if(!bl)continue;urls[p.id]=URL.createObjectURL(bl);
+  const d=document.createElement('div');d.style.cssText='position:relative;aspect-ratio:3/4;border-radius:12px;overflow:hidden;background:#ddd';
+  d.innerHTML=`<img src="${urls[p.id]}" style="width:100%;height:100%;object-fit:cover"><div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.55);color:#fff;font-size:12px;text-align:center">${fmtD(p.date)}</div><button style="position:absolute;top:4px;left:4px;background:rgba(0,0,0,.55);color:#fff;border-radius:50%;width:26px;height:26px">✕</button>`;
+  d.querySelector('button').onclick=async()=>{if(!confirm('تمسحي الصورة دي؟'))return;PH=PH.filter(x=>x.id!==p.id);savePH();await idbDel(p.id);drawPhotos()};box.appendChild(d)}
+ const ok=list.filter(p=>urls[p.id]);if(ok.length>=2){const a=ok[0],b=ok[ok.length-1];
+  cmp.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">${[[a,'قبل'],[b,'بعد']].map(([p,l])=>`<div><img src="${urls[p.id]}" style="width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:12px"><div style="text-align:center;font-weight:800">${l} · ${fmtD(p.date)}</div></div>`).join('')}</div>`}}
 
 // ---------- البداية ----------
 (async()=>{

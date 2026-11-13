@@ -452,7 +452,7 @@ function setBtn(on){const b=$('#vb');if(!b)return;b.classList.toggle('rec',on);b
 let F=null;
 function form(){
  const ex=view.id?DB.find(p=>p.id===view.id):null;
- F=ex?{...ex}:{id:null,kind:view.kind||'sub',name:'',phone:'',plan:'',months:0,price:'',start:'',end:'',program:'',note:'',height:'',weight:'',goal:'',health:'',inbody:[],history:[]};
+ F=ex?{...ex}:{id:null,kind:view.kind||'sub',name:'',phone:'',plan:'',months:0,price:'',start:'',end:'',program:'',note:'',height:'',weight:'',goal:'',health:'',inbody:[],history:[],target:'',conds:[]};
  let title=ex?'✏️ تعديل':(F.kind==='inq'?'＋ عميلة بتسأل':'＋ مشتركة جديدة');
  if(ex&&view.convert){F.kind='sub';F.start=todayISO();title='✓ اشتراك جديد'}
  if(ex&&view.renew){F._prev={plan:ex.plan,months:ex.months,price:ex.price,start:ex.start,end:ex.end};F.kind='sub';title='🔄 تجديد اشتراك';F.start=(F.end&&daysLeft(F.end)>=0)?F.end:todayISO();const m=F.months||(PLAN(F.plan)||{}).m;if(m)F.end=addMonths(F.start,m)}
@@ -474,14 +474,18 @@ function form(){
   <div class="lbl">رقم البرنامج (1 – 20) · اختياري</div><input class="inp" id="f-program" type="number" inputmode="numeric" min="1" max="20" value="${esc(F.program)}">
   <div class="sec-t" style="margin-top:18px">🩺 الملف الصحي (بيظهر للمشتركة في تطبيقها)</div>
   <div class="two"><div><div class="lbl">الطول (سم)</div><input class="inp" id="f-height" type="number" inputmode="decimal" value="${esc(F.height)}"></div><div><div class="lbl">الوزن (كجم)</div><input class="inp" id="f-weight" type="number" inputmode="decimal" value="${esc(F.weight)}"></div></div>
+  <div class="lbl">الوزن المستهدف (كجم)</div><input class="inp" id="f-target" type="number" inputmode="decimal" value="${esc(F.target)}" placeholder="مثلًا 70">
   <div class="lbl">الهدف</div><div class="chips" id="c-goal">${GOALS.map(g=>`<button class="chip" data-v="${g}">${g}</button>`).join('')}</div>
-  <div class="lbl">الحالة الصحية</div><textarea class="inp" id="f-health" placeholder="أمراض مزمنة، إصابات، عمليات، أدوية، حمل أو رضاعة، أي ملاحظة للكابتن...">${esc(F.health)}</textarea>
-  <div class="lbl">قياسات InBody</div><div id="ib-list"></div>
+  <div class="lbl">مشاكل صحية (اختاري اللي ينطبق)</div><div class="chips" id="c-cond">${CONDS.map(c=>`<button class="chip" data-v="${c}">${c}</button>`).join('')}</div>
+  <div class="lbl">تفاصيل الحالة الصحية</div><textarea class="inp" id="f-health" placeholder="أمراض مزمنة، إصابات، عمليات، أدوية، حمل أو رضاعة، أي ملاحظة للكابتن...">${esc(F.health)}</textarea>
+  <div class="lbl">قياسات ومتابعة (العيادة والجيم)</div><div id="ib-list"></div>
   <div class="card" style="background:#F7F4FC">
+   <div class="chips" id="ib-src" style="margin-bottom:8px"><button class="chip on" data-v="clinic">🏥 العيادة</button><button class="chip" data-v="gym">🏋️ الجيم</button></div>
    <div class="two"><div><div class="lbl" style="margin-top:0">التاريخ</div><input class="inp" id="ib-date" type="date" value="${todayISO()}"></div><div><div class="lbl" style="margin-top:0">الوزن</div><input class="inp" id="ib-w" type="number" inputmode="decimal"></div></div>
    <div class="two"><div><div class="lbl">الدهون %</div><input class="inp" id="ib-fat" type="number" inputmode="decimal"></div><div><div class="lbl">العضلات (كجم)</div><input class="inp" id="ib-mus" type="number" inputmode="decimal"></div></div>
    <div class="two"><div><div class="lbl">المياه %</div><input class="inp" id="ib-wat" type="number" inputmode="decimal"></div><div><div class="lbl">الدهون الحشوية</div><input class="inp" id="ib-vis" type="number" inputmode="decimal"></div></div>
    <div class="two"><div><div class="lbl">معدل الحرق BMR</div><input class="inp" id="ib-bmr" type="number" inputmode="numeric"></div><div><div class="lbl">الوسط (سم)</div><input class="inp" id="ib-waist" type="number" inputmode="decimal"></div></div>
+   <div class="lbl">ملاحظة الدكتور (بتظهر للمشتركة)</div><input class="inp" id="ib-note" placeholder="مثلًا: ممتاز، كمّلي على نفس النظام">
    <button class="btn sec" id="ib-add" style="background:var(--navy);color:var(--gold)">＋ إضافة القياس</button>
   </div>
  </div>
@@ -491,13 +495,14 @@ function form(){
  </main>`;
  F.inbody=F.inbody||[];F.history=F.history||[];
  const drawIB=()=>{const b=$('#ib-list');if(!b)return;const l=[...F.inbody].sort((a,c)=>a.date<c.date?1:-1);
-  b.innerHTML=l.length?l.map(r=>`<div class="card" style="padding:8px 12px;font-size:15px"><b>${fmtD(r.date)}</b> · وزن ${r.w||'—'} · دهون ${r.fat||'—'}% · عضلات ${r.mus||'—'} · مياه ${r.wat||'—'}% · حشوية ${r.vis||'—'} · BMR ${r.bmr||'—'}${r.waist?' · وسط '+r.waist:''} <button data-ibd="${r.id}" style="color:var(--red);font-weight:800;float:left">✕</button></div>`).join(''):'<div class="pr" style="margin-bottom:6px">لسه مفيش قياسات</div>';
+  b.innerHTML=l.length?l.map(r=>`<div class="card" style="padding:8px 12px;font-size:15px">${r.src==='gym'?'🏋️':'🏥'} <b>${fmtD(r.date)}</b> · وزن ${r.w||'—'} · دهون ${r.fat||'—'}% · عضلات ${r.mus||'—'} · مياه ${r.wat||'—'}% · حشوية ${r.vis||'—'} · BMR ${r.bmr||'—'}${r.waist?' · وسط '+r.waist:''}${r.note?'<div class="pr" style="font-size:14px">📝 '+esc(r.note)+'</div>':''} <button data-ibd="${r.id}" style="color:var(--red);font-weight:800;float:left">✕</button></div>`).join(''):'<div class="pr" style="margin-bottom:6px">لسه مفيش قياسات</div>';
   b.querySelectorAll('[data-ibd]').forEach(x=>x.onclick=()=>{F.inbody=F.inbody.filter(r=>r.id!==x.dataset.ibd);drawIB()})};
  const paint=()=>{
   document.querySelectorAll('#c-kind .chip').forEach(c=>c.classList.toggle('on',F.kind===c.dataset.v));
   document.querySelectorAll('#c-plan .chip').forEach(c=>c.classList.toggle('on',F.plan===c.dataset.v));
   $('#sf').style.display=F.kind==='sub'?'block':'none';
   document.querySelectorAll('#c-goal .chip').forEach(c=>c.classList.toggle('on',F.goal===c.dataset.v));
+  document.querySelectorAll('#c-cond .chip').forEach(c=>c.classList.toggle('on',(F.conds||[]).includes(c.dataset.v)));
   $('#nl').textContent=F.kind==='inq'?'بتسأل عن إيه؟':'ملاحظات';
  };
  const setv=(id,v)=>{const el=$('#f-'+id);el.value=v;el.classList.remove('flash');void el.offsetWidth;el.classList.add('flash')};
@@ -509,9 +514,12 @@ function form(){
  $('#f-start').onchange=recalc;
  drawIB();
  document.querySelectorAll('#c-goal .chip').forEach(c=>c.onclick=()=>{F.goal=F.goal===c.dataset.v?'':c.dataset.v;paint()});
- $('#ib-add').onclick=()=>{const v=id=>$('#'+id).value.trim();const r={id:'b'+uid(),date:v('ib-date')||todayISO(),w:v('ib-w'),fat:v('ib-fat'),mus:v('ib-mus'),wat:v('ib-wat'),vis:v('ib-vis'),bmr:v('ib-bmr'),waist:v('ib-waist')};
+ F.conds=F.conds||[];
+ document.querySelectorAll('#c-cond .chip').forEach(c=>c.onclick=()=>{const v=c.dataset.v;F.conds=F.conds.includes(v)?F.conds.filter(x=>x!==v):[...F.conds,v];paint()});
+ let ibSrc='clinic';document.querySelectorAll('#ib-src .chip').forEach(c=>c.onclick=()=>{ibSrc=c.dataset.v;document.querySelectorAll('#ib-src .chip').forEach(x=>x.classList.toggle('on',x===c))});
+ $('#ib-add').onclick=()=>{const v=id=>$('#'+id).value.trim();const r={id:'b'+uid(),src:ibSrc,note:v('ib-note'),date:v('ib-date')||todayISO(),w:v('ib-w'),fat:v('ib-fat'),mus:v('ib-mus'),wat:v('ib-wat'),vis:v('ib-vis'),bmr:v('ib-bmr'),waist:v('ib-waist')};
   if(!r.w&&!r.fat&&!r.mus){toast('اكتب الوزن أو الدهون أو العضلات على الأقل');return}
-  F.inbody.push(r);if(r.w)$('#f-weight').value=r.w;['ib-w','ib-fat','ib-mus','ib-wat','ib-vis','ib-bmr','ib-waist'].forEach(i=>$('#'+i).value='');drawIB();toast('اتضاف القياس ✓')};
+  F.inbody.push(r);if(r.w)$('#f-weight').value=r.w;['ib-w','ib-fat','ib-mus','ib-wat','ib-vis','ib-bmr','ib-waist','ib-note'].forEach(i=>$('#'+i).value='');drawIB();toast('اتضاف القياس ✓')};
  const vt=$('#vt');
  const apply=()=>{
   if(!document.body.contains(vt)||!vt.value.trim())return;
@@ -537,7 +545,7 @@ function form(){
    if(F.program&&(+F.program<1||+F.program>20)){toast('رقم البرنامج من 1 لـ 20');return}
    if(F.start&&F.end&&F.end<F.start){toast('تاريخ الانتهاء قبل البدء!');return}
    if(F.plan&&F.plan!=='x'&&F.price){PR[F.plan]=F.price;savePR()}
-   F.height=$('#f-height').value.trim();F.weight=$('#f-weight').value.trim();F.health=$('#f-health').value.trim();
+   F.height=$('#f-height').value.trim();F.weight=$('#f-weight').value.trim();F.health=$('#f-health').value.trim();F.target=$('#f-target').value.trim();
    if(view.renew&&F._prev&&F._prev.start)F.history=[...(F.history||[]),F._prev];
   }else{F.plan='';F.months=0;F.price='';F.start='';F.end='';F.program=''}
   stopRec();delete F._prev;
@@ -630,6 +638,7 @@ async function prog(){
 }
 
 // ===== جدول الكلاسات + إعدادات + رابط المشتركة =====
+const CONDS=['سكر','ضغط','غدة درقية','تكيس مبايض','أنيميا','خشونة ركبة','انزلاق غضروفي','آلام ضهر','دوالي','حساسية صدر / ربو','حمل','رضاعة','ولادة حديثة','عملية حديثة'];
 const GOALS=['تخسيس','زيادة وزن','شد وتنشيف','لياقة عامة','تأهيل بعد إصابة أو ولادة'];
 const WDAYS=['السبت','الأحد','الاتنين','التلات','الأربع','الخميس','الجمعة'];
 let CLASSES=ld('gy_classes_v1',[]);const saveClasses=()=>localStorage.setItem('gy_classes_v1',JSON.stringify(CLASSES));
@@ -659,7 +668,7 @@ const b64u=u8=>{let s='';for(let i=0;i<u8.length;i+=0x8000)s+=String.fromCharCod
 function memberPayload(p){
  const n=+p.program||0,g=n?PG[n]:null,meta=n?PLAN20[n-1]:null;
  return {v:1,at:Date.now(),gym:{name:'Women Health GYM',wa:SET.wa||''},
-  m:{name:p.name||'',phone:p.phone||'',plan:planName(p),price:p.price||'',start:p.start||'',end:p.end||'',history:(p.history||[]).map(h=>({plan:planName(h),start:h.start,end:h.end})),goal:p.goal||'',height:p.height||'',weight:p.weight||'',health:p.health||'',inbody:(p.inbody||[]).map(({id,...r})=>r),
+  m:{name:p.name||'',phone:p.phone||'',plan:planName(p),price:p.price||'',start:p.start||'',end:p.end||'',history:(p.history||[]).map(h=>({plan:planName(h),start:h.start,end:h.end})),goal:p.goal||'',target:p.target||'',conds:p.conds||[],height:p.height||'',weight:p.weight||'',health:p.health||'',inbody:(p.inbody||[]).map(({id,...r})=>r),
    program:n?{no:n,name:(g&&g.title)||(meta&&meta.name)||'',kind:meta?meta.kind:'',goal:meta?meta.goal:'',lvl:meta?meta.lvl:'',ms:meta?meta.ms:[],text:(g&&g.notes)||(meta&&meta.text)||''}:null},
   classes:CLASSES.map(({id,...c})=>({id,...c}))};
 }

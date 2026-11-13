@@ -134,6 +134,10 @@ if(localStorage.getItem('gy_seed4')!=='1'){
  add4('تهدئة بعد التمرين',['مشي هادي لتهدئة النبض','تنفس عميق (شهيق وزفير)','إطالة الفخذ بعد التمرين','إطالة الأرداف بعد التمرين','إطالة الظهر بعد التمرين','إطالة الصدر والأكتاف بعد التمرين','فوم رولر للاسترخاء']);
  localStorage.setItem('gy_seed4','1');saveLib();
 }
+if(localStorage.getItem('gy_seed5')!=='1'){
+ if(!LIB.some(x=>x.name==='الكريزي (Crazy Fit)'))LIB.push({id:uid0(),type:'eq',group:'',name:'الكريزي (Crazy Fit)',notes:'',videos:[]});
+ localStorage.setItem('gy_seed5','1');saveLib();
+}
 if(localStorage.getItem('gy_seed2')!=='1'){
  if(!LIB.some(x=>x.type==='eq'&&x.name.includes('ستيب')))LIB.push({id:uid0(),type:'eq',group:'',name:'ستيبات (Step)',notes:'',videos:[]});
  localStorage.setItem('gy_seed2','1');saveLib();
@@ -550,7 +554,7 @@ function ytEmbed(u){
   return /^[\w-]{6,}$/.test(id)?'https://www.youtube-nocookie.com/embed/'+id:'';
  }catch(e){return ''}
 }
-const SITE_VIDEOS={'تريدميل (جهاز المشي)':'videos/treadmill.mp4','عجل (بايسكل)':'videos/bike.mp4'};
+const SITE_VIDEOS={'تريدميل (جهاز المشي)':'videos/treadmill.mp4','عجل (بايسكل)':'videos/bike.mp4','أوربتراك (إليبتيكال)':'videos/elliptical.mp4','الكريزي (Crazy Fit)':'videos/crazyfit.mp4'};
 let lt='eq',lbq='';
 function lib(){
  const eqs=LIB.filter(x=>x.type==='eq'),exs=LIB.filter(x=>x.type==='ex');

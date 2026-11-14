@@ -163,6 +163,7 @@ function render(){
  if(v==='form')return form();
  if(v==='backup')return backup();
  if(v==='plist')return plist();
+ if(v==='bulk')return bulk();
  if(v==='pform')return pform();
 }
 
@@ -192,7 +193,7 @@ function home(){
    ${SERVICES.map(s=>{const n=DB.filter(p=>p.status!=='new'&&p.branch===b.id&&p.service===s.id).length;
     return `<button class="svc" onclick="go({v:'list',k:'svc',b:'${b.id}',s:'${s.id}'})"><span class="ic" style="background:${s.bg}">${s.ic}</span><b>${s.name}</b><span class="n">${n}</span><span class="ar">‹</span></button>`}).join('')}
   </div>`).join('')}
-  <div class="foot"><button onclick="go({v:'backup'})">💾 النسخة الاحتياطية</button><a href="../gym/" style="color:var(--purple);font-weight:800;font-size:16px;padding:8px;text-decoration:none">💪 تطبيق الجيم</a></div>`;
+  <div class="foot"><button onclick="go({v:'bulk'})">📋 إضافة جماعية</button><button onclick="go({v:'backup'})">💾 النسخة الاحتياطية</button><a href="../gym/" style="color:var(--purple);font-weight:800;font-size:16px;padding:8px;text-decoration:none">💪 تطبيق الجيم</a></div>`;
  };
  drawBody();
  $('#q').oninput=e=>{q=e.target.value;drawBody()};
@@ -411,6 +412,59 @@ function dupCheck(ph){
 }
 
 // ===== النسخة الاحتياطية =====
+// ===== إضافة جماعية (أرقام وأسامي مرة واحدة) =====
+function parseBulk(text){
+ const out=[],seen=new Set(),skipped=[];
+ for(const raw of String(text||'').split(/\r?\n/)){
+  const line=digits(raw).replace(/[\t;|،,]+/g,' ').trim();if(!line)continue;
+  const seqs=line.match(/\+?\d[\d\s\-]{6,}\d/g)||[];
+  const phones=[];let rest=line;
+  for(const sq of seqs){
+   let d=sq.replace(/\D/g,'');
+   const m=d.match(/^(?:0020|20|0)?(1[0125]\d{8})$/);
+   if(m)d='0'+m[1];else if(d.length<8||d.length>11){continue}
+   phones.push(d);rest=rest.replace(sq,' ');
+  }
+  if(!phones.length){skipped.push(raw.trim());continue}
+  const name=rest.replace(/[\-–—_:.\/\\()]+/g,' ').replace(/\s+/g,' ').trim();
+  phones.forEach(ph=>{if(seen.has(ph))return;seen.add(ph);out.push({phone:ph,name:phones.length===1?name:''})});
+ }
+ return {list:out,skipped};
+}
+function bulk(){
+ let B=view.B||{branch:'manshia',service:'physio',status:'active'};
+ $('#app').innerHTML=`
+ <div class="hdr"><div class="row"><button class="back" onclick="history.back()">→</button><h1>📋 إضافة جماعية</h1></div></div>
+ <main>
+ <div class="card" style="background:#F1EAFB;font-size:16px;line-height:1.6">الصقي هنا الأرقام والأسامي مرة واحدة، <b>كل عميل في سطر</b>. ممكن يبقى الاسم والرقم، أو الرقم بس:<br><span dir="ltr" style="display:block;text-align:left;color:var(--navy)">منى السيد 01098765432<br>01123456789<br>هالة فؤاد - 0101 234 5678</span></div>
+ <div class="lbl">الفرع</div><div class="chips" id="b-branch">${BRANCHES.map(b=>`<button class="chip" data-v="${b.id}">${b.name}</button>`).join('')}</div>
+ <div class="lbl">الخدمة</div><div class="chips" id="b-service">${SERVICES.map(s=>`<button class="chip" data-v="${s.id}">${s.ic} ${s.name}</button>`).join('')}</div>
+ <div class="lbl">النوع</div><div class="chips" id="b-status"><button class="chip" data-v="active">✓ مرضى عندي</button><button class="chip" data-v="new">🆕 عملاء جداد</button></div>
+ <div class="lbl">الأرقام والأسامي</div>
+ <textarea class="inp" id="b-text" style="min-height:220px;direction:rtl;line-height:1.7" placeholder="الصقي القايمة هنا..."></textarea>
+ <div id="b-prev" class="card" style="margin-top:10px;display:none"></div>
+ <button class="btn sec" id="b-chk" style="background:var(--navy);color:var(--gold)">👁 راجعي قبل الإضافة</button>
+ <button class="btn" id="b-go">✓ أضيفهم كلهم</button>
+ </main>`;
+ const paint=()=>{['branch','service','status'].forEach(k=>document.querySelectorAll('#b-'+k+' .chip').forEach(c=>c.classList.toggle('on',B[k]===c.dataset.v)))};
+ paint();
+ ['branch','service','status'].forEach(k=>document.querySelectorAll('#b-'+k+' .chip').forEach(c=>c.onclick=()=>{B[k]=c.dataset.v;paint()}));
+ const existing=()=>new Set(DB.map(p=>digits(p.phone).replace(/\D/g,'')));
+ const analyze=()=>{const r=parseBulk($('#b-text').value),ex=existing();const fresh=r.list.filter(x=>!ex.has(x.phone));return {...r,fresh,dups:r.list.length-fresh.length}};
+ $('#b-chk').onclick=()=>{const a=analyze(),box=$('#b-prev');box.style.display='block';
+  box.innerHTML=`<div style="font-weight:900;font-size:18px">هيتضاف <span style="color:var(--green)">${a.fresh.length}</span> ${a.fresh.length===1?'عميل':'عميل'}</div>
+  ${a.dups?`<div class="pr">${a.dups} رقم موجودين قبل كده، هيتخطّوا.</div>`:''}
+  ${a.skipped.length?`<div class="pr" style="color:var(--red)">${a.skipped.length} سطر مفيهوش رقم صحيح، هيتخطّوا:<br>${a.skipped.slice(0,5).map(esc).join('<br>')}${a.skipped.length>5?'<br>...':''}</div>`:''}
+  <div style="margin-top:8px;max-height:200px;overflow:auto">${a.fresh.slice(0,8).map(x=>`<div class="pr" dir="ltr" style="text-align:right">${esc(x.name||'بدون اسم')} · ${x.phone}</div>`).join('')}${a.fresh.length>8?`<div class="pr">... و${a.fresh.length-8} كمان</div>`:''}</div>`};
+ $('#b-go').onclick=()=>{const a=analyze();if(!a.fresh.length){toast('مفيش أرقام جديدة تتضاف');return}
+  const bn=(BRANCHES.find(b=>b.id===B.branch)||{}).name,sn=(SERVICES.find(x=>x.id===B.service)||{}).name;
+  if(!confirm('هتضيفي '+a.fresh.length+' عميل في '+sn+' · '+bn+'. تكملي؟'))return;
+  const now=Date.now();
+  a.fresh.forEach((x,i)=>DB.push({id:uid(),created:now+i,name:x.name,phone:x.phone,branch:B.branch,service:B.service,status:B.status,problem:'',date:'',time:'',notes:''}));
+  save();toast('اتضاف '+a.fresh.length+' عميل ✓');
+  go({v:'list',k:'svc',b:B.branch,s:B.service});
+ };
+}
 function backup(){
  const last=+localStorage.getItem('pa_last_backup')||0;
  $('#app').innerHTML=`

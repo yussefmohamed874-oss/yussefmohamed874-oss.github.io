@@ -129,17 +129,24 @@ function fmtAppt(p){
  return s;
 }
 function apptClass(p){if(!p.date)return '';const t=todayISO();return p.date===t?'today':(p.date<t?'past':'')}
-function waLink(ph,text){
- let d=digits(ph).replace(/\D/g,'');if(d.startsWith('0'))d='2'+d;else if(d.startsWith('1')&&d.length===10)d='20'+d;
- const web='https://wa.me/'+d+(text?'?text='+encodeURIComponent(text):'');
- const q='phone='+d+(text?'&text='+encodeURIComponent(text):'');
- const ua=navigator.userAgent;
- // أندرويد: نفتح الواتساب العادي بالاسم (com.whatsapp) مش واتساب البيزنس
- if(/Android/i.test(ua))return 'intent://send?'+q+'#Intent;scheme=whatsapp;package=com.whatsapp;S.browser_fallback_url='+encodeURIComponent(web)+';end';
- // آيفون: الرابط ده بيفتح الواتساب العادي بس
+function waNum(ph){let d=digits(ph).replace(/\D/g,'');if(d.startsWith('0'))d='2'+d;else if(d.startsWith('1')&&d.length===10)d='20'+d;return d}
+function waLink(ph,text){return 'https://wa.me/'+waNum(ph)+(text?'?text='+encodeURIComponent(text):'')}
+// يفتح الواتساب العادي بالاسم (مش واتساب بيزنس)
+function waRegular(ph,text){
+ const d=waNum(ph),q='phone='+d+(text?'&text='+encodeURIComponent(text):''),ua=navigator.userAgent;
+ if(/Android/i.test(ua))return 'intent://send?'+q+'#Intent;scheme=whatsapp;package=com.whatsapp;end';
  if(/iPhone|iPad|iPod/i.test(ua))return 'whatsapp://send?'+q;
- return web;
+ return null;
 }
+document.addEventListener('click',e=>{
+ const a=e.target.closest&&e.target.closest('a.a-wa');if(!a||!a.dataset.ph)return;
+ const u=waRegular(a.dataset.ph);if(!u)return;
+ e.preventDefault();
+ // لو الواتساب العادي مش متثبت، نرجع للرابط العادي بعد ثانية ونص
+ const t=setTimeout(()=>{if(!document.hidden)window.open(waLink(a.dataset.ph),'_blank')},1600);
+ document.addEventListener('visibilitychange',()=>clearTimeout(t),{once:true});
+ location.href=u;
+});
 function toast(m){document.querySelectorAll('.toast').forEach(x=>x.remove());const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2200)}
 function sortList(a){return a.sort((x,y)=>{const ax=x.date?(x.date+(x.time||'99')):'9999',ay=y.date?(y.date+(y.time||'99')):'9999';return ax<ay?-1:ax>ay?1:(x.name||'').localeCompare(y.name||'','ar')})}
 
@@ -213,7 +220,7 @@ function cardHTML(p,showWhere){
  ${p.problem?`<div class="pr">📝 ${esc(p.problem)}</div>`:''}
  ${p.date?`<div class="ap ${apptClass(p)}">📅 ${fmtAppt(p)}</div>`:''}
  <div class="acts">
-  ${p.phone?`<a class="a-call" href="tel:${esc(digits(p.phone))}">📞 اتصال</a><a class="a-wa" href="${waLink(p.phone)}" target="_blank">واتساب</a>`:''}
+  ${p.phone?`<a class="a-call" href="tel:${esc(digits(p.phone))}">📞 اتصال</a><a class="a-wa" href="${waLink(p.phone)}" data-ph="${esc(p.phone)}" target="_blank">واتساب</a>`:''}
   <button class="a-ed" data-ed="${p.id}">✏️ تعديل</button>
   ${p.status==='new'?`<button class="a-go" data-go="${p.id}">✓ بدأ</button>`:''}
  </div>
@@ -472,7 +479,7 @@ function pCardHTML(p){
  ${p.address?`<div class="pr">📍 ${esc(p.address)}</div>`:''}
  ${(p.days&&p.days.length)?`<div class="tags">${p.days.map(d=>`<span class="tag" style="background:#F1EAFB;color:var(--purple)">${d}</span>`).join('')}</div>`:''}
  <div class="acts">
-  ${p.phone?`<a class="a-call" href="tel:${esc(digits(p.phone))}">📞 اتصال</a><a class="a-wa" href="${waLink(p.phone)}" target="_blank">واتساب</a>`:''}
+  ${p.phone?`<a class="a-call" href="tel:${esc(digits(p.phone))}">📞 اتصال</a><a class="a-wa" href="${waLink(p.phone)}" data-ph="${esc(p.phone)}" target="_blank">واتساب</a>`:''}
   ${p.address?`<a class="a-call" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.address)}" target="_blank">📍 الخريطة</a>`:''}
   <button class="a-ed" data-ped="${p.id}">✏️ تعديل</button>
  </div></div>`;

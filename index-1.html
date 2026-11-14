@@ -67,6 +67,27 @@ img{display:block;max-width:100%;height:auto}
 .btn:hover{filter:brightness(1.07)}
 .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
 
+/* weight & calorie calculator */
+.calc{margin-top:40px;display:grid;grid-template-columns:1fr 1.25fr;gap:40px;align-items:start}
+.calc-intro{min-width:0}
+.calc-intro p{color:var(--night-muted);margin-top:12px}
+.calc-intro ul{color:var(--night-muted);margin:12px 0 0;padding-inline-start:20px;font-size:.93rem}
+#calcForm{color:var(--ink)}
+.seg{display:flex;gap:8px}
+.seg label{flex:1;flex-direction:row;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);border-radius:10px;padding:10px;cursor:pointer;background:var(--bg)}
+.seg input{width:auto;margin:0;accent-color:var(--blue)}
+.seg label:has(input:checked){border-color:var(--blue);background:var(--blue-soft)}
+.calc-out{background:var(--blue-soft);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.calc-nums{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.calc-nums div{background:var(--surface);border-radius:10px;padding:10px 12px;min-width:0}
+.calc-nums small{display:block;color:var(--muted);font-size:.8rem;font-weight:700}
+.calc-nums b{font-family:var(--display);font-size:1.25rem;font-variant-numeric:tabular-nums;white-space:nowrap}
+#oLoss{font-size:1.05rem}
+.calc-out p{font-size:.92rem;color:var(--ink)}
+.calc-note{font-size:.82rem;color:var(--muted)}
+@media (max-width:900px){.calc{grid-template-columns:1fr}}
+@media (max-width:600px){.calc-nums{grid-template-columns:1fr}}
+
 /* header */
 header{background:var(--night);color:var(--night-ink)}
 header .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:12px;flex-wrap:wrap}
@@ -223,6 +244,7 @@ footer span{direction:rtl}
     <nav aria-label="أقسام الموقع">
       <a href="#physio">العلاج الطبيعي</a>
       <a href="#slim">التخسيس والتغذية</a>
+      <a href="#calc">احسب سعراتك</a>
       <a href="#faq">الأسئلة الشائعة</a>
       <a href="#branches">الفروع</a>
       <a href="#book">احجز</a>
@@ -297,6 +319,52 @@ footer span{direction:rtl}
         <div class="stage aid"><small>عامل مساعد</small><h3>خدمات نحت القوام</h3><p>تقييم مدى ملاءمة أجهزة نحت القوام الموضعي لأهدافك وحالتك، كخدمة مساندة للخطة الغذائية وليست بديلًا عنها.</p>
           <div class="sculpt"><span class="tag">كرايو</span><span class="tag">كافيتيشن</span><span class="tag">RF</span><span class="tag">هايفو</span><span class="tag">ليزر</span></div></div>
       </div>
+    </div>
+      <div class="wrap calc" id="calc">
+      <div class="calc-intro">
+        <p class="eyebrow">أداة مجانية</p>
+        <h2>احسب وزنك واحتياجك اليومي من السعرات</h2>
+        <p>أدخل بياناتك وهتعرف مؤشر كتلة الجسم، وتقدير السعرات اللي جسمك محتاجها يوميًا علشان يثبت على وزنه، والمدى المناسب لخسارة وزن تدريجية.</p>
+        <ul>
+          <li>الحساب تقديري بمعادلة Mifflin-St Jeor المعتمدة، ومش بديل عن التقييم في العيادة.</li>
+          <li>مؤشر كتلة الجسم مش بيفرّق بين الدهون والعضلات، علشان كده قياس InBody بيدي صورة أدق.</li>
+          <li>لو أقل من 18 سنة، أو حامل أو مرضعة، أو عندك مرض مزمن، الخطة لازم تكون تحت إشراف طبي.</li>
+        </ul>
+      </div>
+      <form id="calcForm" novalidate>
+        <b style="font-family:var(--display);font-size:1.15rem">حاسبة الوزن والسعرات</b>
+        <div class="seg" role="radiogroup" aria-label="النوع">
+          <label><input type="radio" name="cSex" value="f" checked>أنثى</label>
+          <label><input type="radio" name="cSex" value="m">ذكر</label>
+        </div>
+        <div class="row2">
+          <label for="cAge">السن (سنة)<input id="cAge" type="number" inputmode="numeric" min="18" max="80" placeholder="مثال: 32"></label>
+          <label for="cHeight">الطول (سم)<input id="cHeight" type="number" inputmode="numeric" min="130" max="220" placeholder="مثال: 162"></label>
+        </div>
+        <div class="row2">
+          <label for="cWeight">الوزن (كجم)<input id="cWeight" type="number" inputmode="decimal" min="35" max="250" step="0.1" placeholder="مثال: 84"></label>
+          <label for="cAct">مستوى النشاط
+            <select id="cAct">
+              <option value="1.2">قليل الحركة (شغل مكتبي)</option>
+              <option value="1.375">نشاط خفيف (تمرين 1-3 أيام)</option>
+              <option value="1.55">نشاط متوسط (تمرين 3-5 أيام)</option>
+              <option value="1.725">نشاط عالي (تمرين 6-7 أيام)</option>
+            </select>
+          </label>
+        </div>
+        <button class="btn btn-blue" type="submit">احسب</button>
+        <p class="formmsg" id="calcMsg" role="status"></p>
+        <div class="calc-out" id="calcOut" hidden aria-live="polite">
+          <div class="calc-nums">
+            <div><small>مؤشر كتلة الجسم</small><b id="oBmi"></b></div>
+            <div><small>سعرات ثبات الوزن</small><b id="oTdee"></b></div>
+            <div><small>مدى خسارة الوزن</small><b id="oLoss"></b></div>
+          </div>
+          <p id="oText"></p>
+          <p class="calc-note">الأرقام تقدير عام لشخص بالغ سليم. الاحتياج الحقيقي بيختلف حسب تكوين جسمك وحالتك الصحية، وده اللي بنحدده في جلسة التقييم.</p>
+          <a class="btn btn-wa" href="#book" id="calcBook" data-service="استشارة تغذية علاجية وتقييم InBody">احجز تقييم InBody وخطة تناسبك</a>
+        </div>
+      </form>
     </div>
   </section>
 
@@ -457,6 +525,36 @@ footer span{direction:rtl}
     var n=b.getAttribute("data-n"),done=function(){b.textContent="اتنسخ";setTimeout(function(){b.textContent="نسخ الرقم"},1600)};
     if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(n).then(done,function(){sel(b)})}else sel(b)})});
   function sel(b){var s=b.previousElementSibling,r=document.createRange();r.selectNodeContents(s);var x=getSelection();x.removeAllRanges();x.addRange(r);b.textContent="الرقم متحدد، انسخه"}
+  (function(){
+    var f=document.getElementById("calcForm");if(!f)return;
+    var fmt=function(n){return Math.round(n).toLocaleString("ar-EG")};
+    var last="";
+    f.addEventListener("submit",function(e){
+      e.preventDefault();
+      var msg=document.getElementById("calcMsg"),out=document.getElementById("calcOut");
+      var male=f.querySelector('input[name="cSex"]:checked').value==="m";
+      var age=parseFloat(document.getElementById("cAge").value),h=parseFloat(document.getElementById("cHeight").value),w=parseFloat(document.getElementById("cWeight").value),act=parseFloat(document.getElementById("cAct").value);
+      if(!(age>=18&&age<=80)){msg.textContent="الحاسبة دي للبالغين من 18 لـ 80 سنة. لو السن أقل من 18، الأفضل تقييم في العيادة.";out.hidden=true;document.getElementById("cAge").focus();return}
+      if(!(h>=130&&h<=220)){msg.textContent="اكتب الطول بالسنتيمتر، بين 130 و 220.";out.hidden=true;document.getElementById("cHeight").focus();return}
+      if(!(w>=35&&w<=250)){msg.textContent="اكتب الوزن بالكيلو، بين 35 و 250.";out.hidden=true;document.getElementById("cWeight").focus();return}
+      msg.textContent="";
+      var m=h/100,bmi=w/(m*m);
+      var bmr=10*w+6.25*h-5*age+(male?5:-161),tdee=bmr*act;
+      var floor=male?1500:1200,lo=Math.max(tdee-500,floor),hi=Math.max(tdee-300,floor);
+      var cat,t;
+      if(bmi<18.5){cat="أقل من الطبيعي";t="وزنك أقل من المعدل الطبيعي، فخسارة الوزن مش هدف مناسب ليك. لو عايز تزوّد وزنك أو تبني عضل بشكل صحي، التقييم هيحدد احتياجك."}
+      else if(bmi<25){cat="طبيعي";t="وزنك في المعدل الطبيعي. لو هدفك شد الجسم أو تقليل دهون منطقة معينة، الأهم هو نسبة الدهون للعضل مش رقم الميزان."}
+      else if(bmi<30){cat="زيادة في الوزن";t="عندك زيادة في الوزن. عجز من 300 لـ 500 سعر في اليوم عن احتياجك بيساعد على نزول تدريجي ومستمر من غير حرمان."}
+      else{cat="سمنة";t="المؤشر في نطاق السمنة. النزول هنا محتاج خطة متابعة، وتقييم لأي حاجة ممكن تأثر على الوزن زي الغدة أو مقاومة الإنسولين."}
+      document.getElementById("oBmi").textContent=bmi.toLocaleString("ar-EG",{minimumFractionDigits:1,maximumFractionDigits:1});
+      document.getElementById("oTdee").textContent=fmt(tdee);
+      document.getElementById("oLoss").textContent=bmi<18.5?"غير مناسب":fmt(lo)+" – "+fmt(hi);
+      document.getElementById("oText").textContent="التصنيف: "+cat+". "+t;
+      last="نتيجة حاسبة الموقع: الوزن "+w+" كجم، الطول "+h+" سم، مؤشر الكتلة "+bmi.toFixed(1)+" ("+cat+")، سعرات الثبات حوالي "+Math.round(tdee);
+      out.hidden=false;
+    });
+    document.getElementById("calcBook").addEventListener("click",function(){var n=document.getElementById("fNote");if(n&&last&&!n.value.trim())n.value=last});
+  })();
   document.getElementById("bookForm").addEventListener("submit",function(e){
     e.preventDefault();var name=document.getElementById("fName").value.trim(),msg=document.getElementById("formMsg");
     if(!name){msg.textContent="اكتب اسمك الأول عشان نعرف نرد عليك.";document.getElementById("fName").focus();return}

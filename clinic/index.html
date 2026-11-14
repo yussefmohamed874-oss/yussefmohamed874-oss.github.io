@@ -129,7 +129,17 @@ function fmtAppt(p){
  return s;
 }
 function apptClass(p){if(!p.date)return '';const t=todayISO();return p.date===t?'today':(p.date<t?'past':'')}
-function waLink(ph){let d=digits(ph).replace(/\D/g,'');if(d.startsWith('0'))d='2'+d;else if(d.startsWith('1')&&d.length===10)d='20'+d;return 'https://wa.me/'+d}
+function waLink(ph,text){
+ let d=digits(ph).replace(/\D/g,'');if(d.startsWith('0'))d='2'+d;else if(d.startsWith('1')&&d.length===10)d='20'+d;
+ const web='https://wa.me/'+d+(text?'?text='+encodeURIComponent(text):'');
+ const q='phone='+d+(text?'&text='+encodeURIComponent(text):'');
+ const ua=navigator.userAgent;
+ // أندرويد: نفتح الواتساب العادي بالاسم (com.whatsapp) مش واتساب البيزنس
+ if(/Android/i.test(ua))return 'intent://send?'+q+'#Intent;scheme=whatsapp;package=com.whatsapp;S.browser_fallback_url='+encodeURIComponent(web)+';end';
+ // آيفون: الرابط ده بيفتح الواتساب العادي بس
+ if(/iPhone|iPad|iPod/i.test(ua))return 'whatsapp://send?'+q;
+ return web;
+}
 function toast(m){document.querySelectorAll('.toast').forEach(x=>x.remove());const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2200)}
 function sortList(a){return a.sort((x,y)=>{const ax=x.date?(x.date+(x.time||'99')):'9999',ay=y.date?(y.date+(y.time||'99')):'9999';return ax<ay?-1:ax>ay?1:(x.name||'').localeCompare(y.name||'','ar')})}
 

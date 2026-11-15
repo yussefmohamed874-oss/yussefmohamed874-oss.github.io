@@ -263,6 +263,12 @@ blockquote{background:linear-gradient(135deg,var(--gold-soft),transparent);borde
 .day.today{box-shadow:0 0 0 3px rgba(201,152,46,.18)}
 form{border-top:3px solid var(--gold-2)}
 footer{background:linear-gradient(160deg,#070c20,#0c1430);border-top:1px solid rgba(243,213,138,.25)}
+.strip{display:flex;gap:10px;overflow-x:auto;padding:14px 16px;background:var(--night);scroll-snap-type:x mandatory;scrollbar-width:none}
+.strip::-webkit-scrollbar{display:none}
+.strip img{flex:none;width:210px;height:150px;object-fit:cover;border-radius:14px;border:1px solid rgba(243,213,138,.35);scroll-snap-align:start}
+.pics{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.pics img{width:100%;height:170px;object-fit:cover;border-radius:14px;border:1px solid var(--gold-2);box-shadow:0 12px 28px rgba(12,20,48,.18)}
+section{padding-block:48px}
 .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease}
 .reveal.in{opacity:1;transform:none}
 .mcta{display:none}
@@ -271,6 +277,8 @@ footer{background:linear-gradient(160deg,#070c20,#0c1430);border-top:1px solid r
   .hero{padding-block:44px 64px}
   .glass{padding:7px 12px}.glass b{font-size:.92rem}
   footer{padding-bottom:96px}
+  .method li{padding:16px 18px;display:grid;grid-template-columns:auto 1fr;column-gap:14px;align-items:center}.method li::before{grid-row:span 2;margin:0}.method p{margin-top:2px}
+  section{padding-block:38px}.area{padding:14px 18px}.stage{padding:16px}
   .mcta{display:flex;position:fixed;inset:auto 12px calc(12px + env(safe-area-inset-bottom,0px)) 12px;z-index:30;gap:8px}
   .mcta a{flex:1;justify-content:center;padding:12px 10px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
   .mcta .btn-wa{flex:.7}
@@ -302,7 +310,7 @@ footer{background:linear-gradient(160deg,#070c20,#0c1430);border-top:1px solid r
       <div class="hero-text">
         <p class="eyebrow">حلوان · التبين · المعصرة</p>
         <h1>Physio Art <small>للعلاج الطبيعي والتأهيل والتغذية العلاجية</small></h1>
-        <p class="lead"><strong>رعاية متخصصة تبدأ بفهم حالتك، وتُبنى على احتياجاتك، وتهتم بتقدمك.</strong><br>العلاج الطبيعي والتأهيل، إلى جانب برامج التخسيس والتغذية العلاجية، ضمن منظومة خدمات متكاملة هدفها دعم الحركة الصحية وتحسين نمط الحياة.</p>
+        <p class="lead"><strong>رعاية تبدأ بفهم حالتك، وتهتم بتقدمك.</strong><br>علاج طبيعي وتأهيل، وتخسيس وتغذية علاجية، في 3 فروع.</p>
         <div class="cta">
           <a class="btn btn-gold" href="#book">احجز موعدك الآن</a>
           <a class="btn btn-ghost" href="#physio">تعرّف على خدماتنا</a>
@@ -324,6 +332,10 @@ footer{background:linear-gradient(160deg,#070c20,#0c1430);border-top:1px solid r
     <div><b>3 فروع</b><span>حلوان · التبين · المعصرة</span></div>
   </div></div>
 
+  <div class="strip" aria-label="صور من العيادة">
+    <img src="img/manual-therapy.jpg" alt="جلسة علاج يدوي" loading="lazy"><img src="img/physio-room.jpg" alt="غرفة العلاج الطبيعي" loading="lazy"><img src="img/inbody.jpg" alt="قياس InBody" loading="lazy"><img src="img/sessions-room.jpg" alt="غرفة الجلسات" loading="lazy"><img src="img/body-contouring.jpg" alt="أجهزة نحت القوام" loading="lazy"><img src="img/exam-room.jpg" alt="غرفة الكشف" loading="lazy"><img src="img/cryo.jpg" alt="جهاز الكرايو" loading="lazy">
+  </div>
+
   <section>
     <div class="wrap">
       <div class="head">
@@ -331,9 +343,9 @@ footer{background:linear-gradient(160deg,#070c20,#0c1430);border-top:1px solid r
         <h2>مسار العلاج</h2>
       </div>
       <ol class="method">
-        <li><h3>التقييم السريري الدقيق</h3><p>فهم طبيعة الشكوى الحركية أو الغذائية وتحديد الأسباب الجذرية قبل البدء في أي إجراء.</p></li>
-        <li><h3>خطة علاجية فردية</h3><p>برنامج تأهيلي أو غذائي مخصص يناسب طبيعة جسمك، وحالتك الصحية، ونمط حياتك اليومي.</p></li>
-        <li><h3>المتابعة وتطوير الخطة</h3><p>قياس الاستجابة بشكل دوري وتعديل الخطة العلاجية للوصول إلى أفضل نتيجة مستدامة.</p></li>
+        <li><h3>تقييم دقيق</h3><p>نفهم شكوتك وسببها الأول.</p></li>
+        <li><h3>خطة ليك إنت</h3><p>برنامج يناسب جسمك وحياتك.</p></li>
+        <li><h3>متابعة مستمرة</h3><p>نقيس تقدمك ونطوّر الخطة.</p></li>
       </ol>
     </div>
   </section>
@@ -343,19 +355,19 @@ footer{background:linear-gradient(160deg,#070c20,#0c1430);border-top:1px solid r
       <div class="svc-intro">
         <p class="eyebrow"><span class="num">01</span>العلاج الطبيعي والتأهيل</p>
         <h2>رعاية حركية تبدأ بالتقييم الدقيق</h2>
-        <p>الألم وتراجع القدرة على الحركة لا يحتاجان إلى حلول مؤقتة فقط، بل إلى فهم طبيعة الحالة وتحديد أهداف واضحة للتعامل معها. في Physio Art نركز على تقييم الاحتياجات الحركية، ووضع خطة علاج وتأهيل مناسبة لكل حالة، مع متابعة الاستجابة وتطوير الخطة وفقًا للتقدم.</p>
+        <p>نقيّم حالتك، ونحط خطة علاج وتأهيل تناسبك، ونتابع تقدمك.</p>
+        <div class="pics"><img src="img/manual-therapy.jpg" alt="جلسة علاج يدوي" loading="lazy"><img src="img/physio-room.jpg" alt="غرفة العلاج الطبيعي" loading="lazy"></div>
         <div class="first-step">
           <b>الخطوة الأولى: ابدأ بتقييم حالتك</b>
-          <span style="color:var(--muted)">احجز موعدًا لمناقشة شكواك وتحديد الخطوات العلاجية والتأهيلية المناسبة.</span>
           <a class="btn btn-blue" href="#book" data-service="تقييم علاج طبيعي وتأهيل">احجز تقييم العلاج الطبيعي</a>
         </div>
       </div>
       <div class="areas">
-        <div class="area"><h3>العظام والعمود الفقري</h3><p>حالات الانزلاق الغضروفي، وخشونة المفاصل، والشوكة العظمية، والتأهيل بعد الكسور والعمليات الجراحية وتغيير المفاصل.</p></div>
-        <div class="area"><h3>التأهيل العصبي</h3><p>برامج تأهيل للحالات العصبية، تشمل الجلطات، والعصب السابع، والتصلب المتعدد، وإصابات الحبل الشوكي، لاستعادة الوظائف العصبية والحركية تدريجيًا وفقًا للتقييم.</p></div>
-        <div class="area"><h3>الإصابات الرياضية</h3><p>تأهيل إصابات العضلات والأربطة ومشكلات الركبة والكتف، بهدف استعادة الوظيفة الحركية والعودة الآمنة والتدريجية للنشاط البدني.</p></div>
-        <div class="area"><h3>صحة المرأة والأطفال</h3><p>خدمات تراعي المرحلة العمرية والصحية، وتشمل آلام الحمل وما بعد الولادة، وتأخر النمو الحركي والجنف لدى الأطفال، بحسب احتياجات الحالة.</p></div>
-        <div class="area"><h3>العلاج اليدوي والتقنيات المساندة</h3><p>دمج مدروس بين المهارات العلاجية اليدوية والتقنيات الحديثة، تُختار وتُوظَّف بدقة وفقًا لطبيعة الحالة ومدى ملاءمتها السريرية.</p></div>
+        <div class="area"><h3>العظام والعمود الفقري</h3><p>انزلاق غضروفي، خشونة، وتأهيل بعد الكسور والعمليات.</p></div>
+        <div class="area"><h3>التأهيل العصبي</h3><p>جلطات، العصب السابع، وإصابات الحبل الشوكي.</p></div>
+        <div class="area"><h3>الإصابات الرياضية</h3><p>عضلات وأربطة، وركبة وكتف.</p></div>
+        <div class="area"><h3>صحة المرأة والأطفال</h3><p>آلام الحمل وبعد الولادة، وتأخر النمو الحركي.</p></div>
+        <div class="area"><h3>العلاج اليدوي والأجهزة</h3><p>تقنيات تُختار حسب حالتك.</p></div>
       </div>
     </div>
   </section>
@@ -365,14 +377,15 @@ footer{background:linear-gradient(160deg,#070c20,#0c1430);border-top:1px solid r
       <div class="svc-intro">
         <p class="eyebrow"><span class="num">02</span>التخسيس والتغذية العلاجية</p>
         <h2>إدارة الوزن تبدأ بخطة تناسبك</h2>
-        <p>الوصول إلى وزن مناسب لا يعتمد على نظام غذائي واحد يناسب الجميع. احتياجات الجسم، ونمط الحياة، والأهداف، والاستجابة للتغيير، كلها عوامل تؤثر في اختيار الخطة. نعتمد على تقييم مكونات الجسم، وتنظيم التغذية وفق الاحتياجات الفردية، ومتابعة التقدم لتعديل الخطة عند الحاجة.</p>
+        <p>مفيش نظام واحد يناسب الكل. نقيس، ونحط خطة ليك، ونتابع.</p>
+        <div class="pics"><img src="img/inbody.jpg" alt="قياس InBody" loading="lazy"><img src="img/cryo.jpg" alt="جهاز الكرايو" loading="lazy"></div>
         <div class="cta"><a class="btn btn-wa" href="#book" data-service="استشارة تغذية علاجية وتقييم InBody">احجز استشارة التغذية العلاجية</a></div>
       </div>
       <div class="stages">
-        <div class="stage"><small>المرحلة الأولى</small><h3>قياس مكونات الجسم</h3><p>قياس InBody لتكوين صورة أشمل عن الوزن، ونسب الدهون، والكتلة العضلية، ومعدلات الحرق، وفقًا لإمكانات القياس المتاحة.</p></div>
-        <div class="stage"><small>المرحلة الثانية</small><h3>التغذية الفردية</h3><p>خطة غذائية تراعي احتياجاتك الصحية وعاداتك اليومية، مع التركيز على الاستمرارية والتوازن دون حرمان قاسٍ.</p></div>
-        <div class="stage"><small>المرحلة الثالثة</small><h3>المتابعة والتقييم</h3><p>مراجعة التقدم دوريًا وتقييم التغيرات في تكوين الجسم، وتعديل الخطة وفقًا لاستجابة الجسم الفعلية.</p></div>
-        <div class="stage aid"><small>عامل مساعد</small><h3>خدمات نحت القوام</h3><p>تقييم مدى ملاءمة أجهزة نحت القوام الموضعي لأهدافك وحالتك، كخدمة مساندة للخطة الغذائية وليست بديلًا عنها.</p>
+        <div class="stage"><small>1</small><h3>قياس InBody</h3><p>الوزن والدهون والعضلات ومعدل الحرق.</p></div>
+        <div class="stage"><small>2</small><h3>تغذية فردية</h3><p>خطة متوازنة من غير حرمان قاسي.</p></div>
+        <div class="stage"><small>3</small><h3>متابعة</h3><p>نراجع التقدم ونعدّل الخطة.</p></div>
+        <div class="stage aid"><small>مساعد</small><h3>نحت القوام</h3><p>خدمة مساندة للخطة، مش بديل عنها.</p>
           <div class="sculpt"><span class="tag">كرايو</span><span class="tag">كافيتيشن</span><span class="tag">RF</span><span class="tag">هايفو</span><span class="tag">ليزر</span></div></div>
       </div>
     </div>
@@ -381,15 +394,10 @@ footer{background:linear-gradient(160deg,#070c20,#0c1430);border-top:1px solid r
   <section id="tech">
     <div class="wrap">
       <div class="head">
-        <p class="eyebrow"><span class="num">03</span>التقنيات والخدمات المساندة</p>
-        <h2>اختيار الخدمة المناسبة يبدأ من احتياجك</h2>
-        <p>تضم العيادة منظومة من تقنيات وأجهزة العلاج الطبيعي، إلى جانب أجهزة مخصصة لجلسات نحت القوام الموضعي.</p>
+        <p class="eyebrow"><span class="num">03</span>صور</p>
+        <h2>من داخل العيادة</h2>
       </div>
-      <div class="tech">
-        <div><h3>توظيف مبني على التقييم</h3><p>يُحدَّد استخدام كل تقنية أو جهاز وفقًا لطبيعة الخدمة، واحتياجات الحالة، ومدى ملاءمته الطبية.</p></div>
-        <div><h3>الشفافية السريرية</h3><p>الاختيار السريري يسبق أي إجراء، ونوضح لك الأجهزة المقترحة ودورها الفعلي في خطتك خلال جلسة الكشف والتقييم.</p></div>
-      </div>
-      <div class="head" style="margin-bottom:18px"><h3 style="font-size:1.3rem">من داخل العيادة</h3></div>
+      
       <div class="gallery">
         <figure class="tall"><img src="img/manual-therapy.jpg" alt="جلسة علاج يدوي في Physio Art" loading="lazy"><figcaption>جلسة علاج يدوي</figcaption></figure>
         <figure><img src="img/physio-room.jpg" alt="غرفة العلاج الطبيعي" loading="lazy"><figcaption>غرفة العلاج الطبيعي</figcaption></figure>
@@ -411,8 +419,7 @@ footer{background:linear-gradient(160deg,#070c20,#0c1430);border-top:1px solid r
       <div class="about-text">
         <p class="eyebrow"><span class="num">04</span>عن Physio Art</p>
         <h2>نهج واضح في الرعاية والمتابعة</h2>
-        <p>تجمع Physio Art بين خدمات العلاج الطبيعي والتأهيل، والتخسيس والتغذية العلاجية، مع الاهتمام بتحديد احتياجات كل شخص وتوضيح الخطوات المقترحة للتعامل معها.</p>
-        <p>نؤمن بأهمية التقييم المناسب، ووضوح الخطة، ومراجعة التقدم، حتى يكون المريض على دراية بهدف كل خطوة في خطته العلاجية.</p>
+        <p>علاج طبيعي وتأهيل، وتخسيس وتغذية علاجية، بخطة واضحة ومتابعة لكل حالة.</p>
         <blockquote>Physio Art — رعاية تبدأ بالتقييم، وتستمر بالمتابعة.</blockquote>
       </div>
     </div>
@@ -425,7 +432,7 @@ footer{background:linear-gradient(160deg,#070c20,#0c1430);border-top:1px solid r
         <h2>إجابات واضحة قبل زيارتك للعيادة</h2>
       </div>
       <div class="faq">
-        <details open><summary>ماذا يحدث في جلسة الكشف والتقييم الأولى؟</summary><p>نبدأ بالاستماع إلى شكواك وتاريخك الصحي، ومراجعة أي فحوصات أو أشعة سابقة، ثم نجري فحصًا حركيًا أو قياسًا لمكونات الجسم في حالات التغذية. وبناءً عليه نوضح لك طبيعة الحالة، والخطة العلاجية المقترحة، والمدة المتوقعة للتحسن.</p></details>
+        <details><summary>ماذا يحدث في جلسة الكشف والتقييم الأولى؟</summary><p>نبدأ بالاستماع إلى شكواك وتاريخك الصحي، ومراجعة أي فحوصات أو أشعة سابقة، ثم نجري فحصًا حركيًا أو قياسًا لمكونات الجسم في حالات التغذية. وبناءً عليه نوضح لك طبيعة الحالة، والخطة العلاجية المقترحة، والمدة المتوقعة للتحسن.</p></details>
         <details><summary>ماذا أحضر معي في الموعد الأول؟</summary><p>يُفضّل إحضار أي تقارير طبية، أو أشعة (رنين أو مقطعية أو أشعة عادية)، أو تحاليل حديثة مرتبطة بحالتك، مع ارتداء ملابس مريحة تسهّل الفحص الحركي أو جلسة العلاج.</p></details>
         <details><summary>كم عدد الجلسات التي سأحتاجها؟</summary><p>يختلف العدد من شخص لآخر بحسب طبيعة الحالة وشدتها ومدى الالتزام بالتعليمات والتمارين المنزلية. نحدد العدد المبدئي بعد جلسة التقييم الأولى، ونراجع التقدم بانتظام.</p></details>
         <details><summary>هل أنظمة التغذية تعتمد على الحرمان القاسي؟</summary><p>لا. خطط التغذية في Physio Art مبنية على التوازن والمرونة بما يناسب مجهودك اليومي وحالتك الصحية، لنزول صحي وآمن للوزن مع الحفاظ على الكتلة العضلية وتقليل فرصة رجوع الوزن.</p></details>

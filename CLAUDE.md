@@ -31,6 +31,11 @@ Delegate every task to the subagent whose model fits its difficulty. The main ag
 - Load the skill `anthropic-skills:rassam-elrashaka` before any work for Youssef.
 - Reply in Egyptian Arabic.
 
+## Post style (fixed, طلب يوسف)
+- Every post about a reel follows `tools/post-style.md`: hook question, clinic line with a patient quote, bridge, tease (the number of signs or causes without listing them), reassurance, a comment question, a two-line signature (د. يوسف المصري / رسام الرشاقة), then 7 topical hashtags.
+- No TikTok link at the end. Pick the hashtags from the reel's topic.
+- Write posts on Sonnet.
+
 ## Reel toolkit (rebuild first in every new session)
 - Run `bash tools/reel-toolkit/setup.sh` (default dir `~/reel-toolkit`). It is tested end to end and installs:
   - Python audio and video libs;

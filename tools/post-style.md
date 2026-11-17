@@ -13,6 +13,7 @@ Use this structure for every post about one of his reels. The reference post was
 8. **Hashtags:** 7 on one line, chosen for the reel's topic.
 
 ## Rules
+- **Delivery:** send only the clean post text in one code block, ready to copy into Facebook. No notes or extras inside it. Any comment goes in a separate line after the block.
 - Egyptian Arabic, short sentences, feminine address (diet and gym audience).
 - Emojis follow his reference, which has more than the skill's default. This is his explicit choice.
 - No TikTok link in the post. Upload the video itself to Facebook.

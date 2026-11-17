@@ -33,6 +33,7 @@ Delegate every task to the subagent whose model fits its difficulty. The main ag
 
 ## Post style (fixed, طلب يوسف)
 - Every post about a reel follows `tools/post-style.md`: hook question, clinic line with a patient quote, bridge, tease (the number of signs or causes without listing them), reassurance, a comment question, a two-line signature (د. يوسف المصري / رسام الرشاقة), then 7 topical hashtags.
+- **Delivery (طلب يوسف):** when I send a post, send only the clean post text, ready to copy straight into Facebook. Put it in one code block with no notes, explanations, headings or extras inside it. Any comments go in a separate short line after it, or are left out.
 - No TikTok link at the end. Pick the hashtags from the reel's topic.
 - Write posts on Sonnet.
 

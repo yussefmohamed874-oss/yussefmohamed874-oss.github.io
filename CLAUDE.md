@@ -9,10 +9,12 @@ Delegate every task to the subagent whose model fits its difficulty. The main ag
 | `sonnet-editor` | Sonnet | Medium tasks: executing approved edits with ffmpeg, captions and motion-graphics rendering, color correction, audio mastering, transcription cleanup, Gemini/Veo prompts, scripts/posts/captions drafts, website code. |
 | `haiku-helper` | Haiku | Simple tasks: ffprobe, frames/contact sheets, renaming/converting files, cuts at given timestamps, link checks, hashtag lists. |
 
-- **Budget rule (Youssef, Nov 2026): his credit ran low, so keep Opus use to a minimum.**
-  - Use `opus-director` only when Youssef asks for it by name, or for a decision that can't be reversed.
-  - Plans, QC reviews and routine work go to `sonnet-editor`, and mechanical work goes to `haiku-helper`.
-  - Keep the main session on Sonnet when possible.
+- **Budget rule (Youssef, Nov 2026): Opus is the exception, not the default.** One reel used about 10% of his credit, which is too much.
+  - Use `opus-director` only for an extremely important task that cannot reach top quality on any other model, such as a full reel plan for a new format, or a high-risk medical or legal review. Otherwise use it only when Youssef asks for it by name.
+  - Everything else goes to Sonnet: edit plans for a known format, renders, QC reviews, scripts, prompts and code.
+  - Mechanical work goes to Haiku: probes, frames, conversions, downloads, sheets.
+  - Keep the main session on Sonnet.
+  - Save tokens: don't read large files or images unless they are needed, use small contact sheets, and keep subagent reports short.
 - Definitions live in `.claude/agents/`.
 - If a subagent type is not loaded yet, use the Agent tool with `subagent_type: general-purpose` and `model: opus | sonnet | haiku` plus the same instructions.
 - Run independent tasks in parallel.

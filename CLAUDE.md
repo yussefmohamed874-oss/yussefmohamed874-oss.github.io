@@ -9,12 +9,19 @@ Delegate every task to the subagent whose model fits its difficulty. The main ag
 | `sonnet-editor` | Sonnet | Medium tasks: executing approved edits with ffmpeg, captions and motion-graphics rendering, color correction, audio mastering, transcription cleanup, Gemini/Veo prompts, scripts/posts/captions drafts, website code. |
 | `haiku-helper` | Haiku | Simple tasks: ffprobe, frames/contact sheets, renaming/converting files, cuts at given timestamps, link checks, hashtag lists. |
 
-- **Budget rule (Youssef, Nov 2026): Opus is the exception, not the default.** One reel used about 10% of his credit, which is too much.
-  - Use `opus-director` only for an extremely important task that cannot reach top quality on any other model, such as a full reel plan for a new format, or a high-risk medical or legal review. Otherwise use it only when Youssef asks for it by name.
-  - Everything else goes to Sonnet: edit plans for a known format, renders, QC reviews, scripts, prompts and code.
-  - Mechanical work goes to Haiku: probes, frames, conversions, downloads, sheets.
-  - Keep the main session on Sonnet.
-  - Save tokens: don't read large files or images unless they are needed, use small contact sheets, and keep subagent reports short.
+- **Budget rules (Youssef, Nov 2026).** One reel used about 10% of his credit, which is too much.
+  1. **Never run Opus without asking first.** Before any Opus task, tell Youssef three things, then wait for his OK:
+     - the task;
+     - a rough cost estimate: small (≈1–2%), medium (≈3–5%) or large (≈5–10%+ of his credit), and say it's an estimate;
+     - the cheaper alternative (Sonnet), with what quality he might lose.
+  2. Complex tasks are for Opus, once he approves: full reel plans for a new format, high-risk medical or legal review, complex pipeline design.
+  3. Everything else goes to Sonnet: renders, QC, scripts, prompts, code, edit plans for a format we've already done. Mechanical work goes to Haiku: probes, frames, conversions, downloads.
+  4. Keep credit low in everything:
+     - keep the main session on Sonnet;
+     - read images or large files only when needed, and use small contact sheets;
+     - keep subagent prompts and reports short;
+     - reuse the toolkit and earlier plans, don't redo work;
+     - give each subagent one well-scoped task instead of many back-and-forth messages.
 - Definitions live in `.claude/agents/`.
 - If a subagent type is not loaded yet, use the Agent tool with `subagent_type: general-purpose` and `model: opus | sonnet | haiku` plus the same instructions.
 - Run independent tasks in parallel.

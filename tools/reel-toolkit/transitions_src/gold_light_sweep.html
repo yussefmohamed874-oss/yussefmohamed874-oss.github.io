@@ -1,0 +1,40 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=1080"><title>gold_light_sweep</title><style>html,body{margin:0;padding:0;width:1080px;height:1920px;background:transparent;overflow:hidden;position:relative}#stage{position:absolute;left:0;top:0;width:1080px;height:1920px;overflow:hidden}</style></head><body><div id="stage">
+<style>
+.l{position:absolute;top:50%;left:0;transform-origin:50% 50%;will-change:transform}
+#halo{width:1100px;height:3200px;margin:-1600px 0 0 -550px;background:linear-gradient(90deg,rgba(212,166,74,0),rgba(212,166,74,.16) 50%,rgba(212,166,74,0));filter:blur(50px)}
+#band{width:360px;height:3200px;margin:-1600px 0 0 -180px;background:linear-gradient(90deg,rgba(242,198,109,0),rgba(242,198,109,.30) 30%,rgba(255,236,190,.62) 50%,rgba(242,198,109,.30) 70%,rgba(242,198,109,0));filter:blur(16px)}
+#core{width:16px;height:3200px;margin:-1600px 0 0 -8px;background:linear-gradient(90deg,rgba(255,244,214,0),rgba(255,246,222,.6) 50%,rgba(255,244,214,0));filter:blur(3px)}
+#trail{width:46px;height:3200px;margin:-1600px 0 0 -23px;background:linear-gradient(90deg,rgba(242,198,109,0),rgba(242,198,109,.4) 50%,rgba(242,198,109,0));filter:blur(6px)}
+#flare{position:absolute;left:0;top:0;width:1500px;height:70px;margin:-35px 0 0 -750px;background:radial-gradient(ellipse at center,rgba(255,240,200,.55) 0%,rgba(242,198,109,.22) 25%,rgba(242,198,109,0) 65%);filter:blur(10px)}
+#orb{position:absolute;left:0;top:0;width:180px;height:180px;margin:-90px 0 0 -90px;border-radius:50%;background:radial-gradient(circle,rgba(255,240,200,.55),rgba(242,198,109,.18) 45%,rgba(242,198,109,0) 70%)}
+</style>
+<div id="all" style="position:absolute;inset:0;opacity:0">
+<div class="l" id="halo"></div><div class="l" id="band"></div><div class="l" id="trail"></div><div class="l" id="core"></div>
+<div id="flare"></div><div id="orb"></div>
+</div>
+<script src="../../node/node_modules/gsap/dist/gsap.min.js"></script>
+<script>
+const FPS=30,N=15,D=(N-1)/FPS;
+const s={x:-700,o:0};
+const $=id=>document.getElementById(id);
+const ANG=18;
+function render(){
+  const x=s.x;
+  $('halo').style.transform=`translateX(${x}px) rotate(${ANG}deg)`;
+  $('band').style.transform=`translateX(${x}px) rotate(${ANG}deg)`;
+  $('core').style.transform=`translateX(${x}px) rotate(${ANG}deg)`;
+  $('trail').style.transform=`translateX(${x-210}px) rotate(${ANG}deg)`;
+  // flare rides the band centre line at y=820
+  const fy=820, fx=x+(960-fy)*Math.tan(ANG*Math.PI/180)*-1 ; // band leans: x shifts with y
+  $('flare').style.transform=`translate(${540+ (x-540) + (fy-960)*-Math.tan(ANG*Math.PI/180)}px,${fy}px)`;
+  $('orb').style.transform=`translate(${x+(1180-960)*-Math.tan(ANG*Math.PI/180)}px,1180px)`;
+  $('all').style.opacity=s.o*0.95;
+}
+const tl=gsap.timeline({paused:true,onUpdate:render});
+tl.to(s,{x:1800,duration:D,ease:'power2.inOut'},0);
+tl.fromTo(s,{o:0},{o:1,duration:D*0.4,ease:'sine.out'},0);
+tl.to(s,{o:0,duration:D*0.4,ease:'sine.in'},D*0.6);
+tl.set({}, {}, D);
+window.seek=t=>{tl.time(Math.min(t,D),false);render();};
+render();window.ready=true;
+</script></div></body></html>

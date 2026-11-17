@@ -1,0 +1,38 @@
+{
+ "cover_range": {
+  "navy_wipe": [
+   7,
+   8,
+   9,
+   10,
+   11
+  ],
+  "gold_light_sweep": [],
+  "whip_blur_mask": [
+   3,
+   4,
+   5,
+   6
+  ],
+  "circle_iris_gold": [
+   6,
+   7,
+   8,
+   9
+  ],
+  "split_bars": [
+   9,
+   10,
+   11
+  ],
+  "particle_dissolve": []
+ },
+ "cut": {
+  "navy_wipe": 9,
+  "gold_light_sweep": null,
+  "whip_blur_mask": 4,
+  "circle_iris_gold": 7,
+  "split_bars": 10,
+  "particle_dissolve": null
+ }
+}

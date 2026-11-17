@@ -1,0 +1,43 @@
+file,category,title,mixkit_id,source_url,duration_s,lufs,suggested_use
+music/music_cinematic_ambient_vastness_01.mp3,music/cinematic_ambient,Vastness,184,https://assets.mixkit.co/music/184/184.mp3,229.85,-13.5,intro/outro pad or serious-fact moment; duck to -26 LUFS under voice
+music/music_cinematic_suspense_silent_descent_01.mp3,music/cinematic_suspense,Silent Descent,614,https://assets.mixkit.co/music/614/614.mp3,160.42,-13.3,suspense bed for problem/danger hook; duck under voice
+music/music_corporate_calm_focus_on_yourself_01.mp3,music/corporate_calm,Focus on Yourself,568,https://assets.mixkit.co/music/568/568.mp3,285.96,-11.8,under-voice bed at -28 LUFS for explainer/tips; calm inspiring medical
+music/music_corporate_calm_infinity_03.mp3,music/corporate_calm,Infinity,440,https://assets.mixkit.co/music/440/440.mp3,102.9,-12.2,under-voice bed at -28 LUFS; steady hopeful corporate pulse
+music/music_corporate_calm_minimal_emotion_02.mp3,music/corporate_calm,Minimal Emotion,160,https://assets.mixkit.co/music/160/160.mp3,120.08,-10.0,under-voice bed at -28 LUFS; soft minimal tone for serious health info
+music/music_emotional_piano_piano_reflections_01.mp3,music/emotional_piano,Piano Reflections,22,https://assets.mixkit.co/music/22/22.mp3,198.9,-13.0,emotional piano for patient story/closing message at -28 LUFS
+music/music_upbeat_light_motivating_mornings_01.mp3,music/upbeat_light,Motivating Mornings,33,https://assets.mixkit.co/music/33/33.mp3,96.24,-9.9,light upbeat bed for tips/exercise montage at -26 LUFS
+music/music_upbeat_light_talent_in_the_air_02.mp3,music/upbeat_light,Talent in the Air,473,https://assets.mixkit.co/music/473/473.mp3,114.16,-12.1,light modern bed for CTA/results segment at -26 LUFS
+sfx/comedy/comedy_boing_hit_02.mp3,comedy,Boing hit sound,2894,https://assets.mixkit.co/active_storage/sfx/2894/2894-preview.mp3,1.28,-9.2,cartoon boing for light humour
+sfx/comedy/comedy_crowd_laugh_03.mp3,comedy,Crowd laugh,424,https://assets.mixkit.co/active_storage/sfx/424/424-preview.mp3,4.15,-22.8,crowd laugh after a joke
+sfx/comedy/comedy_record_scratch_01.mp3,comedy,Record player vinyl scratch,702,https://assets.mixkit.co/active_storage/sfx/702/702-preview.mp3,1.15,-18.0,record scratch for stop-and-correct myth moment
+sfx/comedy/comedy_trombone_disappoint_04.mp3,comedy,Trombone disappoint,744,https://assets.mixkit.co/active_storage/sfx/744/744-preview.mp3,2.69,-14.0,sad trombone for fail/bad habit
+sfx/ding_notify/ding_notify_bell_notification_02.mp3,ding_notify,Bell notification,933,https://assets.mixkit.co/active_storage/sfx/933/933-preview.mp3,3.4,-14.9,clean notification bell for tip callout
+sfx/ding_notify/ding_notify_confirmation_tone_04.mp3,ding_notify,Confirmation tone,2867,https://assets.mixkit.co/active_storage/sfx/2867/2867-preview.mp3,1.33,-12.1,success chime for completed step
+sfx/ding_notify/ding_notify_positive_notification_03.mp3,ding_notify,Positive notification,951,https://assets.mixkit.co/active_storage/sfx/951/951-preview.mp3,2.85,-14.8,positive result / good news
+sfx/ding_notify/ding_notify_relaxing_bell_chime_01.mp3,ding_notify,Relaxing bell chime,3109,https://assets.mixkit.co/active_storage/sfx/3109/3109-preview.mp3,1.72,-22.2,soft bell chime for calm key point
+sfx/foley/foley_camera_shutter_01.mp3,foley,Camera shutter click,1133,https://assets.mixkit.co/active_storage/sfx/1133/1133-preview.mp3,0.39,-70.0,photo/before-after snapshot
+sfx/foley/foley_heartbeat_medium_04.mp3,foley,Heartbeat medium speed,495,https://assets.mixkit.co/active_storage/sfx/495/495-preview.mp3,29.75,-15.8,heartbeat bed under serious statement (trim)
+sfx/foley/foley_heartbeat_single_03.mp3,foley,Human single heart beat,490,https://assets.mixkit.co/active_storage/sfx/490/490-preview.mp3,1.15,-15.6,single heartbeat for cardio/stress point
+sfx/foley/foley_stapling_paper_06.mp3,foley,Stapling paper,2995,https://assets.mixkit.co/active_storage/sfx/2995/2995-preview.mp3,1.2,-21.8,paper/staple for documents or prescriptions
+sfx/foley/foley_typewriter_soft_click_05.mp3,foley,Typewriter soft click,1125,https://assets.mixkit.co/active_storage/sfx/1125/1125-preview.mp3,0.26,-70.0,typewriter key for caption typing effect
+sfx/foley/foley_typing_laptop_02.mp3,foley,Typing on a laptop keyboard,2531,https://assets.mixkit.co/active_storage/sfx/2531/2531-preview.mp3,19.67,-20.4,typing under text-on-screen (trim)
+sfx/glitch_tech/glitch_tech_digital_break_02.mp3,glitch_tech,Digital glitch break,2951,https://assets.mixkit.co/active_storage/sfx/2951/2951-preview.mp3,1.1,-22.3,digital glitch break for scene tear transition
+sfx/glitch_tech/glitch_tech_small_electric_glitch_01.mp3,glitch_tech,Small electric glitch,2595,https://assets.mixkit.co/active_storage/sfx/2595/2595-preview.mp3,1.07,-10.5,tiny glitch for 3D/data flicker
+sfx/glitch_tech/glitch_tech_virtual_quick_glitch_03.mp3,glitch_tech,Virtual quick glitch,2946,https://assets.mixkit.co/active_storage/sfx/2946/2946-preview.mp3,2.09,-13.8,scan/virtual glitch on medical 3D overlay
+sfx/impact_riser/impact_riser_cinematic_deep_impact_01.mp3,impact_riser,Cinematic whoosh deep impact,1143,https://assets.mixkit.co/active_storage/sfx/1143/1143-preview.mp3,4.1,-13.2,deep whoosh+impact for big reveal
+sfx/impact_riser/impact_riser_logo_intro_impact_02.mp3,impact_riser,Movie logo intro impact,2900,https://assets.mixkit.co/active_storage/sfx/2900/2900-preview.mp3,9.01,-12.0,logo sting / intro hit
+sfx/impact_riser/impact_riser_quick_zoom_impact_05.mp3,impact_riser,Quick zoom impact,772,https://assets.mixkit.co/active_storage/sfx/772/772-preview.mp3,1.25,-11.6,short punch on zoom-in emphasis
+sfx/impact_riser/impact_riser_reverse_impact_swell_04.mp3,impact_riser,Reverse cinematic impact trailer,784,https://assets.mixkit.co/active_storage/sfx/784/784-preview.mp3,10.11,-12.1,reverse swell before hook or title
+sfx/impact_riser/impact_riser_trailer_riser_short_03.mp3,impact_riser,Cinematic trailer riser,790,https://assets.mixkit.co/active_storage/sfx/790/790-preview.mp3,2.61,-22.3,short riser leading into a reveal
+sfx/pop_click/pop_click_bubble_pop_02.mp3,pop_click,Bubble pop up alert notification,2357,https://assets.mixkit.co/active_storage/sfx/2357/2357-preview.mp3,0.42,-70.0,bubble pop for icon/emoji appearing
+sfx/pop_click/pop_click_check_box_click_05.mp3,pop_click,Modern click box check,1120,https://assets.mixkit.co/active_storage/sfx/1120/1120-preview.mp3,0.29,-70.0,check-mark tick for correct/benefit items
+sfx/pop_click/pop_click_clear_mouse_click_06.mp3,pop_click,Clear mouse clicks,2997,https://assets.mixkit.co/active_storage/sfx/2997/2997-preview.mp3,1.1,-25.2,subtle click for UI/button tap
+sfx/pop_click/pop_click_dry_pop_03.mp3,pop_click,Dry pop up notification alert,2356,https://assets.mixkit.co/active_storage/sfx/2356/2356-preview.mp3,0.34,-70.0,dry pop for bullet/list item entry
+sfx/pop_click/pop_click_long_pop_01.mp3,pop_click,Long pop,2358,https://assets.mixkit.co/active_storage/sfx/2358/2358-preview.mp3,0.52,-20.9,soft UI pop for caption keyword
+sfx/pop_click/pop_click_message_pop_04.mp3,pop_click,Message pop alert,2354,https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3,1.1,-24.7,message-style pop for text bubble
+sfx/whoosh/whoosh_cinematic_fast_03.mp3,whoosh,Cinematic whoosh fast transition,1492,https://assets.mixkit.co/active_storage/sfx/1492/1492-preview.mp3,1.38,-13.0,fast cinematic transition into new scene
+sfx/whoosh/whoosh_deep_tunnel_reverb_05.mp3,whoosh,Cinematic tunnel reverb woosh,1486,https://assets.mixkit.co/active_storage/sfx/1486/1486-preview.mp3,6.79,-13.7,deep cinematic whoosh for chapter/section change
+sfx/whoosh/whoosh_fast_air_sweep_02.mp3,whoosh,Fast air sweep transition,168,https://assets.mixkit.co/active_storage/sfx/168/168-preview.mp3,0.89,-14.0,quick swipe between talking-head cuts
+sfx/whoosh/whoosh_quick_accent_04.mp3,whoosh,Quick swoosh accent,1464,https://assets.mixkit.co/active_storage/sfx/1464/1464-preview.mp3,1.15,-16.9,short accent for caption slide-in
+sfx/whoosh/whoosh_soft_air_01.mp3,whoosh,Air woosh,1489,https://assets.mixkit.co/active_storage/sfx/1489/1489-preview.mp3,2.35,-18.0,soft air pass; gentle text entry or b-roll cut
+sfx/whoosh/whoosh_wind_swoosh_06.mp3,whoosh,Cinematic wind swoosh,1471,https://assets.mixkit.co/active_storage/sfx/1471/1471-preview.mp3,1.49,-16.2,airy wind swoosh for light transitions

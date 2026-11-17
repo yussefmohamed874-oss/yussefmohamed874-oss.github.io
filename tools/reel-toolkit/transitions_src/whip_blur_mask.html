@@ -1,0 +1,36 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=1080"><title>whip_blur_mask</title><style>html,body{margin:0;padding:0;width:1080px;height:1920px;background:transparent;overflow:hidden;position:relative}#stage{position:absolute;left:0;top:0;width:1080px;height:1920px;overflow:hidden}</style></head><body><div id="stage">
+<style>
+.b{position:absolute;top:-200px;height:2320px;will-change:transform}
+#navy{width:2400px;left:0;background:
+ linear-gradient(90deg,rgba(7,19,48,0) 0,rgba(9,24,58,.55) 120px,#0B1B3F 380px,#0B1B3F 2020px,rgba(9,24,58,.55) 2280px,rgba(7,19,48,0) 2400px);filter:blur(5px)}
+#streaks{width:2400px;left:0;background:
+ repeating-linear-gradient(0deg,rgba(255,255,255,0) 0 23px,rgba(212,166,74,.10) 23px 25px,rgba(255,255,255,0) 25px 61px,rgba(255,255,255,.05) 61px 64px,rgba(255,255,255,0) 64px 97px);
+ -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 500px,#000 1900px,transparent 2400px);filter:blur(2px)}
+.g{width:380px;background:linear-gradient(90deg,rgba(212,166,74,0),rgba(212,166,74,.55) 35%,rgba(247,216,138,.95) 70%,rgba(255,240,200,.95) 82%,rgba(247,216,138,0));filter:blur(9px)}
+#gL{background:linear-gradient(270deg,rgba(212,166,74,0),rgba(212,166,74,.55) 35%,rgba(247,216,138,.95) 70%,rgba(255,240,200,.95) 82%,rgba(247,216,138,0))}
+#gT{width:170px;opacity:.7}
+</style>
+<div id="w" style="position:absolute;inset:0;transform:skewX(-9deg)">
+<div class="b" id="navy"></div><div class="b" id="streaks"></div>
+<div class="b g" id="gA"></div><div class="b g" id="gT"></div><div class="b g" id="gL"></div>
+</div>
+<script src="../../node/node_modules/gsap/dist/gsap.min.js"></script>
+<script>
+const FPS=30,N=12,D=(N-1)/FPS;
+const s={x:-2900};
+const $=id=>document.getElementById(id);
+function render(){
+  $('navy').style.transform=`translateX(${s.x}px)`;
+  $('streaks').style.transform=`translateX(${s.x}px)`;
+  $('gA').style.transform=`translateX(${s.x+2400-300}px)`;   // gold lead rides navy leading edge
+  $('gT').style.transform=`translateX(${s.x+2400-560}px)`;
+  $('gL').style.transform=`translateX(${s.x-40}px)`;          // gold trail rides trailing edge
+}
+const tl=gsap.timeline({paused:true,onUpdate:render});
+tl.fromTo(s,{x:-2900},{x:-640,duration:0.13,ease:'power2.inOut'},0);
+tl.to(s,{x:-580,duration:0.06,ease:'none'},0.13);
+tl.to(s,{x:1400,duration:D-0.19,ease:'power2.inOut'},0.19);
+tl.set({}, {}, D);
+window.seek=t=>{tl.time(Math.min(t,D),false);render();};
+render();window.ready=true;
+</script></div></body></html>

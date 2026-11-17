@@ -1,0 +1,45 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=1080"><title>particle_dissolve</title><style>html,body{margin:0;padding:0;width:1080px;height:1920px;background:transparent;overflow:hidden;position:relative}#stage{position:absolute;left:0;top:0;width:1080px;height:1920px;overflow:hidden}</style></head><body><div id="stage">
+<canvas id="c" width="1080" height="1920" style="position:absolute;left:0;top:0;opacity:.85"></canvas>
+<script src="../../node/node_modules/gsap/dist/gsap.min.js"></script>
+<script>
+const FPS=30,N=24,D=(N-1)/FPS;
+const cv=document.getElementById('c'),ctx=cv.getContext('2d');
+let seed=20240611;const rnd=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};
+const gauss=()=>{let u=0;for(let i=0;i<4;i++)u+=rnd();return (u-2)/0.58;};
+const P=[];
+for(let i=0;i<1000;i++){
+  const big=i>=930;
+  const ang=rnd()*Math.PI*2,sp=big?160+rnd()*320:260+rnd()*1300;
+  P.push({x0:540+gauss()*230,y0:960+gauss()*560,
+    vx:Math.cos(ang)*sp*1.15+120,vy:Math.sin(ang)*sp*0.8-40,
+    k:big?3.0:3.5+rnd()*2.5, wind:big?120+rnd()*120:260+rnd()*420, rise:-40-rnd()*90,
+    r:big?22+rnd()*34:1.3+Math.pow(rnd(),1.8)*4.2, born:rnd()*0.1, life:0.5+rnd()*0.25,
+    ph:rnd()*6.28,wob:4+rnd()*14,tw:6+rnd()*9,al:big?0.22+rnd()*0.16:0.55+rnd()*0.4,big,warm:rnd()});
+}
+const s={t:0};
+function draw(){
+  const t=s.t;ctx.clearRect(0,0,1080,1920);ctx.globalCompositeOperation='lighter';
+  for(const p of P){
+    const a=t-p.born;if(a<0||a>p.life)continue;
+    const u=a/p.life;
+    const env=Math.min(1,a/0.05)*Math.pow(1-u,1.4);
+    const e=(1-Math.exp(-p.k*a))/p.k;
+    const x=p.x0+p.vx*e+p.wind*a+Math.sin(a*p.tw+p.ph)*p.wob;
+    const y=p.y0+p.vy*e+p.rise*a+Math.cos(a*p.tw*0.8+p.ph)*p.wob*0.7;
+    const tw=p.big?1:0.72+0.28*Math.sin(a*p.tw*2+p.ph);
+    const al=Math.min(0.85,p.al*env*tw);if(al<=0.003)continue;
+    const r=p.r*(p.big?(0.7+0.5*u):(1-0.35*u));
+    const g=ctx.createRadialGradient(x,y,0,x,y,r*(p.big?1:2.6));
+    const core=p.warm>0.7?'255,238,196':'247,206,120';
+    g.addColorStop(0,`rgba(${core},${al})`);
+    g.addColorStop(p.big?0.4:0.28,`rgba(242,198,109,${al*0.55})`);
+    g.addColorStop(1,'rgba(212,166,74,0)');
+    ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r*(p.big?1:2.6),0,6.2832);ctx.fill();
+  }
+  ctx.globalCompositeOperation='source-over';
+}
+const tl=gsap.timeline({paused:true,onUpdate:draw});
+tl.to(s,{t:D,duration:D,ease:'none'},0);
+window.seek=t=>{tl.time(Math.min(t,D),false);s.t=Math.min(t,D);draw();};
+draw();window.ready=true;
+</script></div></body></html>

@@ -1,0 +1,40 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=1080"><title>navy_wipe</title><style>html,body{margin:0;padding:0;width:1080px;height:1920px;background:transparent;overflow:hidden;position:relative}#stage{position:absolute;left:0;top:0;width:1080px;height:1920px;overflow:hidden}</style></head><body><div id="stage">
+<svg width="1080" height="1920" viewBox="0 0 1080 1920" style="position:absolute;left:0;top:0">
+<defs>
+<linearGradient id="navy" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#071330"/><stop offset="0.5" stop-color="#0B1B3F"/><stop offset="1" stop-color="#0D2150"/></linearGradient>
+<linearGradient id="gSheen" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#D4A64A" stop-opacity="0"/><stop offset="1" stop-color="#D4A64A" stop-opacity="0.22"/></linearGradient>
+<linearGradient id="gGlowR" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#F2C66D" stop-opacity="0.55"/><stop offset="1" stop-color="#F2C66D" stop-opacity="0"/></linearGradient>
+<linearGradient id="gGlowL" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#F2C66D" stop-opacity="0"/><stop offset="1" stop-color="#F2C66D" stop-opacity="0.45"/></linearGradient>
+<linearGradient id="goldline" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#D4A64A"/><stop offset="0.5" stop-color="#F7D88A"/><stop offset="1" stop-color="#D4A64A"/></linearGradient>
+</defs>
+<g transform="matrix(1 0 0.4 1 0 0)">
+ <rect id="panel" y="-100" height="2120" fill="url(#navy)"/>
+ <rect id="sheen" y="-100" height="2120" width="380" fill="url(#gSheen)"/>
+ <rect id="glowR" y="-100" height="2120" width="60" fill="url(#gGlowR)"/>
+ <rect id="lineR" y="-100" height="2120" width="6" fill="url(#goldline)"/>
+ <rect id="glowL" y="-100" height="2120" width="46" fill="url(#gGlowL)"/>
+ <rect id="lineL" y="-100" height="2120" width="3" fill="#D4A64A"/>
+</g></svg>
+<script src="../../node/node_modules/gsap/dist/gsap.min.js"></script>
+<script>
+const FPS=30,N=18,D=(N-1)/FPS;
+const s={Rx:-900,Lx:-1000};
+const $=id=>document.getElementById(id);
+function render(){
+  const w=Math.max(0,s.Rx-s.Lx);
+  $('panel').setAttribute('x',s.Lx);$('panel').setAttribute('width',w);
+  const lead=s.Rx<1100;           // right edge still on screen
+  $('sheen').setAttribute('x',s.Rx-380);$('sheen').style.display=lead?'':'none';
+  $('glowR').setAttribute('x',s.Rx);$('lineR').setAttribute('x',s.Rx-6);
+  $('glowR').style.display=$('lineR').style.display=lead?'':'none';
+  const trail=s.Lx>-760;
+  $('glowL').setAttribute('x',s.Lx-46);$('lineL').setAttribute('x',s.Lx);
+  $('glowL').style.display=$('lineL').style.display=trail&&w>0?'':'none';
+}
+const tl=gsap.timeline({paused:true,onUpdate:render});
+tl.to(s,{Rx:1100,duration:0.26,ease:'power2.inOut'},0);
+tl.to(s,{Lx:1150,duration:D-0.285,ease:'power2.inOut'},0.285);
+tl.set({}, {}, D);
+window.seek=t=>{tl.time(Math.min(t,D),false);render();};
+render();window.ready=true;
+</script></div></body></html>

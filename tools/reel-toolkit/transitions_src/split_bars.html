@@ -1,0 +1,27 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=1080"><title>split_bars</title><style>html,body{margin:0;padding:0;width:1080px;height:1920px;background:transparent;overflow:hidden;position:relative}#stage{position:absolute;left:0;top:0;width:1080px;height:1920px;overflow:hidden}</style></head><body><div id="stage">
+<style>
+.bar{position:absolute;top:0;height:1920px;width:218px;box-sizing:border-box;will-change:transform;
+ background:linear-gradient(180deg,#0D2150 0%,#0B1B3F 45%,#071330 100%);
+ border-left:2px solid #D4A64A;border-right:2px solid #D4A64A;
+ box-shadow:0 0 0 0 transparent}
+.bar::after{content:"";position:absolute;left:-2px;right:-2px;bottom:0;height:3px;background:linear-gradient(90deg,#D4A64A,#F7D88A,#D4A64A);box-shadow:0 0 18px 4px rgba(242,198,109,.55)}
+.bar::before{content:"";position:absolute;left:0;right:0;top:0;bottom:0;background:linear-gradient(90deg,rgba(255,255,255,.04),rgba(255,255,255,0) 30%,rgba(0,0,0,.12))}
+.bar:nth-child(even){background:linear-gradient(180deg,#0A1A3B 0%,#081633 45%,#061029 100%)}
+</style>
+<div id="bars"></div>
+<script src="../../node/node_modules/gsap/dist/gsap.min.js"></script>
+<script>
+const FPS=30,N=21,D=(N-1)/FPS;
+const bars=[];const wrap=document.getElementById('bars');
+for(let i=0;i<5;i++){const b=document.createElement('div');b.className='bar';b.style.left=(i*216)+'px';wrap.appendChild(b);bars.push(b);}
+const s=bars.map(()=>({y:-2000}));
+function render(){bars.forEach((b,i)=>{b.style.transform=`translateY(${s[i].y}px)`;});}
+const tl=gsap.timeline({paused:true,onUpdate:render});
+const ST=0.03,DUR=0.17;
+s.forEach((o,i)=>{ tl.to(o,{y:0,duration:DUR,ease:'power3.in'},i*ST); });
+const OUT=0.35;
+s.forEach((o,i)=>{ tl.to(o,{y:-2000,duration:DUR,ease:'power3.in'},OUT+(4-i)*ST); });
+tl.set({}, {}, D);
+window.seek=t=>{tl.time(Math.min(t,D),false);render();};
+render();window.ready=true;
+</script></div></body></html>

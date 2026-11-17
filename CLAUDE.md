@@ -18,6 +18,20 @@ Delegate every task to the subagent whose model fits its difficulty. The main ag
 - Load the skill `anthropic-skills:rassam-elrashaka` before any work for Youssef.
 - Reply in Egyptian Arabic.
 
+## Reel toolkit (rebuild first in every new session)
+- Run `bash tools/reel-toolkit/setup.sh` (default dir `~/reel-toolkit`). It is tested end to end and installs:
+  - Python audio and video libs;
+  - GSAP, lottie and anime.js;
+  - Google fonts (Zain and alternatives);
+  - Whisper Small;
+  - 42 Mixkit sounds and tracks, from `manifest.csv`;
+  - 6 brand transitions (navy_wipe, gold_light_sweep, whip_blur_mask, circle_iris_gold, split_bars, particle_dissolve).
+- After setup, render the transitions with `node transitions/render.js && python3 transitions/to_rgba.py`.
+- `tools/reel-toolkit/presets.sh` holds the grade, voice-chain, punch-in, xfade and export presets.
+- Grade for the insulin-resistance shoot (grey wall, green shirt): use `GRADE_CINEMATIC`.
+- Load the skills `talking-head-reel-editor` and `professional-cinematic-video-enhancer` before editing.
+- Music picks need Youssef's approval. The audition file is numbered 1–8 in manifest order.
+
 ## Transcription in cloud sessions
 - huggingface.co is blocked, and Youssef declined opening it.
 - Get Whisper Small from npm instead: `@skillninja/shortmovie-telop-model-p0..p3`. Run `npm pack` on each part, concatenate `model.bin.part0..3`, check the sha256 in p0, then run it with faster-whisper.

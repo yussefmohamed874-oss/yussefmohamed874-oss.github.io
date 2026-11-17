@@ -1,0 +1,38 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=1080"><title>circle_iris_gold</title><style>html,body{margin:0;padding:0;width:1080px;height:1920px;background:transparent;overflow:hidden;position:relative}#stage{position:absolute;left:0;top:0;width:1080px;height:1920px;overflow:hidden}</style></head><body><div id="stage">
+<svg width="1080" height="1920" viewBox="0 0 1080 1920" style="position:absolute;left:0;top:0">
+<defs>
+<radialGradient id="navy" cx="540" cy="960" r="1150" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#0E2352"/><stop offset="0.55" stop-color="#0B1B3F"/><stop offset="1" stop-color="#071330"/></radialGradient>
+<mask id="m" maskUnits="userSpaceOnUse" x="0" y="0" width="1080" height="1920">
+ <circle id="mA" cx="540" cy="960" r="0" fill="#fff"/>
+ <circle id="mH" cx="540" cy="960" r="0" fill="#000"/>
+</mask>
+<filter id="gl" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="9"/></filter>
+</defs>
+<rect width="1080" height="1920" fill="url(#navy)" mask="url(#m)"/>
+<g id="ringA"><circle id="rAg" cx="540" cy="960" r="0" fill="none" stroke="#F2C66D" stroke-opacity=".6" stroke-width="26" filter="url(#gl)"/>
+<circle id="rA" cx="540" cy="960" r="0" fill="none" stroke="#F7D88A" stroke-width="7"/>
+<circle id="rA2" cx="540" cy="960" r="0" fill="none" stroke="#D4A64A" stroke-width="2" stroke-opacity=".7"/></g>
+<g id="ringH"><circle id="rHg" cx="540" cy="960" r="0" fill="none" stroke="#F2C66D" stroke-opacity=".6" stroke-width="26" filter="url(#gl)"/>
+<circle id="rH" cx="540" cy="960" r="0" fill="none" stroke="#F7D88A" stroke-width="7"/>
+<circle id="rH2" cx="540" cy="960" r="0" fill="none" stroke="#D4A64A" stroke-width="2" stroke-opacity=".7"/></g>
+</svg>
+<script src="../../node/node_modules/gsap/dist/gsap.min.js"></script>
+<script>
+const FPS=30,N=18,D=(N-1)/FPS,RMAX=1260;
+const s={a:0,h:0};
+const $=id=>document.getElementById(id);
+function set(id,r,vis){const e=$(id);e.setAttribute('r',Math.max(0,r));}
+function render(){
+  $('mA').setAttribute('r',s.a);$('mH').setAttribute('r',s.h);
+  const aOn=s.a>1&&s.a<RMAX-20, hOn=s.h>1&&s.h<RMAX-20;
+  $('ringA').style.display=aOn?'':'none';$('ringH').style.display=hOn?'':'none';
+  set('rAg',s.a);set('rA',s.a);set('rA2',s.a-16);
+  set('rHg',s.h);set('rH',s.h);set('rH2',s.h+16);
+}
+const tl=gsap.timeline({paused:true,onUpdate:render});
+tl.to(s,{a:RMAX,duration:0.26,ease:'power3.inOut'},0);
+tl.to(s,{h:RMAX,duration:D-0.31,ease:'power3.inOut'},0.31);
+tl.set({}, {}, D);
+window.seek=t=>{tl.time(Math.min(t,D),false);render();};
+render();window.ready=true;
+</script></div></body></html>
